@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net46</TargetFramework>
+		<RootNamespace>Xamarin.VSSDK</RootNamespace>
+
+		<PackageId>Xamarin.VSSDK</PackageId>
+		<Title>$(PackageId)</Title>
+		<Description>$(PackageId)</Description>
+
+		<PrimaryOutputPackageFileKind>build</PrimaryOutputPackageFileKind>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Update="Xamarin.VSSDK.targets">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Xamarin.VSSDK.props">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,35 @@
+<Project>
+  <PropertyGroup>
+	  <_ProjectTargets>$(MSBuildProjectDirectory)\$(MSBuildProjectName).targets</_ProjectTargets>
+	  <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+	  <MSBuildAllProjects Condition="Exists('$(_ProjectTargets)')">$(MSBuildAllProjects);$(_ProjectTargets)</MSBuildAllProjects>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<BuildDependsOn>
+			SetVersion;
+			$(BuildDependsOn)
+		</BuildDependsOn>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="NuGet.Build.Packaging" Version="*" PrivateAssets="all" />
+	</ItemGroup>
+
+	<ItemDefinitionGroup>
+		<None>
+			<IncludeInPackage>true</IncludeInPackage>
+		</None>
+	</ItemDefinitionGroup>
+	
+	<Target Name="CleanPackagePath" BeforeTargets="Pack">
+		<ItemGroup>
+			<_PackageContent Condition="Exists('%(FullPath)')">
+				<PackagePath>build\%(Filename)%(Extension)</PackagePath>
+			</_PackageContent>
+		</ItemGroup>
+	</Target>
+	
+	<Import Project="Version.targets" />
+  <Import Project="$(_ProjectTargets)" Condition="'$(MSBuildProjectExtension)' != '.props' And Exists('$(_ProjectTargets)')" />
+</Project>

@@ -1,0 +1,83 @@
+<Project DefaultTargets="Build" InitialTargets="_Setup" TreatAsLocalProperty="Configuration">
+	<Import Project="build\corebuild.props" />
+
+	<PropertyGroup>
+		<Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+		<IntermediateOutputPath>$(RestoreOutputPath)\</IntermediateOutputPath>
+    <AdditionalProperties>Configuration=$(Configuration)</AdditionalProperties>
+		<Out Condition="'$(Out)' == ''">out</Out>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="xunit.runner.console" Version="2.3.0-beta1-build3642" />
+	</ItemGroup>
+
+  <ItemDefinitionGroup>
+    <Solution>
+      <AdditionalProperties>$(AdditionalProperties)</AdditionalProperties>
+    </Solution>
+  </ItemDefinitionGroup>
+
+	<ItemGroup>
+		<Solution Include="src\*.sln" />
+	</ItemGroup>
+
+	<Target Name="Build">
+		<Message Text="Building AssemblyVersion=$(AssemblyVersion), PackageVersion=$(PackageVersion)" Importance="high" />
+		<MSBuild Projects="@(Solution)" Targets="Build" />
+	</Target>
+
+	<Target Name="Test" DependsOnTargets="Build">
+		<ItemGroup>
+			<_TestAssembly Include="test\**\bin\**\*Tests.dll" />
+			<TestAssembly Include="@(_TestAssembly)"
+									  Condition="$([System.String]::new('%(Filename)').EndsWith('AcceptanceTests')) == 'false' And '%(Filename)' != 'Roslyn.Services.Editor.UnitTests'" />
+		</ItemGroup>
+
+		<Exec Command='"$(XunitConsolePath)" "%(TestAssembly.FullPath)" $(XunitOptions) -html "$(Out)\%(TestAssembly.Filename).html" -xml "$(Out)\%(TestAssembly.Filename).xml"'
+			  Condition="'@(TestAssembly)' != ''"/>
+	</Target>
+
+	<Target Name="Acceptance">
+		<ItemGroup>
+			<TestAssembly Include="test\**\bin\**\*AcceptanceTests.dll" />
+		</ItemGroup>
+
+		<Exec Command='"$(XunitConsolePath)" "%(TestAssembly.FullPath)" $(XunitOptions) -html "$(Out)\%(TestAssembly.Filename).html" -xml "$(Out)\%(TestAssembly.Filename).xml"'
+			  Condition="'@(TestAssembly)' != ''"/>
+	</Target>
+
+	<Target Name="Clean">
+		<Exec Command='for /d /r . %%d in (bin,obj,.vs) do @if exist "%%d" rd /s/q "%%d"'
+		      Condition="'$(OS)' == 'Windows_NT'" />
+	</Target>
+
+	<Target Name="All" DependsOnTargets="Rebuild;Test" />
+
+	<Target Name="Rebuild" DependsOnTargets="Clean;Restore;Build" />
+
+	<Target Name="_Restore" AfterTargets="Restore">
+		<MSBuild Projects="@(Solution)" Targets="Restore" />
+	</Target>
+
+	<Target Name="GitVersion">
+		<PropertyGroup>
+			<GitBaseVersionMajor>0</GitBaseVersionMajor>
+			<GitBaseVersionMinor>1</GitBaseVersionMinor>
+			<GitBaseVersionPatch>0</GitBaseVersionPatch>
+			<GitCommits>0</GitCommits>
+		</PropertyGroup>
+	</Target>
+
+	<Target Name="_Setup" DependsOnTargets="SetVersion">
+		<!-- Update AppVeyor build # to match the actual one being used -->
+		<Exec Command="appveyor UpdateBuild -Version $(PackageVersion)"
+			  Condition=" '$(APPVEYOR)' == 'true' And '$(target)' != 'Restore' "
+			  ContinueOnError="true" />
+
+		<MakeDir Directories="$(Out)" Condition="!Exists('$(Out)')" />
+	</Target>
+
+	<Import Project="src\Version.targets" />
+	<Import Project="build\corebuild.targets" />
+</Project>

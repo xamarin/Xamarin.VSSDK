@@ -1,0 +1,22 @@
+<Project>
+  <PropertyGroup>
+	  <NuGetBuildTasksPackTargets>DONT-WANT-SDK-PACK</NuGetBuildTasksPackTargets>
+
+	  <_ProjectProps>$(MSBuildProjectDirectory)\$(MSBuildProjectName).props</_ProjectProps>
+	  <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+	  <MSBuildAllProjects Condition="Exists('$(_ProjectProps)')">$(MSBuildAllProjects);$(_ProjectProps)</MSBuildAllProjects>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<PackOnBuild>true</PackOnBuild>
+		<IncludeFrameworkReferencesInPackage>false</IncludeFrameworkReferencesInPackage>
+		<InferLegacyPackageReferences>false</InferLegacyPackageReferences>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<!-- TODO: this capability should come from NuGetizer -->
+		<ProjectCapability Include="Pack" Condition="'$(IsPackable)' == 'true'" />
+	</ItemGroup>
+
+  <Import Project="$(_ProjectProps)" Condition="'$(MSBuildProjectExtension)' != '.props' And Exists('$(_ProjectProps)')" />
+</Project>
