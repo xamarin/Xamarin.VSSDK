@@ -4,7 +4,7 @@
 	<PropertyGroup>
 		<Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
 		<IntermediateOutputPath>$(RestoreOutputPath)\</IntermediateOutputPath>
-    <AdditionalProperties>Configuration=$(Configuration)</AdditionalProperties>
+		<AdditionalProperties>Configuration=$(Configuration)</AdditionalProperties>
 		<Out Condition="'$(Out)' == ''">out</Out>
 	</PropertyGroup>
 
@@ -12,11 +12,11 @@
 		<PackageReference Include="xunit.runner.console" Version="2.3.0-beta1-build3642" />
 	</ItemGroup>
 
-  <ItemDefinitionGroup>
-    <Solution>
-      <AdditionalProperties>$(AdditionalProperties)</AdditionalProperties>
-    </Solution>
-  </ItemDefinitionGroup>
+	<ItemDefinitionGroup>
+		<Solution>
+			<AdditionalProperties>$(AdditionalProperties)</AdditionalProperties>
+		</Solution>
+	</ItemDefinitionGroup>
 
 	<ItemGroup>
 		<Solution Include="src\*.sln" />
@@ -28,23 +28,43 @@
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build">
+		<PropertyGroup>
+			<XmlTestFile>$(Out)TestResults.xml</XmlTestFile>
+			<HtmlTestFile>$(Out)TestResults.html</HtmlTestFile>
+		</PropertyGroup>
+
 		<ItemGroup>
 			<_TestAssembly Include="test\**\bin\**\*Tests.dll" />
 			<TestAssembly Include="@(_TestAssembly)"
 									  Condition="$([System.String]::new('%(Filename)').EndsWith('AcceptanceTests')) == 'false' And '%(Filename)' != 'Roslyn.Services.Editor.UnitTests'" />
 		</ItemGroup>
 
-		<Exec Command='"$(XunitConsolePath)" "%(TestAssembly.FullPath)" $(XunitOptions) -html "$(Out)\%(TestAssembly.Filename).html" -xml "$(Out)\%(TestAssembly.Filename).xml"'
-			  Condition="'@(TestAssembly)' != ''"/>
+		<Exec Command="&quot;$(XunitConsolePath)&quot; &quot;@(TestAssembly, '&quot; &quot;')&quot; $(XunitOptions) -html &quot;$(HtmlTestFile)&quot; -xml &quot;$(XmlTestFile)&quot;"
+			  Condition="'@(TestAssembly)' != ''">
+			<Output TaskParameter="ExitCode" PropertyName="ExitCode" />
+		</Exec>
+
+		<Message Text="All tests passed, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' == '0'" Importance="high" />
+		<Error Text="There were test failures, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' != '0'" />
 	</Target>
 
-	<Target Name="Acceptance">
+	<Target Name="Acceptance" DependsOnTargets="Build">
+		<PropertyGroup>
+			<XmlTestFile>$(Out)AcceptanceResults.xml</XmlTestFile>
+			<HtmlTestFile>$(Out)AcceptanceResults.html</HtmlTestFile>
+		</PropertyGroup>
+
 		<ItemGroup>
 			<TestAssembly Include="test\**\bin\**\*AcceptanceTests.dll" />
 		</ItemGroup>
 
-		<Exec Command='"$(XunitConsolePath)" "%(TestAssembly.FullPath)" $(XunitOptions) -html "$(Out)\%(TestAssembly.Filename).html" -xml "$(Out)\%(TestAssembly.Filename).xml"'
-			  Condition="'@(TestAssembly)' != ''"/>
+		<Exec Command="&quot;$(XunitConsolePath)&quot; &quot;@(TestAssembly, '&quot; &quot;')&quot; $(XunitOptions) -html &quot;$(HtmlTestFile)&quot; -xml &quot;$(XmlTestFile)&quot;"
+			  Condition="'@(TestAssembly)' != ''">
+			<Output TaskParameter="ExitCode" PropertyName="ExitCode" />
+		</Exec>
+
+		<Message Text="All tests passed, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' == '0'" Importance="high" />
+		<Error Text="There were test failures, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' != '0'" />
 	</Target>
 
 	<Target Name="Clean">
@@ -57,7 +77,7 @@
 	<Target Name="Rebuild" DependsOnTargets="Clean;Restore;Build" />
 
 	<Target Name="_Restore" AfterTargets="Restore">
-		<MSBuild Projects="@(Solution)" Targets="Restore" />
+		<MSBuild BuildInParallel="true" Projects="@(Solution)" Targets="Restore" />
 	</Target>
 
 	<Target Name="GitVersion">
