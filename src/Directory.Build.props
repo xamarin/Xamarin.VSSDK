@@ -1,5 +1,6 @@
 <Project>
   <PropertyGroup>
+    <!-- This property still needs to be passed-in via build.cmd in order for it to work properly -->
 	  <NuGetBuildTasksPackTargets>DONT-WANT-SDK-PACK</NuGetBuildTasksPackTargets>
 
 	  <_ProjectProps>$(MSBuildProjectDirectory)\$(MSBuildProjectName).props</_ProjectProps>

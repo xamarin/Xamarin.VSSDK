@@ -3,6 +3,9 @@
 	  <_ProjectTargets>$(MSBuildProjectDirectory)\$(MSBuildProjectName).targets</_ProjectTargets>
 	  <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
 	  <MSBuildAllProjects Condition="Exists('$(_ProjectTargets)')">$(MSBuildAllProjects);$(_ProjectTargets)</MSBuildAllProjects>
+
+		<DocumentationFile Condition="'$(DocumentationFile)' == ''">$(OutputPath)$(AssemblyName).xml</DocumentationFile>
+		<SignAssembly Condition="'$(SignAssembly)' == ''">false</SignAssembly>
   </PropertyGroup>
 
 	<PropertyGroup>
@@ -13,6 +16,7 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
+    <PackageReference Include="MicroBuild.Core" Version="0.2.0" PrivateAssets="all" />
 		<PackageReference Include="NuGet.Build.Packaging" Version="*" PrivateAssets="all" />
 	</ItemGroup>
 
@@ -31,5 +35,6 @@
 	</Target>
 	
 	<Import Project="Version.targets" />
-  <Import Project="$(_ProjectTargets)" Condition="'$(MSBuildProjectExtension)' != '.props' And Exists('$(_ProjectTargets)')" />
+	<Import Project="VSL.Imports.targets" />
+	<Import Project="$(_ProjectTargets)" Condition="'$(MSBuildProjectExtension)' != '.props' And Exists('$(_ProjectTargets)')" />
 </Project>

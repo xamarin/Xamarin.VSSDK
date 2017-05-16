@@ -4,8 +4,8 @@
 	<PropertyGroup>
 		<Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
 		<IntermediateOutputPath>$(RestoreOutputPath)\</IntermediateOutputPath>
-		<AdditionalProperties>Configuration=$(Configuration)</AdditionalProperties>
-		<Out Condition="'$(Out)' == ''">out</Out>
+		<Out Condition="'$(Out)' == ''">$(MSBuildThisFileDirectory)out</Out>
+		<AdditionalProperties>Configuration=$(Configuration);PackageOutputPath=$(Out)</AdditionalProperties>
 	</PropertyGroup>
 
 	<ItemGroup>
