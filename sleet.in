@@ -1,0 +1,13 @@
+{
+  "username": "",
+  "useremail": "",
+  "sources": [
+    {
+      "name": "feed",
+      "type": "azure",
+      "path": "",
+      "container": "",
+      "connectionString": ""
+    }
+  ]
+}

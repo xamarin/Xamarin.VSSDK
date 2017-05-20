@@ -6,10 +6,18 @@
 		<IntermediateOutputPath>$(RestoreOutputPath)\</IntermediateOutputPath>
 		<Out Condition="'$(Out)' == ''">$(MSBuildThisFileDirectory)out</Out>
 		<AdditionalProperties>Configuration=$(Configuration);PackageOutputPath=$(Out)</AdditionalProperties>
+
+		<!-- Validate/init feed before pushing. Typically, init is done once, manually. Validate takes time -->
+		<SleetValidate Condition="'$(SleetValidate)' == ''">false</SleetValidate>
+		<!-- Delete when https://github.com/emgarten/Sleet/issues/9 is implemented -->
+		<Sleet>$(NuGetPackageRoot)sleet\1.0.1\tools\Sleet.exe</Sleet>
+		<SleetConfig>$(MSBuildProjectDirectory)\sleet.json</SleetConfig>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="xunit.runner.console" Version="2.3.0-beta1-build3642" />
+		<PackageReference Include="Sleet" Version="1.0.1" />
+		<PackageReference Include="JsonPoke.MSBuild" Version="*" />
 	</ItemGroup>
 
 	<ItemDefinitionGroup>
@@ -25,6 +33,36 @@
 	<Target Name="Build">
 		<Message Text="Building AssemblyVersion=$(AssemblyVersion), PackageVersion=$(PackageVersion)" Importance="high" />
 		<MSBuild Projects="@(Solution)" Targets="Build" />
+	</Target>
+
+	<Target Name="Publish">
+		<Error Condition="'$(StorageAccount)' == ''" Text="StorageAccount is not set via property or environment variable. Should be the Azure Storage account name." />
+		<Error Condition="'$(StorageConnection)' == ''" Text="StorageConnection is not set via property or environment variable. Should be the Azure Storage connection string." />
+		<Error Condition="'$(StorageContainer)' == ''" Text="StorageContainer is not set via property or environment variable. Should be the Azure Storage blob container name." />
+
+		<Delete Files="$(SleetConfig)" Condition="Exists('$(SleetConfig)')" />
+		<Copy SourceFiles="$(MSBuildProjectDirectory)\sleet.in" DestinationFiles="$(SleetConfig)" />
+
+		<JsonPoke JsonInputPath="$(SleetConfig)"
+              JValue="https://$(StorageAccount).blob.core.windows.net/$(StorageContainer)/"
+              JPath="sources[0].path" />
+		<JsonPoke JsonInputPath="$(SleetConfig)"
+              JValue="$(StorageContainer)"
+              JPath="sources[0].container" />
+		<JsonPoke JsonInputPath="$(SleetConfig)"
+              JValue="$(StorageConnection)"
+              JPath="sources[0].connectionString" />
+
+		<!-- First try to determine if the feed is valid -->
+		<Exec Command='"$(Sleet)" validate -s feed' Condition="'$(SleetValidate)' == 'true'" IgnoreExitCode="true">
+			<Output PropertyName='ExitCode' TaskParameter='ExitCode'/>
+		</Exec>
+		<!-- if not, initialize it -->
+		<Exec Command='"$(Sleet)" init -s feed' Condition="'$(SleetValidate)' == 'true' And $(ExitCode) != '0'" />
+		<!-- Finally (force, just in case) push packages -->
+		<Exec Command='"$(Sleet)" push "$(Out)" -f -s feed' />
+
+		<Delete Files="$(SleetConfig)" Condition="Exists('$(SleetConfig)')" />
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build">
