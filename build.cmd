@@ -8,6 +8,8 @@ set MultiProcessor=/m
 set BuildConfiguration=Release
 set MSBuildTarget=/t:All
 set MSBuildAdditionalArguments=
+REM Turn on MSBuild async logging to speed up builds
+set MSBUILDLOGASYNC=1 
 
 :ParseArguments
 if "%1" == "" goto :DoneParsing
