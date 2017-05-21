@@ -37,7 +37,7 @@
 
 	<Target Name="Publish">
 		<Error Condition="'$(StorageAccount)' == ''" Text="StorageAccount is not set via property or environment variable. Should be the Azure Storage account name." />
-		<Error Condition="'$(StorageConnection)' == ''" Text="StorageConnection is not set via property or environment variable. Should be the Azure Storage connection string." />
+		<Error Condition="'$(StorageAccessKey)' == ''" Text="StorageAccessKey is not set via property or environment variable. Should be the Azure Storage access key." />
 		<Error Condition="'$(StorageContainer)' == ''" Text="StorageContainer is not set via property or environment variable. Should be the Azure Storage blob container name." />
 
 		<Delete Files="$(SleetConfig)" Condition="Exists('$(SleetConfig)')" />
@@ -50,7 +50,7 @@
               JValue="$(StorageContainer)"
               JPath="sources[0].container" />
 		<JsonPoke JsonInputPath="$(SleetConfig)"
-              JValue="$(StorageConnection)"
+              JValue="DefaultEndpointsProtocol=https;AccountName=$(StorageAccount);AccountKey=$(StorageAccessKey);EndpointSuffix=core.windows.net"
               JPath="sources[0].connectionString" />
 
 		<!-- First try to determine if the feed is valid -->
