@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+	  <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>  
+
+	<Import Condition="'$(ImportVSSDK)' == 'true'" Project="$(VSSDKDir)Xamarin.VSSDK.targets" />
+	<Import Condition="'$(ImportVSSDKBuildTools)' == 'true'" Project="$(VSSDKBuildToolsDir)Xamarin.VSSDK.BuildTools.targets" />
+</Project>
