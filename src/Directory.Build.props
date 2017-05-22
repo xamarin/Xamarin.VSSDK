@@ -1,23 +1,16 @@
 <Project>
-  <PropertyGroup>
-    <!-- This property still needs to be passed-in via build.cmd in order for it to work properly -->
-	  <NuGetBuildTasksPackTargets>DONT-WANT-SDK-PACK</NuGetBuildTasksPackTargets>
 
-	  <_ProjectProps>$(MSBuildProjectDirectory)\$(MSBuildProjectName).props</_ProjectProps>
+  <PropertyGroup>
+    <!-- This property still needs to be passed-in via build.cmd in order for it to work properly pre-15.2 -->
+	  <NuGetBuildTasksPackTargets>DONT-WANT-SDK-PACK</NuGetBuildTasksPackTargets>
 	  <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-	  <MSBuildAllProjects Condition="Exists('$(_ProjectProps)')">$(MSBuildAllProjects);$(_ProjectProps)</MSBuildAllProjects>
   </PropertyGroup>
 
 	<PropertyGroup>
 		<PackOnBuild>true</PackOnBuild>
 		<IncludeFrameworkReferencesInPackage>false</IncludeFrameworkReferencesInPackage>
 		<InferLegacyPackageReferences>false</InferLegacyPackageReferences>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)..\out</PackageOutputPath>
 	</PropertyGroup>
 	
-	<ItemGroup>
-		<!-- TODO: this capability should come from NuGetizer -->
-		<ProjectCapability Include="Pack" Condition="'$(IsPackable)' == 'true'" />
-	</ItemGroup>
-
-  <Import Project="$(_ProjectProps)" Condition="'$(MSBuildProjectExtension)' != '.props' And Exists('$(_ProjectProps)')" />
 </Project>

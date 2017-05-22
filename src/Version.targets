@@ -5,7 +5,7 @@
 		<PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
 	</ItemGroup>
 	
-	<Target Name="SetVersion" DependsOnTargets="GitVersion">
+	<Target Name="SetVersion" BeforeTargets="Build" DependsOnTargets="GitVersion">
 		<PropertyGroup>
       <!-- CI checkouts may be against a specific commit, not a branch, so add -pr as label -->
 			<GitSemVerDashLabel Condition="'$(GitBranch)' == 'undefined' Or '$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">$(GitSemVerDashLabel)-pr$(APPVEYOR_PULL_REQUEST_NUMBER)</GitSemVerDashLabel>

@@ -1,8 +1,6 @@
 <Project>
   <PropertyGroup>
-	  <_ProjectTargets>$(MSBuildProjectDirectory)\$(MSBuildProjectName).targets</_ProjectTargets>
 	  <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-	  <MSBuildAllProjects Condition="Exists('$(_ProjectTargets)')">$(MSBuildAllProjects);$(_ProjectTargets)</MSBuildAllProjects>
 
 		<DocumentationFile Condition="'$(DocumentationFile)' == ''">$(OutputPath)$(AssemblyName).xml</DocumentationFile>
 		<SignAssembly Condition="'$(SignAssembly)' == ''">false</SignAssembly>
@@ -36,5 +34,4 @@
 	
 	<Import Project="Version.targets" />
 	<Import Project="VSL.Imports.targets" />
-	<Import Project="$(_ProjectTargets)" Condition="'$(MSBuildProjectExtension)' != '.props' And Exists('$(_ProjectTargets)')" />
 </Project>

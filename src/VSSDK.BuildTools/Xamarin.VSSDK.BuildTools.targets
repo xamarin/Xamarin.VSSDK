@@ -1,3 +1,36 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
+  <!-- NOTE: we don't import the VSSDK targets when we're doing the outer/crosstargeting build. -->
+  <Import Project="$(VsSDKInstall)\Microsoft.VsSDK.targets" Condition="'$(TargetFramework)' != '' and '$(VsSDKInstall)' != ''" />
 
+  <!-- We make this target depend on FindSourceVsixManifest just so we cause the minimal possible VSSDK task to run -->
+  <Target Name="ReportVSSDK" BeforeTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VsSDKInstall)' != ''" DependsOnTargets="FindSourceVsixManifest">
+    <GetVSSDKTasksVersion>
+      <Output TaskParameter="Version" PropertyName="VSSDKTasksVersion" />
+    </GetVSSDKTasksVersion>
+    <Message Importance="high" Text="Building for Dev$(Dev) ($(TargetFramework)) with Microsoft.VsSDK.Build.Tasks, Version=$(VSSDKTasksVersion)" />
+  </Target>
+
+  <UsingTask TaskName="GetVSSDKTasksVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <Task>
+      <ParameterGroup>
+        <Version Output="true" />
+      </ParameterGroup>
+      <Using Namespace="Microsoft.Build.Framework" />
+      <Using Namespace="System.Reflection" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        var tasks = AppDomain.CurrentDomain.GetAssemblies ().FirstOrDefault (asm => asm.GetName ().Name == "Microsoft.VsSDK.Build.Tasks");
+        if (tasks != null) 
+        {
+          this.Version = ((AssemblyFileVersionAttribute)tasks.GetCustomAttribute(typeof(AssemblyFileVersionAttribute))).Version;
+        }
+        else
+        {
+          Log.LogError("Did not find Microsoft.VsSDK.Build.Tasks loaded in AppDomain.");
+        }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
 </Project>
