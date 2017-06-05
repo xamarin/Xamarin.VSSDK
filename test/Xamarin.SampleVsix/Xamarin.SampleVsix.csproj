@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xamarin.VSSDK" Version="0.2.0-pre.3" />
-    <PackageReference Include="Xamarin.VSSDK.BuildTools" Version="0.2.0-pre.3" />
+    <PackageReference Include="Xamarin.VSSDK" Version="0.2.0-pre.4" />
+    <PackageReference Include="Xamarin.VSSDK.BuildTools" Version="0.2.0-pre.4" />
   </ItemGroup>
 
 </Project>

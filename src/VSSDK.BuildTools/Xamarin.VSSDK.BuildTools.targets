@@ -13,7 +13,7 @@
 
   <UsingTask TaskName="GetVSSDKTasksVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
-      <Version Required="true" />
+      <Version Output="true" />
     </ParameterGroup>
     <Task>
       <Using Namespace="System.Reflection" />
