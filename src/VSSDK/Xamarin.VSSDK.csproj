@@ -25,12 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageFile Include="EnvDTE80" Version="8.0.1" Kind="Dependency" FrameworkSpecific="false" TargetFramework="net46" />
-    <PackageFile Include="VSLangProj" Version="7.0.3300" Kind="Dependency" FrameworkSpecific="false" TargetFramework="net46" />
-    <PackageFile Include="EnvDTE80" Version="8.0.1" Kind="Dependency" FrameworkSpecific="false" TargetFramework="net461" />
-    <PackageFile Include="VSLangProj" Version="7.0.3300" Kind="Dependency" FrameworkSpecific="false" TargetFramework="net461" />
-    <PackageFile Include="EnvDTE80" Version="8.0.1" Kind="Dependency" FrameworkSpecific="false" TargetFramework="net462" />
-    <PackageFile Include="VSLangProj" Version="7.0.3300" Kind="Dependency" FrameworkSpecific="false" TargetFramework="net462" />
+    <PackageFile Include="EnvDTE80" Version="8.0.1" Kind="Dependency" FrameworkSpecific="false" TargetFramework="any" />
+    <PackageFile Include="VSLangProj" Version="7.0.3300" Kind="Dependency" FrameworkSpecific="false" TargetFramework="any" />
 
     <PackageFile Include="VSSDK_Reference_Assemblies" Version="12.0.21005" TargetFramework="net46" Kind="Dependency" />
     <!-- Workaround for warning on wrong dep. for 12.0.* -->
