@@ -1,6 +1,10 @@
 <Project InitialTargets="EnsureNoCrossTargeting" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    <!-- By default VS extensions should target x86 -->
+    <Platforms Condition="'$(Platforms)' == ''">AnyCPU;x86</Platforms>
+    <Platform Condition="'$(Platform)' == '' And $(Platforms.Contains('x86'))">x86</Platform>
+
     <!-- 
         If a project targets one specific TF, it means it's VS version agnostic from that 
         VS version and up (i.e. if it targets net46, it's a single assembly for VS2013+),

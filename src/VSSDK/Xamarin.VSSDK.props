@@ -26,6 +26,7 @@
     <!-- We only support building/loading on VS2017+ -->
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
 
 </Project>
