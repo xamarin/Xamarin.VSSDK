@@ -13,15 +13,13 @@
 
   <UsingTask TaskName="GetVSSDKTasksVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
-      <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
-      <ItemName />
+      <Version Required="true" />
     </ParameterGroup>
     <Task>
-      <Using Namespace="Microsoft.Build.Framework" />
       <Using Namespace="System.Reflection" />
       <Code Type="Fragment" Language="cs">
         <![CDATA[
-        var tasks = AppDomain.CurrentDomain.GetAssemblies ().FirstOrDefault (asm => asm.GetName ().Name == "Microsoft.VsSDK.Build.Tasks");
+        var tasks = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(asm => asm.GetName().Name == "Microsoft.VsSDK.Build.Tasks");
         if (tasks != null) 
         {
           this.Version = ((AssemblyFileVersionAttribute)tasks.GetCustomAttribute(typeof(AssemblyFileVersionAttribute))).Version;
