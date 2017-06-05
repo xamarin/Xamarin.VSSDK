@@ -1,17 +1,3 @@
-<Project InitialTargets="EnsureNoCrossTargeting" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <Target Name="EnsureNoCrossTargeting" Condition="'$(IsCrossTargetingBuild)' == 'true'">
-
-    <ItemGroup>
-      <TargetedVisualStudio DisplayName="Visual Studio 2013 (net46,  Dev=12)" Condition="$(TargetFrameworks.Contains('net46'))"  />
-      <TargetedVisualStudio DisplayName="Visual Studio 2015 (net461, Dev=14)" Condition="$(TargetFrameworks.Contains('net461'))"  />
-      <TargetedVisualStudio DisplayName="Visual Studio 2017 (net462, Dev=15)" Condition="$(TargetFrameworks.Contains('net462'))"  />
-    </ItemGroup>
-    
-    <Error Code="XVSSDK0001" Text="In order to build multi-targeting VSIXes, each targeted IDE must be built separately. 
-You can use either /p:TargetFramework or the aliased /p:Dev property to build for each.
-The current project targets: @(TargetedVisualStudio, ',')." />
-  </Target>
-  
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">  
   <Import Project="Xamarin.VSSDK.Xaml.targets" />
 </Project>
