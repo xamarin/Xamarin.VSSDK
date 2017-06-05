@@ -20,4 +20,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageFile Include="Microsoft.VisualStudio.SDK.VsixSuppression" Kind="Dependency" Version="14.1.33" />
+  </ItemGroup>
+  
 </Project>
