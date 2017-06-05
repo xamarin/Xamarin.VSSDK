@@ -21,7 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageFile Include="Microsoft.VisualStudio.SDK.VsixSuppression" Kind="Dependency" Version="14.1.33" />
+    <PackageFile Include="Microsoft.VisualStudio.SDK.VsixSuppression" Kind="Dependency" Version="14.1.33" TargetFramework="net46" />
+    <PackageFile Include="Microsoft.VisualStudio.SDK.VsixSuppression" Kind="Dependency" Version="14.1.33" TargetFramework="net461" />
+    <PackageFile Include="Microsoft.VisualStudio.SDK.VsixSuppression" Kind="Dependency" Version="14.1.33" TargetFramework="net462" />
   </ItemGroup>
   
 </Project>

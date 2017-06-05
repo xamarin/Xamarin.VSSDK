@@ -25,21 +25,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageFile Include="EnvDTE80" Kind="Dependency" Version="8.0.1" />
-    <PackageFile Include="VSLangProj" Kind="Dependency" Version="7.0.3300" />
-    
-    <PackageFile Include="VSSDK_Reference_Assemblies" Kind="Dependency" Version="12.0.21005" TargetFramework="net46" />
+    <PackageFile Include="EnvDTE80" Version="8.0.1" Kind="Dependency" FrameworkSpecific="false" TargetFramework="net46" />
+    <PackageFile Include="VSLangProj" Version="7.0.3300" Kind="Dependency" FrameworkSpecific="false" TargetFramework="net46" />
+    <PackageFile Include="EnvDTE80" Version="8.0.1" Kind="Dependency" FrameworkSpecific="false" TargetFramework="net461" />
+    <PackageFile Include="VSLangProj" Version="7.0.3300" Kind="Dependency" FrameworkSpecific="false" TargetFramework="net461" />
+    <PackageFile Include="EnvDTE80" Version="8.0.1" Kind="Dependency" FrameworkSpecific="false" TargetFramework="net462" />
+    <PackageFile Include="VSLangProj" Version="7.0.3300" Kind="Dependency" FrameworkSpecific="false" TargetFramework="net462" />
+
+    <PackageFile Include="VSSDK_Reference_Assemblies" Version="12.0.21005" TargetFramework="net46" Kind="Dependency" />
     <!-- Workaround for warning on wrong dep. for 12.0.* -->
-    <PackageFile Include="Microsoft.VisualStudio.Threading" Version="12.2.0" Kind="Dependency" TargetFramework="net46" />
-    <PackageFile Include="VSSDK.Shell.12" Kind="Dependency" Version="12.0.4" TargetFramework="net46" />
-    <PackageFile Include="VSSDK.ComponentModelHost" Kind="Dependency" Version="12.0.4" TargetFramework="net46" />
+    <PackageFile Include="Microsoft.VisualStudio.Threading" Version="12.2.0" TargetFramework="net46" Kind="Dependency" />
+    <PackageFile Include="VSSDK.Shell.12" Version="12.0.4" TargetFramework="net46" Kind="Dependency" />
+    <PackageFile Include="VSSDK.ComponentModelHost" Version="12.0.4" TargetFramework="net46" Kind="Dependency" />
 
-    <PackageFile Include="VSSDK_Reference_Assemblies" Kind="Dependency" Version="14.3.25407" TargetFramework="net461" />
-    <PackageFile Include="Microsoft.VisualStudio.Shell.14.0" Kind="Dependency" Version="14.3.25407" TargetFramework="net461" />
-    <PackageFile Include="Microsoft.VisualStudio.ComponentModelHost" Kind="Dependency" Version="14.0.25424" TargetFramework="net461" />
+    <PackageFile Include="VSSDK_Reference_Assemblies" Version="14.3.25407" TargetFramework="net461" Kind="Dependency" />
+    <PackageFile Include="Microsoft.VisualStudio.Shell.14.0" Version="14.3.25407" TargetFramework="net461" Kind="Dependency" />
+    <PackageFile Include="Microsoft.VisualStudio.ComponentModelHost" Version="14.0.25424" TargetFramework="net461" Kind="Dependency" />
 
-    <PackageFile Include="Microsoft.VisualStudio.Shell.15.0" Kind="Dependency" Version="15.0.26201" TargetFramework="net462" />
-    <PackageFile Include="Microsoft.VisualStudio.ComponentModelHost" Kind="Dependency" Version="15.0.26201" TargetFramework="net462" />
+    <PackageFile Include="Microsoft.VisualStudio.Shell.15.0" Version="15.0.26201" TargetFramework="net462" Kind="Dependency" />
+    <PackageFile Include="Microsoft.VisualStudio.ComponentModelHost" Version="15.0.26201" TargetFramework="net462" Kind="Dependency" />
   </ItemGroup>
   
   <!-- TODO: DELETE and replace with stable VSSDK_Reference_Assemblies for 15.26201 when it's available -->

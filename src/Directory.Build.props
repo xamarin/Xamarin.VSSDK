@@ -9,7 +9,7 @@
 
     <!-- Packaging -->
 		<PackOnBuild>true</PackOnBuild>
-    <PrimaryOutputPackageFileKind>build</PrimaryOutputPackageFileKind>
+    <PrimaryOutputKind>build</PrimaryOutputKind>
 		<InferLegacyPackageReferences>false</InferLegacyPackageReferences>
     <PackageOutputPath>$(MSBuildThisFileDirectory)..\out</PackageOutputPath>
 
