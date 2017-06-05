@@ -5,7 +5,7 @@
 		<Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
 		<IntermediateOutputPath>$(RestoreOutputPath)\</IntermediateOutputPath>
 		<Out Condition="'$(Out)' == ''">$(MSBuildThisFileDirectory)out</Out>
-		<AdditionalProperties>Configuration=$(Configuration);PackageOutputPath=$(Out)</AdditionalProperties>
+		<AdditionalProperties>Configuration=$(Configuration);PackageOutputPath=$(Out);NuGetBuildTasksPackTargets=DONT-WANT-SDK-PACK</AdditionalProperties>
 
 		<!-- Validate/init feed before pushing. Typically, init is done once, manually. Validate takes time -->
 		<SleetValidate Condition="'$(SleetValidate)' == ''">false</SleetValidate>
@@ -15,7 +15,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="xunit.runner.console" Version="2.3.0-beta1-build3642" />
+    <PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
+    <PackageReference Include="xunit.runner.console" Version="2.3.0-beta1-build3642" />
 		<PackageReference Include="Sleet" Version="1.0.1" />
 		<PackageReference Include="JsonPoke.MSBuild" Version="*" />
 	</ItemGroup>

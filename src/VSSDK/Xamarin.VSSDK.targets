@@ -1,3 +1,112 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project InitialTargets="EnsureNoCrossTargeting" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <PropertyGroup>
+    <!-- 
+        If a project targets one specific TF, it means it's VS version agnostic from that 
+        VS version and up (i.e. if it targets net46, it's a single assembly for VS2013+),
+        so we don't need to inject all the supported target frameworks. 
+        This means that the project will reference only those VSSDK assemblies for the 
+        matching VS version and nothing else.
+        Also, VSSDK build tools will be latest & greatest in that case too.
+		-->
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == '' And '$(TargetFramework)' == ''">net462;net461;net46</TargetFrameworks>
+
+    <!-- Replicate here since otherwise it's only set on the CSharp.targets, just in case it's too late. -->
+    <IsCrossTargetingBuild Condition="
+							   '$(IsCrossTargetingBuild)' == '' And 
+							   '$(TargetFrameworks)' != '' And 
+							   '$(TargetFramework)' == ''">true</IsCrossTargetingBuild>
+  </PropertyGroup>
+
+  <!-- The .user target isn't imported in the crosstargeting version of the Common targets 
+       It's important to import it because it contains the user-selected ActiveDebugFramework. -->
+  <Import Project="$(MSBuildProjectFullPath).user" Condition="'$(IsCrossTargetingBuild)' == 'true' And Exists('$(MSBuildProjectFullPath).user')" />
+
+  <!-- Ensure Dev, TargetFramework and ActiveDebugFramework have consistent values -->
+  <PropertyGroup>
+    <!-- Default $(Dev) according to either '.' value or $(ActiveDebugFramework). These are explicit user-chosen values -->
+    <Dev Condition="'$(Dev)' == '.'">$(VisualStudioVersion.Substring(0, 2))</Dev>
+    <Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net462'">15</Dev>
+    <Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net461'">14</Dev>
+    <Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net46'">12</Dev>
+
+    <!-- Preserve the explicit original value (either from Dev or ActiveDebugFramework) before defaulting -->
+    <_Dev>$(Dev)</_Dev>
+
+    <!-- If no ActiveDebugFramework was set, just set it to the one we determined, for consistency -->
+    <ActiveDebugFramework Condition="'$(Dev)' == '15' And '$(ActiveDebugFramework)' == ''">net462</ActiveDebugFramework>
+    <ActiveDebugFramework Condition="'$(Dev)' == '14' And '$(ActiveDebugFramework)' == ''">net461</ActiveDebugFramework>
+    <ActiveDebugFramework Condition="'$(Dev)' == '12' And '$(ActiveDebugFramework)' == ''">net46</ActiveDebugFramework>
+
+    <!-- The Run dropdown doesn't set the TargetFramework in this case, so we do it ourselves -->
+    <TargetFramework Condition="'$(TargetFramework)' == '' And '$(ActiveDebugFramework)' != ''">$(ActiveDebugFramework)</TargetFramework>
+  </PropertyGroup>
+
+  <!--
+      Provides the default value for $(Dev) according to the current $(TargetFramework) 
+      which is automatically specified by the cross-targeting build for each value in 
+      $(TargetFrameworks), or alternatively, by the Framework selector dropdown in 15.3+
+  -->
+  <PropertyGroup Condition="'$(Dev)' == ''">
+    <Dev Condition="'$(TargetFramework)' == 'net462'">15</Dev>
+    <Dev Condition="'$(TargetFramework)' == 'net461'">14</Dev>
+    <Dev Condition="'$(TargetFramework)' == 'net46'">12</Dev>
+  </PropertyGroup>
+
+  <!-- 
+      Overrides the $(TargetFrameworks) with a specific target to build 
+      when a $(Dev) value is explicitly provided (either explicitly or implicitly 
+      via the ActiveDebugFramework, which is why we use $(_Dev) instead). This allows
+      building for each VS individually, using its own VSSDK.BuildTools 
+      (since only one can be loaded in a given build process).
+      This prevents a cross-targeting build to occur.
+	  
+      When doing msbuild /t:restore, the $(Dev) value will not be provided 
+      and therefore all TFMs will be properly restored.
+
+      NOTE: we can't just override TargetFramework, since we'd otherwise lose 
+      nuget-provided imports that already happened. 
+
+      NOTE: we don't override this value unless it was explicitly set either via 
+      $(Dev) or $(ActiveDebugFramework) since otherwise we'd break restore and 
+      cross-targeting build.
+  -->
+  <PropertyGroup Condition="'$(_Dev)' != ''">
+    <TargetFrameworks Condition="'$(_Dev)' == '15'">net462</TargetFrameworks>
+    <TargetFrameworks Condition="'$(_Dev)' == '14'">net461</TargetFrameworks>
+    <TargetFrameworks Condition="'$(_Dev)' == '12'">net46</TargetFrameworks>
+  </PropertyGroup>
+
+  <!-- 
+      This works in MSBuild 15.3+ and allows us to determine if the current build is 
+      a cross-targeting build, so we can load the appropriate VSSDK build tools. 
+  -->
+  <ItemDefinitionGroup>
+    <_InnerBuildProjects>
+      <Properties>IsCrossTargetedBuild=$(IsCrossTargetingBuild)</Properties>
+    </_InnerBuildProjects>
+  </ItemDefinitionGroup>
+
+  <!--
+      Append $(Dev) to output and intermediate paths to prevent bin clashes between targets.
+  -->
+  <PropertyGroup Condition="'$(Dev)' != ''">
+    <IntermediateOutputPath>$(IntermediateOutputPath)$(Dev)\</IntermediateOutputPath>
+    <OutputPath>$(OutputPath)$(Dev)\</OutputPath>
+  </PropertyGroup>
+
+  <Target Name="EnsureNoCrossTargeting" Condition="'$(IsCrossTargetingBuild)' == 'true'">
+
+    <ItemGroup>
+      <TargetedVisualStudio DisplayName="Visual Studio 2013 (net46,  Dev=12)" Condition="$(TargetFrameworks.Contains('net46'))"  />
+      <TargetedVisualStudio DisplayName="Visual Studio 2015 (net461, Dev=14)" Condition="$(TargetFrameworks.Contains('net461'))"  />
+      <TargetedVisualStudio DisplayName="Visual Studio 2017 (net462, Dev=15)" Condition="$(TargetFrameworks.Contains('net462'))"  />
+    </ItemGroup>
+    
+    <Error Code="XVSSDK0001" Text="In order to build multi-targeting VSIXes, each targeted IDE must be built separately. 
+You can use either /p:TargetFramework or the aliased /p:Dev property to build for each.
+The current project targets: @(TargetedVisualStudio, ',')." />
+  </Target>
+  
+  <Import Project="Xamarin.VSSDK.Xaml.targets" />
 </Project>

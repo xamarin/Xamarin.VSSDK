@@ -12,10 +12,11 @@
   </Target>
 
   <UsingTask TaskName="GetVSSDKTasksVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <ItemName />
+    </ParameterGroup>
     <Task>
-      <ParameterGroup>
-        <Version Output="true" />
-      </ParameterGroup>
       <Using Namespace="Microsoft.Build.Framework" />
       <Using Namespace="System.Reflection" />
       <Code Type="Fragment" Language="cs">

@@ -2,7 +2,7 @@
 
 namespace Xamarin.SampleVsix
 {
-    public class SamplePackages
+    public class SamplePackage
     {
     }
 }

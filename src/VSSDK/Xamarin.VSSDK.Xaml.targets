@@ -1,0 +1,18 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<PropertyGroup>
+		<!-- Force proper reference resolution for the XAML compile pass. -->    
+		<MarkupCompilePass2ForMainAssemblyDependsOn>
+			ResolveReferences;
+			$(MarkupCompilePass2ForMainAssemblyDependsOn)
+		</MarkupCompilePass2ForMainAssemblyDependsOn>
+	</PropertyGroup>
+
+	<ItemDefinitionGroup>
+		<ProjectReference>
+			<!-- When referencing project has XAML files, the double compilation passes down AssemblyName and breaks transitive refs. -->
+			<GlobalPropertiesToRemove>AssemblyName</GlobalPropertiesToRemove>
+		</ProjectReference>
+	</ItemDefinitionGroup>
+
+</Project>

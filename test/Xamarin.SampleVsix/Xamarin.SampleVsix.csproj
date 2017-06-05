@@ -1,9 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
-    <ImportVSSDK>true</ImportVSSDK>
-    <ImportVSSDKBuildTools>true</ImportVSSDKBuildTools>
+    <TargetFrameworks>net46;net461;net462</TargetFrameworks>
+
+    <GeneratePkgDefFile>False</GeneratePkgDefFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Xamarin.VSSDK" Version="0.2.0-pre.1" />
+    <PackageReference Include="Xamarin.VSSDK.BuildTools" Version="0.2.0-pre.1" />
+  </ItemGroup>
 
 </Project>

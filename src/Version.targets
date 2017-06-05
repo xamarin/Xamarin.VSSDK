@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<ItemGroup>
-		<PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
-	</ItemGroup>
-	
-	<Target Name="SetVersion" BeforeTargets="Build" DependsOnTargets="GitVersion">
+  <PropertyGroup>
+    <BuildDependsOn>
+      SetVersion;
+      $(BuildDependsOn)
+    </BuildDependsOn>
+  </PropertyGroup>
+
+  <Target Name="SetVersion" DependsOnTargets="GitVersion">
 		<PropertyGroup>
       <!-- CI checkouts may be against a specific commit, not a branch, so add -pr as label -->
 			<GitSemVerDashLabel Condition="'$(GitBranch)' == 'undefined' Or '$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">$(GitSemVerDashLabel)-pr$(APPVEYOR_PULL_REQUEST_NUMBER)</GitSemVerDashLabel>
@@ -13,8 +16,8 @@
       <GitSemVerDashLabel Condition="'$(GitSemVerDashLabel)' == '' And '$(GitCommits)' != '0'">-pre</GitSemVerDashLabel>
 
       <PackageVersion Condition="'$(GitSemVerDashLabel)' == ''">$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)</PackageVersion>
-      <PackageVersion Condition="'$(GitSemVerDashLabel)' != '' And '$(GitCommits)' != '0'">$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)$(GitSemVerDashLabel).$(GitCommits)</PackageVersion>
-			<PackageVersion Condition="'$(GitSemVerDashLabel)' != ''">$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)$(GitSemVerDashLabel)</PackageVersion>
+      <PackageVersion Condition="'$(GitSemVerDashLabel)' != '' and '$(GitCommits)' != '0'">$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)$(GitSemVerDashLabel).$(GitCommits)</PackageVersion>
+			<PackageVersion Condition="'$(GitSemVerDashLabel)' != '' and '$(GitCommits)' == '0'">$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)$(GitSemVerDashLabel)</PackageVersion>
 
 			<AssemblyVersion>$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)</AssemblyVersion>
     </PropertyGroup>

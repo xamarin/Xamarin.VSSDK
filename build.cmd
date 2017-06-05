@@ -86,7 +86,7 @@ set MSBuildTargetName=%MSBuildTarget:~3%
 taskkill /f /im MSBuild.exe /fi "memusage gt 40" >NUL
 
 @echo on
-msbuild "%Root%build.proj" /nologo /nr:%NodeReuse% %MultiProcessor% %MSBuildTarget% /p:target=%MSBuildTargetName% /p:Configuration=%BuildConfiguration% %MSBuildAdditionalArguments% /p:NuGetBuildTasksPackTargets=NO-SDK-PACK
+msbuild "%Root%build.proj" /nologo /nr:%NodeReuse% %MultiProcessor% %MSBuildTarget% /p:target=%MSBuildTargetName% /p:Configuration=%BuildConfiguration% %MSBuildAdditionalArguments%
 
 @echo off
 

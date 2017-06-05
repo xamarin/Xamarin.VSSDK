@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net46</TargetFramework>
-		<RootNamespace>Xamarin.VSSDK</RootNamespace>
+  <PropertyGroup>
+    <TargetFramework>net46</TargetFramework>
+    <RootNamespace>Xamarin.VSSDK</RootNamespace>
 
-		<PackageId>Xamarin.VSSDK.BuildTools</PackageId>
-		<Title>$(PackageId)</Title>
-		<Description>$(PackageId)</Description>
+    <PackageId>Xamarin.VSSDK.BuildTools</PackageId>
+    <Title>$(PackageId)</Title>
+    <Description>$(PackageId)</Description>
+  </PropertyGroup>
 
-		<PrimaryOutputPackageFileKind>build</PrimaryOutputPackageFileKind>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<None Update="Xamarin.VSSDK.BuildTools.targets">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Xamarin.VSSDK.BuildTools.props">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
+  <ItemGroup>
+    <None Update="Xamarin.VSSDK.BuildTools.targets">
+      <Kind>build</Kind>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Xamarin.VSSDK.BuildTools.props">
+      <Kind>build</Kind>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>
