@@ -127,14 +127,17 @@
 			<GitBaseVersionMajor>0</GitBaseVersionMajor>
 			<GitBaseVersionMinor>1</GitBaseVersionMinor>
 			<GitBaseVersionPatch>0</GitBaseVersionPatch>
-			<GitCommits>0</GitCommits>
+      <GitSemVerMajor>0</GitSemVerMajor>
+      <GitSemVerMinor>1</GitSemVerMinor>
+      <GitSemVerPatch>0</GitSemVerPatch>
+      <GitCommits>0</GitCommits>
 		</PropertyGroup>
 	</Target>
 
 	<Target Name="_Setup" DependsOnTargets="SetVersion">
 		<!-- Update AppVeyor build # to match the actual one being used -->
 		<Exec Command="appveyor UpdateBuild -Version $(PackageVersion)"
-			  Condition=" '$(APPVEYOR)' == 'true' And '$(target)' != 'Restore' "
+			  Condition="'$(APPVEYOR)' == 'true' And '$(target)' != 'Restore'"
 			  ContinueOnError="true" />
 
 		<MakeDir Directories="$(Out)" Condition="!Exists('$(Out)')" />
