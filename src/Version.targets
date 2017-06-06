@@ -11,7 +11,9 @@
   <Target Name="SetVersion" DependsOnTargets="GitVersion">
 		<PropertyGroup>
       <!-- CI checkouts may be against a specific commit, not a branch, so add -pr as label -->
-			<GitSemVerDashLabel Condition="'$(GitBranch)' == 'undefined' Or '$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">$(GitSemVerDashLabel)-pr$(APPVEYOR_PULL_REQUEST_NUMBER)</GitSemVerDashLabel>
+      <!-- TFS case: BUILD_REASON=PullRequest and BUILD_SOURCEBRANCH=refs/pull/[#]/merge -->
+			<GitSemVerDashLabel Condition="'$(GitBranch)' == 'undefined' Or '$(BUILD_REASON)' == 'PullRequest'">-pr$(BUILD_SOURCEBRANCH.Substring(10).TrimEnd('/merge'))</GitSemVerDashLabel>
+			<GitSemVerDashLabel Condition="'$(GitBranch)' == 'undefined' Or '$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">-pr$(APPVEYOR_PULL_REQUEST_NUMBER)</GitSemVerDashLabel>
       <!-- If there's no label, but we're not at the tip of the base version, add a -pre because this is not the base build -->
       <GitSemVerDashLabel Condition="'$(GitSemVerDashLabel)' == '' And '$(GitCommits)' != '0'">-pre</GitSemVerDashLabel>
 

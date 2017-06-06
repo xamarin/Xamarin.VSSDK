@@ -33,6 +33,8 @@
 
 	<Target Name="Build">
 		<Message Text="Building AssemblyVersion=$(AssemblyVersion), PackageVersion=$(PackageVersion)" Importance="high" />
+    <Message Text="##vso[build.updatebuildnumber]$(PackageVersion)" Importance="high" />
+    
 		<MSBuild Projects="@(Solution)" Targets="Build" />
 	</Target>
 
