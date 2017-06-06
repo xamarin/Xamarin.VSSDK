@@ -1,16 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net46;net461;net462</TargetFrameworks>
+    <TargetFrameworks>net462;net461;net46</TargetFrameworks>
+    <!--<TargetFramework>net462</TargetFramework>-->
 
     <GeneratePkgDefFile>False</GeneratePkgDefFile>
 
-    <Platforms>AnyCPU;x86</Platforms>
+    <Platforms>x86</Platforms>
+    <Platform>x86</Platform>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xamarin.VSSDK" Version="0.2.0-pre.5" />
-    <PackageReference Include="Xamarin.VSSDK.BuildTools" Version="0.2.0-pre.5" />
+    <PackageReference Include="Xamarin.VSSDK" Version="0.2.0-pre-build0013" />
+    <PackageReference Include="Xamarin.VSSDK.BuildTools" Version="0.2.0-pre-build0013" />
   </ItemGroup>
 
 </Project>
