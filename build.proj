@@ -36,6 +36,7 @@
     <Message Text="##vso[build.updatebuildnumber]$(PackageVersion)" Importance="high" />
     
 		<MSBuild Projects="@(Solution)" Targets="Build" />
+		<Copy SourceFiles="NuGet.Config" DestinationFolder="$(Out)" />
 	</Target>
 
 	<Target Name="Publish">
