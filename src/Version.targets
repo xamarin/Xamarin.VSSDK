@@ -9,23 +9,22 @@
   </PropertyGroup>
 
   <Target Name="SetVersion" DependsOnTargets="GitVersion">
-		<PropertyGroup>
-      <!-- CI checkouts may be against a specific commit, not a branch, so add -pr as label -->
+    <PropertyGroup>
+      <!-- PR builds are *always* prerelease -->
       <!-- TFS case: BUILD_REASON=PullRequest and BUILD_SOURCEBRANCH=refs/pull/[#]/merge -->
-			<GitSemVerDashLabel Condition="'$(GitBranch)' == 'undefined' Or '$(BUILD_REASON)' == 'PullRequest'">-pr$(BUILD_SOURCEBRANCH.Substring(10).TrimEnd('/merge'))</GitSemVerDashLabel>
-			<GitSemVerDashLabel Condition="'$(GitBranch)' == 'undefined' Or '$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">-pr$(APPVEYOR_PULL_REQUEST_NUMBER)</GitSemVerDashLabel>
-      <!-- If there's no label, but we're not at the tip of the base version, add a -pre because this is not the base build -->
-      <GitSemVerDashLabel Condition="'$(GitSemVerDashLabel)' == '' And '$(GitCommits)' != '0'">-pre</GitSemVerDashLabel>
+      <GitSemVerDashLabel Condition="'$(TF_BUILD)' == 'true' and '$(BUILD_REASON)' == 'PullRequest'">-pr$(BUILD_SOURCEBRANCH.Substring(10).TrimEnd('/merge'))</GitSemVerDashLabel>
+      <GitSemVerDashLabel Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">-pr$(APPVEYOR_PULL_REQUEST_NUMBER)</GitSemVerDashLabel>
 
-      <PackageVersion Condition="'$(GitSemVerDashLabel)' == ''">$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)</PackageVersion>
-      <PackageVersion Condition="'$(GitSemVerDashLabel)' != '' and '$(GitCommits)' != '0'">$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)$(GitSemVerDashLabel).$(GitCommits)</PackageVersion>
-			<PackageVersion Condition="'$(GitSemVerDashLabel)' != '' and '$(GitCommits)' == '0'">$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)$(GitSemVerDashLabel)</PackageVersion>
+      <!-- Non-prerelease versions will use the package version determined by SemVer -->
+      <PackageVersion Condition="'$(GitSemVerDashLabel)' == ''">$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</PackageVersion>
+      <!-- Prerelease versions are fixed to the base version (this allows the stable versions to always be greater) and have the build number instead -->
+      <PackageVersion Condition="'$(GitSemVerDashLabel)' != ''">$(GitSemVerMajor).$(GitSemVerMinor).$(GitBaseVersionPatch)$(GitSemVerDashLabel)-build$(GitCommits.PadLeft(4, '0'))</PackageVersion>
 
-			<AssemblyVersion>$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)</AssemblyVersion>
+      <AssemblyVersion>$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)</AssemblyVersion>
     </PropertyGroup>
-	</Target>
+  </Target>
 
-	<PropertyGroup>
-		<VersionImported>true</VersionImported>
-	</PropertyGroup>
+  <PropertyGroup>
+    <VersionImported>true</VersionImported>
+  </PropertyGroup>
 </Project>
