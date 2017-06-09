@@ -10,6 +10,7 @@ set MSBuildTarget=/t:All
 set MSBuildAdditionalArguments=
 REM Turn on MSBuild async logging to speed up builds
 set MSBUILDLOGASYNC=1 
+set MSBUILDDISABLENODEREUSE=1
 
 :ParseArguments
 if "%1" == "" goto :DoneParsing
@@ -86,7 +87,7 @@ set MSBuildTargetName=%MSBuildTarget:~3%
 taskkill /f /im MSBuild.exe /fi "memusage gt 40" >NUL
 
 @echo on
-msbuild "%Root%build.proj" /nologo /nr:%NodeReuse% %MultiProcessor% %MSBuildTarget% /p:target=%MSBuildTargetName% /p:Configuration=%BuildConfiguration% %MSBuildAdditionalArguments%
+msbuild "%Root%build.proj" /nologo /nr:%NodeReuse% %MultiProcessor% %MSBuildTarget% /p:target=%MSBuildTargetName% /p:Configuration=%BuildConfiguration% /p:NuGetBuildTasksPackTargets=NO-SDK-PACK %MSBuildAdditionalArguments%
 
 @echo off
 

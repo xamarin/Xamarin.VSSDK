@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
     <PackageReference Include="MicroBuild.Core" Version="0.2.0" PrivateAssets="all" />
-    <PackageReference Include="NuGet.Build.Packaging" Version="[0.1.306,)" PrivateAssets="all" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="[0.1.313,)" PrivateAssets="all" />
   </ItemGroup>
 
   <Import Project="Version.targets" />

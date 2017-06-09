@@ -10,11 +10,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="buildCrossTargeting\Xamarin.VSSDK.props">
+      <Kind>buildCrossTargeting</Kind>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="buildCrossTargeting\Xamarin.VSSDK.targets">
+      <Kind>buildCrossTargeting</Kind>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Xamarin.VSSDK.Defaults.targets">
+      <Kind>build</Kind>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Xamarin.VSSDK.targets">
       <Kind>build</Kind>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Xamarin.VSSDK.props">
+    <None Update="Xamarin.VSSDK.targets">
       <Kind>build</Kind>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
