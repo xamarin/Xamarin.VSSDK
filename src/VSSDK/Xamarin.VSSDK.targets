@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="Xamarin.VSSDK.Defaults.targets" />
+  <Import Project="Xamarin.VSSDK.Defaults.targets" Condition="'$(XamarinVSSDKDefaultsImported)' != 'true'" />
 
   <!--
       Provides the default value for $(Dev) according to the current $(TargetFramework) 
@@ -11,6 +11,11 @@
     <Dev Condition="'$(TargetFramework)' == 'net462'">15.0</Dev>
     <Dev Condition="'$(TargetFramework)' == 'net461'">14.0</Dev>
     <Dev Condition="'$(TargetFramework)' == 'net46'">12.0</Dev>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- The Run dropdown doesn't set the TargetFramework, so we do it ourselves -->
+    <TargetFramework Condition="'$(TargetFramework)' == '' and '$(ActiveDebugFramework)' != ''">$(ActiveDebugFramework)</TargetFramework>
   </PropertyGroup>
 
   <Import Project="Xamarin.VSSDK.Xaml.targets" />

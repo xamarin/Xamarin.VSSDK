@@ -28,13 +28,14 @@
     <TargetFrameworks Condition="'$(Dev)' == '15.0'">net462</TargetFrameworks>
     <TargetFrameworks Condition="'$(Dev)' == '14.0'">net461</TargetFrameworks>
     <TargetFrameworks Condition="'$(Dev)' == '12.0'">net46</TargetFrameworks>
+    <TargetFramework>$(TargetFrameworks)</TargetFramework>
   </PropertyGroup>
 
   <!-- Visual Studio 15.3+ supports cross-targeting and loading the right MSBuild tasks version for each inner build 
        somehow. This does not work from a batch script, however, so we require building each version independently 
        if the project cross-targets but we're building for more than one VS.
   -->
-  <Target Name="EnsureNoCrossTargeting" Condition="'$(BuildingInsideVisualStudio)' != 'true' and '$(TargetFrameworks)' != '' and '$(TargetFramework)' == ''">
+  <Target Name="EnsureNoCrossTargeting" Condition="'$(BuildingInsideVisualStudio)' != 'true' and '$(TargetFrameworks)' != '' and '$(TargetFramework)' == '' and '$(ExcludeRestorePackageImports)' != 'true'">
     <ItemGroup>
       <TargetedVisualStudio DisplayName="Visual Studio 2013 (net46,  Dev=12.0)" Condition="$(TargetFrameworks.Contains('net46'))"  />
       <TargetedVisualStudio DisplayName="Visual Studio 2015 (net461, Dev=14.0)" Condition="$(TargetFrameworks.Contains('net461'))"  />

@@ -17,6 +17,8 @@
     <ActiveDebugFramework Condition="'$(Dev)' == '15.0' And '$(ActiveDebugFramework)' == ''">net462</ActiveDebugFramework>
     <ActiveDebugFramework Condition="'$(Dev)' == '14.0' And '$(ActiveDebugFramework)' == ''">net461</ActiveDebugFramework>
     <ActiveDebugFramework Condition="'$(Dev)' == '12.0' And '$(ActiveDebugFramework)' == ''">net46</ActiveDebugFramework>
+
+    <XamarinVSSDKDefaultsImported>true</XamarinVSSDKDefaultsImported>
   </PropertyGroup>
 
 </Project>

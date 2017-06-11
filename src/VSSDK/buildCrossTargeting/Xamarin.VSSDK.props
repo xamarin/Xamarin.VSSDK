@@ -13,14 +13,7 @@
     <!-- We only support building/loading on VS2017+ -->
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
 
-    <!-- 
-        This property is important since while restoring, we should *never* modify either TF or TFs
-        The combination of properties to check was reverse-engineered from the NuGet targets at 
-        https://github.com/NuGet/NuGet.Client/blob/dev/src/NuGet.Core/NuGet.Build.Tasks/NuGet.targets#L54-L56
-    -->
-    <IsRestoring Condition="'$(NuGetRestoreTargets)' != '' and '$(ExcludeRestorePackageImports)' == 'true'">true</IsRestoring>
-
-    <MSBuildAllProjects Condition="'$(IsRestoring)' != 'true' and Exists('$(MSBuildProjectFullPath).user')">$(MSBuildAllProjects);$(MSBuildProjectFullPath).user</MSBuildAllProjects>
+    <MSBuildAllProjects Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(Dev)' == '' and '$(ActiveDebugFramework)' == '' and Exists('$(MSBuildProjectFullPath).user')">$(MSBuildAllProjects);$(MSBuildProjectFullPath).user</MSBuildAllProjects>
   </PropertyGroup>
 
   <!-- The .user target isn't imported in the crosstargeting version of the Common targets 
@@ -28,9 +21,11 @@
        NOTE: we only import the active framework value if Dev != *, as we consider that value to 
        mean "build for all supported TFs defined in the project".
   -->
-  <Import Project="$(MSBuildProjectFullPath).user" Condition="'$(IsRestoring)' != 'true' and '$(Dev)' != '*' and Exists('$(MSBuildProjectFullPath).user')" />
+  <Import Project="$(MSBuildProjectFullPath).user"
+          Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(Dev)' == '' and '$(ActiveDebugFramework)' == '' and Exists('$(MSBuildProjectFullPath).user')" />
 
   <!-- The defaults will not consider '*' for ActiveDebugFramework -> TargetFramework -> Dev mapping -->
-  <Import Project="..\build\Xamarin.VSSDK.Defaults.targets" Condition="'$(IsRestoring)' != 'true'" />
+  <Import Project="..\build\Xamarin.VSSDK.Defaults.targets"
+          Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(XamarinVSSDKDefaultsImported)' != 'true'" />
   
 </Project>
