@@ -71,8 +71,8 @@
 
 	<Target Name="Test" DependsOnTargets="Build">
 		<PropertyGroup>
-			<XmlTestFile>$(Out)TestResults.xml</XmlTestFile>
-			<HtmlTestFile>$(Out)TestResults.html</HtmlTestFile>
+			<XmlTestFile>$(Out)\TestResults.xml</XmlTestFile>
+			<HtmlTestFile>$(Out)\TestResults.html</HtmlTestFile>
 		</PropertyGroup>
 
 		<ItemGroup>
