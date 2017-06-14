@@ -5,9 +5,9 @@ namespace Xamarin.SampleVsix
 {
     public class SamplePackage
     {
-        public override string ToString()
-        {
-            return Strings.Foo;
-        }
+        //public override string ToString()
+        //{
+        //    return Strings.Foo;
+        //}
     }
 }

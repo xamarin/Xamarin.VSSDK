@@ -1,35 +1,45 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project>
+	<Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+	<Import Project="Xamarin.VSSDK.props" />
 
-  <PropertyGroup>
-    <TargetFrameworks>net462;net461;net46</TargetFrameworks>
+	<PropertyGroup>
+		<!--<TargetFrameworks>net462;net461;net46</TargetFrameworks>-->
+		<TargetFramework>net462</TargetFramework>
 
-    <GeneratePkgDefFile>False</GeneratePkgDefFile>
+		<GeneratePkgDefFile>False</GeneratePkgDefFile>
 
-    <Platforms>x86</Platforms>
-    <Platform>x86</Platform>
+		<Platforms>x86</Platforms>
+		<Platform>x86</Platform>
 
-	<DeployExtension>false</DeployExtension>
-  </PropertyGroup>
+		<DeployExtension>true</DeployExtension>
+		<CreateVsixManifest>true</CreateVsixManifest>
+		<IncludeDebugSymbolsInVSIXContainer>true</IncludeDebugSymbolsInVSIXContainer>
+		<Configurations>Debug;Release</Configurations>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="netfx-System.StringResources" Version="3.1.5" />
-    <PackageReference Include="Xamarin.VSSDK" Version="0.2.0-pre-build0014" />
-    <PackageReference Include="Xamarin.VSSDK.BuildTools" Version="0.2.0-pre-build0014" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MSBuilder.XmlPoke" Version="0.9.2" />
+		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="15.0.26201" />
+		<!--<PackageReference Include="Xamarin.VSSDK" Version="0.2.0-pre-build0016" />
+		<PackageReference Include="Xamarin.VSSDK.BuildTools" Version="0.2.0-pre-build0016" />-->
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
+	<Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+	<Import Project="Xamarin.VSSDK.targets" />
+	<Import Project="Xamarin.SampleVsix.targets" />
 </Project>

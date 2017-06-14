@@ -1,11 +1,11 @@
-<Project TreatAsLocalProperty="Dev" InitialTargets="EnsureNoCrossTargeting" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project TreatAsLocalProperty="Dev;ActiveDebugFramework;TargetFrameworks;TargetFramework" InitialTargets="EnsureNoCrossTargeting" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup>
-    <!-- The Run dropdown doesn't set the TargetFramework, so we do it ourselves -->
-    <TargetFramework Condition="'$(TargetFramework)' == '' and '$(ActiveDebugFramework)' != ''">$(ActiveDebugFramework)</TargetFramework>
+	<PropertyGroup>
+		<!-- The Run dropdown doesn't set the TargetFramework, so we do it ourselves -->
+		<TargetFramework Condition="'$(TargetFramework)' == '' and '$(ActiveDebugFramework)' != ''">$(ActiveDebugFramework)</TargetFramework>
   </PropertyGroup>
 
-  <!-- 
+	<!-- 
       Overrides the $(TargetFrameworks) with a specific target to build 
       when a $(Dev) value is explicitly provided (either explicitly or via
       the ActiveDebugFramework. This allows building for each VS individually, 
@@ -24,31 +24,36 @@
       $(Dev) or $(ActiveDebugFramework) since otherwise we'd break restore and 
       cross-targeting build.
   -->
-  <PropertyGroup Condition="'$(Dev)' != ''">
-    <TargetFrameworks Condition="'$(Dev)' == '15.0'">net462</TargetFrameworks>
-    <TargetFrameworks Condition="'$(Dev)' == '14.0'">net461</TargetFrameworks>
-    <TargetFrameworks Condition="'$(Dev)' == '12.0'">net46</TargetFrameworks>
-    <TargetFramework>$(TargetFrameworks)</TargetFramework>
+	<PropertyGroup Condition="'$(Dev)' != ''">
+		<TargetFrameworks Condition="'$(Dev)' == '15.0'">net462</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Dev)' == '14.0'">net461</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Dev)' == '12.0'">net46</TargetFrameworks>
+	</PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == '' and '$(BuildingInsideVisualStudio)' == 'true'">
+    <TargetFrameworks Condition="'$(VisualStudioVersion)' == '15.0'">net462</TargetFrameworks>
+    <TargetFrameworks Condition="'$(VisualStudioVersion)' == '14.0'">net461</TargetFrameworks>
+    <TargetFrameworks Condition="'$(VisualStudioVersion)' == '12.0'">net46</TargetFrameworks>
   </PropertyGroup>
 
-  <!-- Visual Studio 15.3+ supports cross-targeting and loading the right MSBuild tasks version for each inner build 
+	<!-- Visual Studio 15.3+ supports cross-targeting and loading the right MSBuild tasks version for each inner build 
        somehow. This does not work from a batch script, however, so we require building each version independently 
        if the project cross-targets but we're building for more than one VS.
   -->
-  <Target Name="EnsureNoCrossTargeting" Condition="'$(BuildingInsideVisualStudio)' != 'true' and '$(TargetFrameworks)' != '' and '$(TargetFramework)' == '' and '$(ExcludeRestorePackageImports)' != 'true'">
-    <ItemGroup>
-      <TargetedVisualStudio DisplayName="Visual Studio 2013 (net46,  Dev=12.0)" Condition="$(TargetFrameworks.Contains('net46'))"  />
-      <TargetedVisualStudio DisplayName="Visual Studio 2015 (net461, Dev=14.0)" Condition="$(TargetFrameworks.Contains('net461'))"  />
-      <TargetedVisualStudio DisplayName="Visual Studio 2017 (net462, Dev=15.0)" Condition="$(TargetFrameworks.Contains('net462'))"  />
-    </ItemGroup>
+	<Target Name="EnsureNoCrossTargeting" Condition="'$(BuildingInsideVisualStudio)' != 'true' and '$(TargetFrameworks)' != '' and '$(TargetFramework)' == '' and '$(ExcludeRestorePackageImports)' != 'true'">
+		<ItemGroup>
+			<TargetedVisualStudio DisplayName="Visual Studio 2013 (net46,  Dev=12.0)" Condition="$(TargetFrameworks.Contains('net46'))"  />
+			<TargetedVisualStudio DisplayName="Visual Studio 2015 (net461, Dev=14.0)" Condition="$(TargetFrameworks.Contains('net461'))"  />
+			<TargetedVisualStudio DisplayName="Visual Studio 2017 (net462, Dev=15.0)" Condition="$(TargetFrameworks.Contains('net462'))"  />
+		</ItemGroup>
 
-    <Error Code="XVSSDK0001" Text="In order to build cross-targeting VSIXes, each targeted IDE must be built separately. 
+		<Error Code="XVSSDK0001" Text="In order to build cross-targeting VSIXes, each targeted IDE must be built separately. 
 You can use either /p:TargetFramework or the aliased /p:Dev property to build for each.
   For Visual Studio 2013, specify: /p:Dev=12.0 or /p:TargetFramework=net46
   For Visual Studio 2015, specify: /p:Dev=14.0 or /p:TargetFramework=net461 
   For Visual Studio 2017, specify: /p:Dev=15.0 or /p:TargetFramework=net462
 
 The current project targets: @(TargetedVisualStudio, ',')." />
-  </Target>
+	</Target>
 
 </Project>

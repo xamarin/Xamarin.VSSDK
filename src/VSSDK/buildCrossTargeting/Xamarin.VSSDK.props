@@ -1,4 +1,4 @@
-<Project TreatAsLocalProperty="Dev" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!-- 
       Declare our supported frameworks so they show up in the target framework selection dropdown.
@@ -13,7 +13,8 @@
     <!-- We only support building/loading on VS2017+ -->
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
 
-    <MSBuildAllProjects Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(Dev)' == '' and '$(ActiveDebugFramework)' == '' and Exists('$(MSBuildProjectFullPath).user')">$(MSBuildAllProjects);$(MSBuildProjectFullPath).user</MSBuildAllProjects>
+    <_ShouldImportUserProj Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(Dev)' == '' and '$(ActiveDebugFramework)' == '' and Exists('$(MSBuildProjectFullPath).user')">true</_ShouldImportUserProj>
+    <MSBuildAllProjects Condition="'$(_ShouldImportUserProj)' == 'true'">$(MSBuildAllProjects);$(MSBuildProjectFullPath).user</MSBuildAllProjects>
   </PropertyGroup>
 
   <!-- The .user target isn't imported in the crosstargeting version of the Common targets 
@@ -21,11 +22,10 @@
        NOTE: we only import the active framework value if Dev != *, as we consider that value to 
        mean "build for all supported TFs defined in the project".
   -->
-  <Import Project="$(MSBuildProjectFullPath).user"
-          Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(Dev)' == '' and '$(ActiveDebugFramework)' == '' and Exists('$(MSBuildProjectFullPath).user')" />
+  <Import Project="$(MSBuildProjectFullPath).user" Condition="'$(_ShouldImportUserProj)' == 'true'" />
 
   <!-- The defaults will not consider '*' for ActiveDebugFramework -> TargetFramework -> Dev mapping -->
   <Import Project="..\build\Xamarin.VSSDK.Defaults.targets"
           Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(XamarinVSSDKDefaultsImported)' != 'true'" />
-  
+
 </Project>

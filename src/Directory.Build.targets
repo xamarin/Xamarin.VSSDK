@@ -1,17 +1,17 @@
 <Project>
-  <PropertyGroup>
-	  <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+	<PropertyGroup>
+		<MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
 
-		<DocumentationFile Condition="'$(DocumentationFile)' == ''">$(OutputPath)$(AssemblyName).xml</DocumentationFile>
+		<!--<DocumentationFile Condition="'$(DocumentationFile)' == ''">$(OutputPath)$(AssemblyName).xml</DocumentationFile>-->
 		<SignAssembly Condition="'$(SignAssembly)' == ''">false</SignAssembly>
-  </PropertyGroup>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
-    <PackageReference Include="MicroBuild.Core" Version="0.2.0" PrivateAssets="all" />
-    <PackageReference Include="NuGet.Build.Packaging" Version="[0.1.313,)" PrivateAssets="all" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
+		<PackageReference Include="MicroBuild.Core" Version="0.2.0" PrivateAssets="all" />
+		<PackageReference Include="NuGet.Build.Packaging" Version="[0.1.313,)" PrivateAssets="all" />
+	</ItemGroup>
 
-  <Import Project="Version.targets" />
+	<Import Project="Version.targets" />
 	<Import Project="VSL.Imports.targets" />
 </Project>

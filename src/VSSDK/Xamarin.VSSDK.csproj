@@ -37,10 +37,7 @@
 	</ItemGroup>
 
 	<Target Name="Layout" AfterTargets="Build" DependsOnTargets="GetPackageContents">
-		<Copy SourceFiles="@(_PackageContent)" 
-			  DestinationFiles="$(OutputPath)%(_PackageContent.PackagePath)" 
-			  Condition="'%(_PackageContent.PackageFolder)' != ''"
-			  SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(_PackageContent)" DestinationFiles="$(OutputPath)%(_PackageContent.PackagePath)" Condition="'%(_PackageContent.PackageFolder)' != ''" SkipUnchangedFiles="true" />
 	</Target>
 
 	<ItemGroup>

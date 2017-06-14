@@ -1,24 +1,24 @@
-<Project TreatAsLocalProperty="Dev" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project TreatAsLocalProperty="Dev;ActiveDebugFramework" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup>
-    <!-- We only support building/loading on VS2017+ -->
-    <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<!-- We only support building/loading on VS2017+ -->
+		<MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
+	</PropertyGroup>
 
-  <!-- Ensure Dev, TargetFramework and ActiveDebugFramework have consistent values -->
-  <PropertyGroup>
-    <!-- Default $(Dev) according to either '.' value or $(ActiveDebugFramework). These are explicit user-chosen values -->
-    <Dev Condition="'$(Dev)' == '.'">$(VisualStudioVersion)</Dev>
-    <Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net462'">15.0</Dev>
-    <Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net461'">14.0</Dev>
-    <Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net46'">12.0</Dev>
+	<!-- Ensure Dev, TargetFramework and ActiveDebugFramework have consistent values -->
+	<PropertyGroup>
+		<!-- Default $(Dev) according to either '.' value or $(ActiveDebugFramework). These are explicit user-chosen values -->
+		<Dev Condition="'$(Dev)' == '.'">$(VisualStudioVersion)</Dev>
+		<Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net462'">15.0</Dev>
+		<Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net461'">14.0</Dev>
+		<Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net46'">12.0</Dev>
 
-    <!-- If no ActiveDebugFramework was set, just set it to the one we determined, for consistency -->
-    <ActiveDebugFramework Condition="'$(Dev)' == '15.0' And '$(ActiveDebugFramework)' == ''">net462</ActiveDebugFramework>
-    <ActiveDebugFramework Condition="'$(Dev)' == '14.0' And '$(ActiveDebugFramework)' == ''">net461</ActiveDebugFramework>
-    <ActiveDebugFramework Condition="'$(Dev)' == '12.0' And '$(ActiveDebugFramework)' == ''">net46</ActiveDebugFramework>
+		<!-- If no ActiveDebugFramework was set, just set it to the one we determined, for consistency -->
+		<ActiveDebugFramework Condition="'$(Dev)' == '15.0'">net462</ActiveDebugFramework>
+		<ActiveDebugFramework Condition="'$(Dev)' == '14.0'">net461</ActiveDebugFramework>
+		<ActiveDebugFramework Condition="'$(Dev)' == '12.0'">net46</ActiveDebugFramework>
 
-    <XamarinVSSDKDefaultsImported>true</XamarinVSSDKDefaultsImported>
-  </PropertyGroup>
+		<XamarinVSSDKDefaultsImported>true</XamarinVSSDKDefaultsImported>
+	</PropertyGroup>
 
 </Project>

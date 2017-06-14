@@ -1,22 +1,22 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project TreatAsLocalProperty="Dev;TargetFramework" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="Xamarin.VSSDK.Defaults.targets" Condition="'$(XamarinVSSDKDefaultsImported)' != 'true'" />
+	<Import Project="Xamarin.VSSDK.Defaults.targets" Condition="'$(XamarinVSSDKDefaultsImported)' != 'true'" />
 
-  <!--
+	<!--
       Provides the default value for $(Dev) according to the current $(TargetFramework) 
       which is automatically specified by the cross-targeting build for each value in 
       $(TargetFrameworks), or alternatively, by the Framework selector dropdown in 15.3+
   -->
-  <PropertyGroup Condition="'$(Dev)' == ''">
-    <Dev Condition="'$(TargetFramework)' == 'net462'">15.0</Dev>
-    <Dev Condition="'$(TargetFramework)' == 'net461'">14.0</Dev>
-    <Dev Condition="'$(TargetFramework)' == 'net46'">12.0</Dev>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Dev)' == ''">
+		<Dev Condition="'$(TargetFramework)' == 'net462'">15.0</Dev>
+		<Dev Condition="'$(TargetFramework)' == 'net461'">14.0</Dev>
+		<Dev Condition="'$(TargetFramework)' == 'net46'">12.0</Dev>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <!-- The Run dropdown doesn't set the TargetFramework, so we do it ourselves -->
-    <TargetFramework Condition="'$(TargetFramework)' == '' and '$(ActiveDebugFramework)' != ''">$(ActiveDebugFramework)</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<!-- The Run dropdown doesn't set the TargetFramework, so we do it ourselves -->
+		<TargetFramework Condition="'$(TargetFramework)' == '' and '$(ActiveDebugFramework)' != ''">$(ActiveDebugFramework)</TargetFramework>
+	</PropertyGroup>
 
-  <Import Project="Xamarin.VSSDK.Xaml.targets" />
+	<Import Project="Xamarin.VSSDK.Xaml.targets" />
 </Project>

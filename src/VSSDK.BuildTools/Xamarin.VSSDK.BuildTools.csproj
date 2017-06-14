@@ -1,31 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
-    <RootNamespace>Xamarin.VSSDK</RootNamespace>
+	<PropertyGroup>
+		<TargetFramework>net46</TargetFramework>
+		<RootNamespace>Xamarin.VSSDK</RootNamespace>
 
-    <PackageId>Xamarin.VSSDK.BuildTools</PackageId>
-    <Title>$(PackageId)</Title>
-    <Description>$(PackageId)</Description>
-  </PropertyGroup>
+		<PackageId>Xamarin.VSSDK.BuildTools</PackageId>
+		<Title>$(PackageId)</Title>
+		<Description>$(PackageId)</Description>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Update="Xamarin.VSSDK.BuildTools.targets">
-      <Kind>build</Kind>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Xamarin.VSSDK.BuildTools.props">
-      <Kind>build</Kind>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="Xamarin.VSSDK.BuildTools.targets">
+			<Kind>build</Kind>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Xamarin.VSSDK.BuildTools.props">
+			<Kind>build</Kind>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageFile Include="Microsoft.VisualStudio.SDK.VsixSuppression" Kind="Dependency" Version="14.1.33" TargetFramework="any" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageFile Include="Microsoft.VisualStudio.SDK.VsixSuppression" Kind="Dependency" Version="14.1.33" TargetFramework="any" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="NuGet.Build.Packaging" Version="0.1.308" />
-  </ItemGroup>
-  
+	<ItemGroup>
+		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="15.0.26201" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.1012" PrivateAssets="all" />
+		<PackageReference Include="netfx-System.StringResources" Version="3.1.5" PrivateAssets="all" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
 </Project>

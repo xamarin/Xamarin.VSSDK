@@ -1,14 +1,112 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  
-  <!-- NOTE: we don't import the VSSDK targets when we're doing the outer/crosstargeting build. -->
-  <Import Project="$(VsSDKInstall)\Microsoft.VsSDK.targets" Condition="'$(TargetFramework)' != '' and '$(VsSDKInstall)' != ''" />
+  <UsingTask TaskName="UpdateVsixManifest" AssemblyFile="Xamarin.VSSDK.BuildTools.dll" />
 
-  <!-- We make this target depend on FindSourceVsixManifest just so we cause the minimal possible VSSDK task to run -->
-  <Target Name="ReportVSSDK" BeforeTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VsSDKInstall)' != ''" DependsOnTargets="FindSourceVsixManifest">
+  <PropertyGroup>
+    <IsVsixExtension>true</IsVsixExtension>
+    <!-- Since we can augment the VSIX manifest from MSBuild, it might not be valid initially.
+         Our MergeVsixManifest will perform validation always anyway. -->
+    <BypassVsixValidation>true</BypassVsixValidation>
+  </PropertyGroup>
+
+  <Import Project="$(VsSDKInstall)\Microsoft.VsSDK.targets" Condition="'$(VsSDKInstall)' != ''" />
+
+  <PropertyGroup>
+    <!-- We replace the VSSDK property so that the built-in DetokenizeVsixManifestFile target writes to 
+         a tmp file which we can use as input for our incremental build support.
+         We preserve the existing value as the one we will merge to later on. -->
+    <MergedIntermediateVsixManifest>$(IntermediateVsixManifest)</MergedIntermediateVsixManifest>
+    <IntermediateVsixManifest>$(MergedIntermediateVsixManifest).tmp</IntermediateVsixManifest>
+    <EnsureUpdatedVsixManifestDependsOn>MergeVsixManifest;ReplaceIntermediateVsixManifest</EnsureUpdatedVsixManifestDependsOn>
+  </PropertyGroup>
+
+  <!-- There is a non-trivial amount of conditions around $(DeployExtension) and $(CreateVsixContainer) and the manifest, 
+       so just make sure we get a chance to run before all those that do things with the intermediate manifest. -->
+  <Target Name="BeforeCopyVsixManifestFile" BeforeTargets="CopyVsixManifestFile" DependsOnTargets="$(EnsureUpdatedVsixManifestDependsOn)" />
+  <Target Name="BeforeGetVsixDeploymentPath" BeforeTargets="GetVsixDeploymentPath" DependsOnTargets="$(EnsureUpdatedVsixManifestDependsOn)" />
+  <Target Name="BeforeCreateVsixContainer" BeforeTargets="CreateVsixContainer" DependsOnTargets="$(EnsureUpdatedVsixManifestDependsOn)" />
+
+  <!--
+    =================================================================================
+                          Merge Vsix Manifest 
+    =================================================================================
+
+    Here we take the intermediate manifest detokenized by VSSDK and augment it with 
+    items from the MSBuild project, and write it out to a target manifest.
+  -->
+  <Target Name="MergeVsixManifest" Inputs="$(IntermediateVsixManifest);$(MSBuildAllProjects)" Outputs="$(MergedIntermediateVsixManifest)">
+    <UpdateVsixManifest
+        SourceVsix="$(IntermediateVsixManifest)"
+        TargetVsix="$(MergedIntermediateVsixManifest)"
+        Metadata="@(VsixMetadata)"
+        Installation="@(VsixInstallation)"
+        InstallationTargets="@(VsixInstallationTarget)"
+        Dependencies="@(VsixDependency)"
+        Prerequisites="@(VsixPrerequisite)"
+        Assets="@(VsixAsset)">
+      <Output TaskParameter="TargetVsix" ItemName="FileWrites" />
+    </UpdateVsixManifest>
+
+    <!-- Re-read the references just in case they have changed. -->
+    <ReadReferencesFromVsixManifest
+      InputFile="$(MergedIntermediateVsixManifest)"
+      CurrentProjectName="$(ProjectName)"
+      ProjectReferences="@(_VsixManifestProjectReference)">
+      <Output TaskParameter="ProjectReferencesToResolve" ItemName="_MergedVsixManifestReferencesToResolve" />
+    </ReadReferencesFromVsixManifest>
+
+    <MSBuild Projects="@(_MergedVsixManifestReferencesToResolve)"
+         Properties="%(_MergedVsixManifestReferencesToResolve.SetConfiguration); %(_MergedVsixManifestReferencesToResolve.SetPlatform)"
+         Targets="%(_MergedVsixManifestReferencesToResolve.OutputGroupToResolve)"
+         RebaseOutputs="false">
+      <Output TaskParameter="TargetOutputs" ItemName="_MergedVsixManifestResolvedReferences"/>
+    </MSBuild>
+
+    <DetokenizeVsixManifestSource
+      InputFile="$(MergedIntermediateVsixManifest)"
+      OutputFile="$(MergedIntermediateVsixManifest)"
+      ResolvedReferences="@(_MergedVsixManifestResolvedReferences)">
+      <Output TaskParameter="OutputFile" ItemName="FileWrites" />
+    </DetokenizeVsixManifestSource>
+
+    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" VsixSchemaPath="$(VsixSchemaPath)"/>
+  </Target>
+
+  <!--
+    =================================================================================
+                          Replace Intermediate Vsix Manifest
+    =================================================================================
+
+    This target reverts the replaced IntermediateVsixManifest property so that the 
+    built-in targets run as usual
+  -->
+  <Target Name="ReplaceIntermediateVsixManifest">
+    <ItemGroup>
+      <!-- Remove the .tmp manifest in the VSIX source items used as input for the create VSIX step -->
+      <VSIXSourceItem Remove="$(IntermediateVsixManifest)" />
+    </ItemGroup>
+    <PropertyGroup>
+      <IntermediateVsixManifest>$(MergedIntermediateVsixManifest)</IntermediateVsixManifest>
+    </PropertyGroup>
+    <ItemGroup>
+      <!-- Add the actual .vsixmanifest now. -->
+      <VSIXSourceItem Include="$(MergedIntermediateVsixManifest)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    =================================================================================
+                          Report VSSDK Tasks Version
+    =================================================================================
+  -->
+  <Target Name="ReportVSSDK" AfterTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VsSDKInstall)' != ''">
+    <!-- This target forces the FindVsixManifest to run so that we can inspect the tasks assembly version. -->
+    <FindVsixManifest ItemsToConsider="@(None)"
+                      ProjectName="$(MSBuildProjectName)"
+                      Condition="'@(SourceVsixManifest)' == ''" />
     <GetVSSDKTasksVersion>
       <Output TaskParameter="Version" PropertyName="VSSDKTasksVersion" />
     </GetVSSDKTasksVersion>
-    <Message Importance="high" Text="Building for Dev$(Dev) ($(TargetFramework)) with Microsoft.VsSDK.Build.Tasks, Version=$(VSSDKTasksVersion)" />
+    <Message Importance="high" Text="Built for Dev$(Dev) ($(TargetFramework)) with Microsoft.VsSDK.Build.Tasks, Version=$(VSSDKTasksVersion)" />
   </Target>
 
   <UsingTask TaskName="GetVSSDKTasksVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
