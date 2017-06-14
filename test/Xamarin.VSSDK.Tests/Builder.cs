@@ -22,6 +22,7 @@ public static partial class Builder
     public static TargetResult Build(ProjectInstance project, string targets, Dictionary<string, string> properties = null, ITestOutputHelper output = null, LoggerVerbosity? verbosity = null)
     {
         properties = properties ?? new Dictionary<string, string>();
+        properties["Configuration"] = ThisAssembly.Project.Properties.Configuration;
 
         //if (!Debugger.IsAttached)
         // Without this, builds end up running in process and colliding with each other, 
