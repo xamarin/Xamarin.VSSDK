@@ -11,6 +11,9 @@
   <Import Project="$(VsSDKInstall)\Microsoft.VsSDK.targets" Condition="'$(VsSDKInstall)' != ''" />
 
   <PropertyGroup>
+    <!-- Prior to 15.0, this property wasn't set and was hardcoded to this value -->
+    <VsSDKAssemblyFile Condition="'$(VsSDKAssemblyFile)' == ''">Microsoft.VsSDK.Build.Tasks.dll</VsSDKAssemblyFile>
+
     <!-- We replace the VSSDK property so that the built-in DetokenizeVsixManifestFile target writes to 
          a tmp file which we can use as input for our incremental build support.
          We preserve the existing value as the one we will merge to later on. -->
@@ -33,7 +36,11 @@
     Here we take the intermediate manifest detokenized by VSSDK and augment it with 
     items from the MSBuild project, and write it out to a target manifest.
   -->
-  <Target Name="MergeVsixManifest" Inputs="$(IntermediateVsixManifest);$(MSBuildAllProjects)" Outputs="$(MergedIntermediateVsixManifest)">
+  <Target Name="MergeVsixManifest" 
+          DependsOnTargets="SetVsSDKVersion" 
+          Inputs="$(IntermediateVsixManifest);$(MSBuildAllProjects)" 
+          Outputs="$(MergedIntermediateVsixManifest)">
+
     <UpdateVsixManifest
         SourceVsix="$(IntermediateVsixManifest)"
         TargetVsix="$(MergedIntermediateVsixManifest)"
@@ -68,7 +75,9 @@
       <Output TaskParameter="OutputFile" ItemName="FileWrites" />
     </DetokenizeVsixManifestSource>
 
-    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" VsixSchemaPath="$(VsixSchemaPath)"/>
+    <!-- In 15.3+ VSSDK, the schema path is not user-settable. -->
+    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" Condition="'$(VsSDKVersion)' &gt;= '15.0'"  />
+    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" VsixSchemaPath="$(VsixSchemaPath)" Condition="'$(VsSDKVersion)' &lt; '15.0'" />
   </Target>
 
   <!--
@@ -93,38 +102,53 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="SetVsSDKVersion">
+    <GetVSSDKTasksVersion AssemblyFile="$(VsSDKInstall)\$(VsSDKAssemblyFile)">
+      <Output TaskParameter="Assembly" PropertyName="VsSDKTasksAssembly" />
+      <Output TaskParameter="Version" PropertyName="VsSDKTasksVersion" />
+    </GetVSSDKTasksVersion>
+    <PropertyGroup>
+      <VsSDKVersion>$(VsSDKTasksVersion.Substring(0, 4))</VsSDKVersion>
+    </PropertyGroup>
+  </Target>
+
   <!--
     =================================================================================
                           Report VSSDK Tasks Version
     =================================================================================
+
+    It's useful to report before and after so that build failures can still report 
+    the SDK in use. Also, reading the version towards the end is also useful.
   -->
-  <Target Name="ReportVSSDK" AfterTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VsSDKInstall)' != ''">
-    <!-- This target forces the FindVsixManifest to run so that we can inspect the tasks assembly version. -->
-    <FindVsixManifest ItemsToConsider="@(None)"
-                      ProjectName="$(MSBuildProjectName)"
-                      Condition="'@(SourceVsixManifest)' == ''" />
-    <GetVSSDKTasksVersion>
-      <Output TaskParameter="Version" PropertyName="VSSDKTasksVersion" />
-    </GetVSSDKTasksVersion>
-    <Message Importance="high" Text="Built for Dev$(Dev) ($(TargetFramework)) with Microsoft.VsSDK.Build.Tasks, Version=$(VSSDKTasksVersion)" />
+  <Target Name="ReportVsSDKBefore" BeforeTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VsSDKInstall)' != ''">
+    <Message Importance="low" Text="Building for Dev$(Dev) ($(TargetFramework)) with $(VSSDKTasksAssembly), Version=$(VSSDKTasksVersion)" />
+  </Target>
+  <Target Name="ReportVsSDK" AfterTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VsSDKInstall)' != ''">
+    <Message Importance="normal" Text="Built for Dev$(Dev) ($(TargetFramework)) with $(VSSDKTasksAssembly), Version=$(VSSDKTasksVersion)" />
   </Target>
 
-  <UsingTask TaskName="GetVSSDKTasksVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+  <UsingTask TaskName="GetVsSDKTasksVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
+      <AssemblyFile Required="true" />
+      <Assembly Output="true" />
       <Version Output="true" />
     </ParameterGroup>
     <Task>
+      <Using Namespace="System.IO" />
       <Using Namespace="System.Reflection" />
       <Code Type="Fragment" Language="cs">
         <![CDATA[
-        var tasks = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(asm => asm.GetName().Name == "Microsoft.VsSDK.Build.Tasks");
-        if (tasks != null) 
+        Assembly tasks;
+        if (!File.Exists(this.AssemblyFile))
         {
-          this.Version = ((AssemblyFileVersionAttribute)tasks.GetCustomAttribute(typeof(AssemblyFileVersionAttribute))).Version;
+          Log.LogError("Did not find Microsoft.VsSDK.Build.Tasks loaded in AppDomain.");
+          Success = false;
         }
         else
         {
-          Log.LogError("Did not find Microsoft.VsSDK.Build.Tasks loaded in AppDomain.");
+          tasks = System.Reflection.Assembly.LoadFrom(this.AssemblyFile);
+          this.Assembly = tasks.GetName().Name;
+          this.Version = ((AssemblyFileVersionAttribute)tasks.GetCustomAttribute(typeof(AssemblyFileVersionAttribute))).Version;
         }
         ]]>
       </Code>
