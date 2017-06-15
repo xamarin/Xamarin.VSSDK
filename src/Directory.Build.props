@@ -8,7 +8,7 @@
 		<NuGetBuildTasksPackTargets>DONT-WANT-SDK-PACK</NuGetBuildTasksPackTargets>
 
 		<!-- Packaging -->
-		<PackOnBuild Condition="'$(PackOnBuild)' == '' and '$(Configuration)' == 'Release'">true</PackOnBuild>
+		<PackOnBuild Condition="'$(PackOnBuild)' == ''">true</PackOnBuild>
 		<PrimaryOutputKind>build</PrimaryOutputKind>
 		<InferLegacyPackageReferences>false</InferLegacyPackageReferences>
 		<PackageOutputPath>$(MSBuildThisFileDirectory)..\out</PackageOutputPath>

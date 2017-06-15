@@ -6,4 +6,12 @@
 		<DisplayName>Xamarin.SampleVsix</DisplayName>
 		<Description xml:space="preserve">Xamarin.SampleVsix</Description>
 	</Metadata>
+  <!--
+  <Dependencies>
+    <Dependency Id="Mono.Debugging.VisualStudio" Version="[1.0,)" />
+  </Dependencies>
+  -->
+  <!--<Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Xamarin.MonoDebugging" Version="[1.0,)" />
+  </Prerequisites>-->
 </PackageManifest>
