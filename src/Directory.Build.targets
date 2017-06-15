@@ -12,6 +12,10 @@
 		<PackageReference Include="NuGet.Build.Packaging" Version="[0.1.313,)" PrivateAssets="all" />
 	</ItemGroup>
 
+  <Target Name="PruneCachedPackage" Condition="'$(Configuration)' == 'Debug'" AfterTargets="Build">
+    <Exec Command='rd "$(NuGetPackageRoot)$(PackageId.ToLowerInvariant())" /q /s' />
+  </Target>
+
 	<Import Project="Version.targets" />
 	<Import Project="VSL.Imports.targets" />
 </Project>

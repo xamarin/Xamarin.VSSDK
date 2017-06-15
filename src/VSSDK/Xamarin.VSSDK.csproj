@@ -40,88 +40,30 @@
 		<Copy SourceFiles="@(_PackageContent)" DestinationFiles="$(OutputPath)%(_PackageContent.PackagePath)" Condition="'%(_PackageContent.PackageFolder)' != ''" SkipUnchangedFiles="true" />
 	</Target>
 
-	<ItemGroup>
-		<PackageFile Include="EnvDTE80" Version="8.0.1" Kind="Dependency" FrameworkSpecific="false" TargetFramework="any" />
-		<PackageFile Include="VSLangProj" Version="7.0.3300" Kind="Dependency" FrameworkSpecific="false" TargetFramework="any" />
+	<ItemGroup Label="Visual Studio (All Versions)">
+		<PackageFile Include="EnvDTE100" Version="10.0.1" Kind="Dependency" FrameworkSpecific="false" TargetFramework="any" />
+		<PackageFile Include="VSLangProj100" Version="10.0.30319" Kind="Dependency" FrameworkSpecific="false" TargetFramework="any" />
+		<PackageFile Include="VSLangProj110" Version="11.0.61030" Kind="Dependency" FrameworkSpecific="false" TargetFramework="any" />
+	</ItemGroup>
 
+	<ItemGroup Label="Visual Studio 2013">
 		<PackageFile Include="VSSDK_Reference_Assemblies" Version="12.0.21005" TargetFramework="net46" Kind="Dependency" />
 		<!-- Workaround for warning on wrong dep. for 12.0.* -->
 		<PackageFile Include="Microsoft.VisualStudio.Threading" Version="12.2.0" TargetFramework="net46" Kind="Dependency" />
 		<PackageFile Include="VSSDK.Shell.12" Version="12.0.4" TargetFramework="net46" Kind="Dependency" />
 		<PackageFile Include="VSSDK.ComponentModelHost" Version="12.0.4" TargetFramework="net46" Kind="Dependency" />
-
-		<PackageFile Include="VSSDK_Reference_Assemblies" Version="14.3.25407" TargetFramework="net461" Kind="Dependency" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.14.0" Version="14.3.25407" TargetFramework="net461" Kind="Dependency" />
-		<PackageFile Include="Microsoft.VisualStudio.ComponentModelHost" Version="14.0.25424" TargetFramework="net461" Kind="Dependency" />
-
-		<PackageFile Include="Microsoft.VisualStudio.Shell.15.0" Version="15.0.26201" TargetFramework="net462" Kind="Dependency" />
-		<PackageFile Include="Microsoft.VisualStudio.ComponentModelHost" Version="15.0.26201" TargetFramework="net462" Kind="Dependency" />
 	</ItemGroup>
 
-	<!-- TODO: DELETE and replace with stable VSSDK_Reference_Assemblies for 15.26201 when it's available -->
-	<ItemGroup>
-		<PackageFile Include="Microsoft.VisualStudio.Debugger.Interop.10.0" Version="10.0.30319" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Debugger.Interop.11.0" Version="11.0.50727" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Debugger.Interop.12.0" Version="12.0.21005" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Debugger.Interop.14.0" Version="15.0.25726-preview5" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Debugger.Interop" Version="8.0.50727" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Debugger.InteropA" Version="9.0.21022" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Designer.Interfaces" Version="1.1.4322" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.ManagedInterfaces.9.0" Version="9.0.30729" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.ManagedInterfaces" Version="8.0.50727" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.ManagedInterfaces.WCF" Version="9.0.21022" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.OLE.Interop" Version="7.10.6070" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.ProjectAggregator" Version="8.0.50727" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.Framework" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.Interop.10.0" Version="10.0.30319" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.Interop.8.0" Version="8.0.50727" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.Interop.9.0" Version="9.0.30729" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.Interop" Version="7.10.6071" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.TextManager.Interop.10.0" Version="10.0.30319" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.TextManager.Interop.8.0" Version="8.0.50727" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.TextManager.Interop.9.0" Version="9.0.30729" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.TextManager.Interop" Version="7.10.6070" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.WCFReference.Interop" Version="9.0.30729" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.Data.ConnectionUI" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.CoreUtility" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Data.Core" Version="9.0.21022" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Data" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Data.Framework" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Data.Services" Version="9.0.21022" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Debugger.Engine" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Editor" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.ImageCatalog" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Imaging" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime" Version="15.0.25726-Preview5" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Language.Intellisense" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Language.StandardClassification" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Package.LanguageService.15.0" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.QualityTools.Vsip" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Settings.15.0" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.15.0" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.Design" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.Interop.11.0" Version="11.0.61030" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.Interop.12.0" Version="12.0.30110" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.Interop.12.1.DesignTime" Version="12.1.30328" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.Interop.14.0.DesignTime" Version="15.0.25726-preview5" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Text.Data" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Text.Logic" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Text.UI" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.TextManager.Interop.11.0" Version="11.0.61030" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.TextManager.Interop.12.0" Version="12.0.30110" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.TextManager.Interop.12.1.DesignTime" Version="12.1.30328" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.TextTemplating.15.0" Version="15.0.25123-dev15preview" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.TextTemplating.Interfaces.10.0" Version="10.0.30319" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.TextTemplating.Interfaces.11.0" Version="11.0.50727" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.TextTemplating.Interfaces.15.0" Version="15.0.25123-dev15preview" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.TextTemplating.VSHost.15.0" Version="15.0.25123-dev15preview" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Threading" Version="15.0.240" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Utilities" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VisualStudio.Shell.Embeddable" Version="15.0.25726-preview5" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VSSDK.UnitTestLibrary" Version="15.0.25123-dev15preview" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.Windows.Simulator.Client" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
-		<PackageFile Include="Microsoft.VSSDK.BuildTools" Version="15.0.26201" Kind="Dependency" TargetFramework="net462" />
+	<ItemGroup Label="Visual Studio 2015">
+		<PackageFile Include="VSSDK_Reference_Assemblies" Version="14.3.25407" TargetFramework="net461" Kind="Dependency" />
+		<PackageFile Include="Microsoft.VisualStudio.ComponentModelHost" Version="14.0.25424" TargetFramework="net461" Kind="Dependency" />
+		<PackageFile Include="VSLangProj140" Version="14.0.25029" TargetFramework="net461" Kind="Dependency" />
+	</ItemGroup>
+
+	<ItemGroup Label="Visual Studio 2017">
+		<PackageFile Include="VSSDK_Reference_Assemblies" Version="15.0.26607" TargetFramework="net462" Kind="Dependency" />
+		<PackageFile Include="Microsoft.VisualStudio.ComponentModelHost" Version="15.0.26201" TargetFramework="net462" Kind="Dependency" />
+		<PackageFile Include="VSLangProj150" Version="15.0.26228" TargetFramework="net461" Kind="Dependency" />
 	</ItemGroup>
 
 </Project>

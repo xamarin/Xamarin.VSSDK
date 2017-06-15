@@ -1,15 +1,15 @@
 <Project>
 	<Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-	<Import Project="Xamarin.VSSDK.props" />
+	<!--<Import Project="Xamarin.VSSDK.props" />-->
 
 	<PropertyGroup>
-		<!--<TargetFrameworks>net462;net461;net46</TargetFrameworks>-->
-		<TargetFramework>net462</TargetFramework>
-
-		<GeneratePkgDefFile>False</GeneratePkgDefFile>
+		<TargetFrameworks>net462;net461;net46</TargetFrameworks>
+		<!--<TargetFramework>net462</TargetFramework>-->
 
 		<Platforms>x86</Platforms>
 		<Platform>x86</Platform>
+
+		<GeneratePkgDefFile>false</GeneratePkgDefFile>
 
 		<DeployExtension>true</DeployExtension>
 		<CreateVsixManifest>true</CreateVsixManifest>
@@ -20,8 +20,8 @@
 	<ItemGroup>
 		<PackageReference Include="MSBuilder.XmlPoke" Version="0.9.2" />
 		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="15.0.26201" />
-		<!--<PackageReference Include="Xamarin.VSSDK" Version="0.2.0-pre-build0016" />
-		<PackageReference Include="Xamarin.VSSDK.BuildTools" Version="0.2.0-pre-build0016" />-->
+		<PackageReference Include="Xamarin.VSSDK" Version="0.2.1-pre-build0003" />
+		<PackageReference Include="Xamarin.VSSDK.BuildTools" Version="0.2.1-pre-build0003" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -40,6 +40,6 @@
 	</ItemGroup>
 
 	<Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-	<Import Project="Xamarin.VSSDK.targets" />
+	<!--<Import Project="Xamarin.VSSDK.targets" />-->
 	<Import Project="Xamarin.SampleVsix.targets" />
 </Project>

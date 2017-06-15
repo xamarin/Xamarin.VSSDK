@@ -16,7 +16,7 @@
     </VsixMetadata>
     <VsixInstallation Include="$(VsixID)" AllUsers="true" />
     <VsixInstallationTarget Include="Microsoft.VisualStudio.Community" Version="[15.0,)" />
-    <VsixDependency Include="MEF" Version="14.0" DisplayName="MEF" />
+    <!--<VsixDependency Include="MEF" Version="14.0" DisplayName="MEF" />-->
     <VsixPrerequisite Include="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />
     <VsixAsset Include="Microsoft.VisualStudio.MefComponent" Source="Project" ProjectName="%CurrentProject%" Path="|%CurrentProject%|"/>
   </ItemGroup>
