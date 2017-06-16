@@ -12,33 +12,17 @@
 	<ItemGroup>
 		<None Update="buildCrossTargeting\Xamarin.VsSDK.props">
 			<Kind>buildCrossTargeting</Kind>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="buildCrossTargeting\Xamarin.VsSDK.targets">
 			<Kind>buildCrossTargeting</Kind>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Xamarin.VsSDK.Defaults.targets">
-			<Kind>build</Kind>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Xamarin.VsSDK.props">
-			<Kind>build</Kind>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Xamarin.VsSDK.targets">
-			<Kind>build</Kind>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Xamarin.VsSDK.Xaml.targets">
-			<Kind>build</Kind>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 
-	<Target Name="Layout" AfterTargets="Build" DependsOnTargets="GetPackageContents">
-		<Copy SourceFiles="@(_PackageContent)" DestinationFiles="$(OutputPath)%(_PackageContent.PackagePath)" Condition="'%(_PackageContent.PackageFolder)' != ''" SkipUnchangedFiles="true" />
-	</Target>
+	<ItemDefinitionGroup>
+		<None>
+			<Kind>build</Kind>
+		</None>
+	</ItemDefinitionGroup>
 
 	<ItemGroup Label="Visual Studio 2013">
 		<PackageFile Include="VSSDK_Reference_Assemblies" Version="12.0.21005" TargetFramework="net46" Kind="Dependency" />

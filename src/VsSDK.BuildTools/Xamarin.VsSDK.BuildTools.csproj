@@ -9,24 +9,11 @@
 		<Description>$(PackageId)</Description>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<None Update="Xamarin.VsSDK.BuildTools.VsSDKVersion.targets">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		  <Kind>build</Kind>
-		</None>
-		<None Update="Xamarin.VsSDK.BuildTools.VsixManifest.targets">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		  <Kind>build</Kind>
-		</None>
-		<None Update="Xamarin.VsSDK.BuildTools.targets">
+	<ItemDefinitionGroup>
+		<None>
 			<Kind>build</Kind>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Xamarin.VsSDK.BuildTools.props">
-			<Kind>build</Kind>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
+	</ItemDefinitionGroup>
 
 	<ItemGroup>
 		<PackageFile Include="Microsoft.VisualStudio.SDK.VsixSuppression" Kind="Dependency" Version="14.1.33" TargetFramework="any" />
