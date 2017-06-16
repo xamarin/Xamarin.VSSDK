@@ -4,7 +4,7 @@
 		<TargetFramework>net46</TargetFramework>
 		<RootNamespace>Xamarin.VsSDK</RootNamespace>
 
-		<PackageId>Xamarin.VSSDK.BuildTools</PackageId>
+		<PackageId>Xamarin.VsSDK.BuildTools</PackageId>
 		<Title>$(PackageId)</Title>
 		<Description>$(PackageId)</Description>
 	</PropertyGroup>
