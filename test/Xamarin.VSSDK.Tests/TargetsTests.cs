@@ -5,7 +5,7 @@ using Microsoft.Build.Framework;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Xamarin.VSSDK.Tests
+namespace Xamarin.VsSDK.Tests
 {
     public class TargetsTests
     {
@@ -25,7 +25,7 @@ namespace Xamarin.VSSDK.Tests
             var result = Builder.Build(project, "Build");
 
             Assert.Equal(BuildResultCode.Failure, result.BuildResult.OverallResult);
-            Assert.Equal("XVSSDK0001", result.Logger.Errors[0].Code);
+            Assert.Equal("XVsSDK0001", result.Logger.Errors[0].Code);
         }
 
         [Fact]

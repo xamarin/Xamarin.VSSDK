@@ -1,0 +1,53 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- Prior to 15.0, this property wasn't set and was hardcoded to this value -->
+    <VsSDKAssemblyFile Condition="'$(VsSDKAssemblyFile)' == ''">Microsoft.VSSDK.Build.Tasks.dll</VsSDKAssemblyFile>
+  </PropertyGroup>
+
+  <Target Name="SetVsSDKVersion" BeforeTargets="Build">
+    <GetVsSDKTasksVersion AssemblyFile="$(VsSDKInstall)\$(VsSDKAssemblyFile)">
+      <Output TaskParameter="Assembly" PropertyName="VsSDKTasksAssembly" />
+      <Output TaskParameter="Version" PropertyName="VsSDKTasksVersion" />
+    </GetVsSDKTasksVersion>
+    <PropertyGroup>
+      <VsSDKVersion>$(VsSDKTasksVersion.Substring(0, 4))</VsSDKVersion>
+    </PropertyGroup>
+  </Target>
+
+  <!--
+    =================================================================================
+                          Report VsSDK Tasks Version
+    =================================================================================
+  -->
+  <Target Name="ReportVsSDKVersion" AfterTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VsSDKInstall)' != ''">
+    <Message Importance="normal" Text="Built for Dev$(Dev) ($(TargetFramework)) with $(VsSDKTasksAssembly), Version=$(VsSDKTasksVersion)" />
+  </Target>
+
+  <UsingTask TaskName="GetVsSDKTasksVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <AssemblyFile Required="true" />
+      <Assembly Output="true" />
+      <Version Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Reflection" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        Assembly tasks;
+        if (!File.Exists(this.AssemblyFile))
+        {
+          Log.LogError("Did not find Microsoft.VsSDK.Build.Tasks loaded in AppDomain.");
+          Success = false;
+        }
+        else
+        {
+          tasks = System.Reflection.Assembly.LoadFrom(this.AssemblyFile);
+          this.Assembly = tasks.GetName().Name;
+          this.Version = ((AssemblyFileVersionAttribute)tasks.GetCustomAttribute(typeof(AssemblyFileVersionAttribute))).Version;
+        }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+</Project>

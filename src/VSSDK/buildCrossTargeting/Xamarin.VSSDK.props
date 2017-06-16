@@ -10,9 +10,6 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <!-- We only support building/loading on VS2017+ -->
-    <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
-
     <_ShouldImportUserProj Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(Dev)' == '' and '$(ActiveDebugFramework)' == '' and Exists('$(MSBuildProjectFullPath).user')">true</_ShouldImportUserProj>
     <MSBuildAllProjects Condition="'$(_ShouldImportUserProj)' == 'true'">$(MSBuildAllProjects);$(MSBuildProjectFullPath).user</MSBuildAllProjects>
   </PropertyGroup>
@@ -25,7 +22,7 @@
   <Import Project="$(MSBuildProjectFullPath).user" Condition="'$(_ShouldImportUserProj)' == 'true'" />
 
   <!-- The defaults will not consider '*' for ActiveDebugFramework -> TargetFramework -> Dev mapping -->
-  <Import Project="..\build\Xamarin.VSSDK.Defaults.targets"
-          Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(XamarinVSSDKDefaultsImported)' != 'true'" />
+  <Import Project="..\build\Xamarin.VsSDK.Defaults.targets"
+          Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(XamarinVsSDKDefaultsImported)' != 'true'" />
 
 </Project>

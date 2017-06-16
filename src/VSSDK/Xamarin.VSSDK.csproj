@@ -2,35 +2,35 @@
 
 	<PropertyGroup>
 		<TargetFramework>net46</TargetFramework>
-		<RootNamespace>Xamarin.VSSDK</RootNamespace>
+		<RootNamespace>Xamarin.VsSDK</RootNamespace>
 
-		<PackageId>Xamarin.VSSDK</PackageId>
+		<PackageId>Xamarin.VsSDK</PackageId>
 		<Title>$(PackageId)</Title>
 		<Description>$(PackageId)</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Update="buildCrossTargeting\Xamarin.VSSDK.props">
+		<None Update="buildCrossTargeting\Xamarin.VsSDK.props">
 			<Kind>buildCrossTargeting</Kind>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="buildCrossTargeting\Xamarin.VSSDK.targets">
+		<None Update="buildCrossTargeting\Xamarin.VsSDK.targets">
 			<Kind>buildCrossTargeting</Kind>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Xamarin.VSSDK.Defaults.targets">
+		<None Update="Xamarin.VsSDK.Defaults.targets">
 			<Kind>build</Kind>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Xamarin.VSSDK.props">
+		<None Update="Xamarin.VsSDK.props">
 			<Kind>build</Kind>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Xamarin.VSSDK.targets">
+		<None Update="Xamarin.VsSDK.targets">
 			<Kind>build</Kind>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Xamarin.VSSDK.Xaml.targets">
+		<None Update="Xamarin.VsSDK.Xaml.targets">
 			<Kind>build</Kind>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
