@@ -1,4 +1,4 @@
-# Xamarin.VSSDK
+# Xamarin.VsSDK
 
 Extensions to the Visual Studio SDK to make extensions authoring easier.
 
