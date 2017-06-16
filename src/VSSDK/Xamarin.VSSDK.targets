@@ -18,5 +18,13 @@
 		<TargetFramework Condition="'$(TargetFramework)' == '' and '$(ActiveDebugFramework)' != ''">$(ActiveDebugFramework)</TargetFramework>
 	</PropertyGroup>
 
+  <Target Name="RemoveImmutable" AfterTargets="RunResolvePackageDependencies" Condition="'$(Dev)' &gt;= '15.0'">
+    <ItemGroup>
+      <PackageDefinitions Remove="@(PackageDefinitions)" Condition="$([System.String]::new('%(Identity)').StartsWith('Microsoft.VisualStudio.Shell.Immutable.10.0'))" />
+      <FileDefinitions Remove="@(FileDefinitions)" Condition="$([System.String]::new('%(Identity)').StartsWith('Microsoft.VisualStudio.Shell.Immutable.10.0'))" />
+      <PackageDependencies Remove="@(PackageDependencies)" Condition="$([System.String]::new('%(Identity)').StartsWith('Microsoft.VisualStudio.Shell.Immutable.10.0'))" />
+    </ItemGroup>
+  </Target>
+
 	<Import Project="Xamarin.VSSDK.Xaml.targets" />
 </Project>
