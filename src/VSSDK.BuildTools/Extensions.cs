@@ -1,6 +1,6 @@
 ﻿using Microsoft.Build.Utilities;
 
-namespace Xamarin.VSSDK
+namespace Xamarin.VsSDK
 {
     static class Extensions
     {

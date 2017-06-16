@@ -9,7 +9,7 @@
       Overrides the $(TargetFrameworks) with a specific target to build 
       when a $(Dev) value is explicitly provided (either explicitly or via
       the ActiveDebugFramework. This allows building for each VS individually, 
-      using its own VSSDK.BuildTools (since only one can be loaded in a given 
+      using its own VsSDK.BuildTools (since only one can be loaded in a given 
       build process). 
       
       This prevents a cross-targeting build to occur.
@@ -48,7 +48,7 @@
 			<TargetedVisualStudio DisplayName="Visual Studio 2017 (net462, Dev=15.0)" Condition="$(TargetFrameworks.Contains('net462'))"  />
 		</ItemGroup>
 
-		<Error Code="XVSSDK0001" Text="In order to build cross-targeting VSIXes, each targeted IDE must be built separately. 
+		<Error Code="XVsSDK0001" Text="In order to build cross-targeting VSIXes, each targeted IDE must be built separately. 
 You can use either /p:TargetFramework or the aliased /p:Dev property to build for each.
   For Visual Studio 2013, specify: /p:Dev=12.0 or /p:TargetFramework=net46
   For Visual Studio 2015, specify: /p:Dev=14.0 or /p:TargetFramework=net461 

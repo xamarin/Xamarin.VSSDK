@@ -8,7 +8,7 @@ using System.Xml.XPath;
 using System.Xml;
 using System.Diagnostics;
 
-namespace Xamarin.VSSDK.Tests
+namespace Xamarin.VsSDK.Tests
 {
     public class UpdateVsixManifestTests
     {

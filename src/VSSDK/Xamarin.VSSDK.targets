@@ -1,6 +1,6 @@
 <Project TreatAsLocalProperty="Dev;TargetFramework" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<Import Project="Xamarin.VSSDK.Defaults.targets" Condition="'$(XamarinVSSDKDefaultsImported)' != 'true'" />
+	<Import Project="Xamarin.VsSDK.Defaults.targets" Condition="'$(XamarinVsSDKDefaultsImported)' != 'true'" />
 
 	<!--
       Provides the default value for $(Dev) according to the current $(TargetFramework) 
@@ -26,5 +26,5 @@
     </ItemGroup>
   </Target>
 
-	<Import Project="Xamarin.VSSDK.Xaml.targets" />
+	<Import Project="Xamarin.VsSDK.Xaml.targets" />
 </Project>
