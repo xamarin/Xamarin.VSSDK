@@ -62,8 +62,6 @@
 
 	<ItemGroup Label="Visual Studio 2017">
 		<PackageFile Include="VSSDK_Reference_Assemblies" Version="15.0.26608" TargetFramework="net462" Kind="Dependency" />
-		<PackageFile Include="Microsoft.VisualStudio.ComponentModelHost" Version="15.0.26201" TargetFramework="net462" Kind="Dependency" />
-		<PackageFile Include="VSLangProj150" Version="15.0.26228" TargetFramework="net461" Kind="Dependency" />
 	</ItemGroup>
 
 </Project>
