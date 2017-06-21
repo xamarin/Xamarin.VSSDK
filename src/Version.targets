@@ -8,7 +8,7 @@
     </BuildDependsOn>
   </PropertyGroup>
 
-  <Target Name="SetVersion" DependsOnTargets="GitVersion">
+  <Target Name="SetVersion" BeforeTargets="GetPackageVersion" DependsOnTargets="GitVersion">
     <PropertyGroup>
       <!-- PR builds are *always* prerelease -->
       <!-- TFS case: BUILD_REASON=PullRequest and BUILD_SOURCEBRANCH=refs/pull/[#]/merge -->

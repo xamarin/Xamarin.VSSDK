@@ -27,6 +27,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\VSSDK\Xamarin.VsSDK.csproj">
+			<TargetFramework>any</TargetFramework>
+		</ProjectReference>
+	</ItemGroup>
+
+	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
