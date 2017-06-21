@@ -4,7 +4,7 @@
     <VsSDKAssemblyFile Condition="'$(VsSDKAssemblyFile)' == ''">Microsoft.VSSDK.Build.Tasks.dll</VsSDKAssemblyFile>
   </PropertyGroup>
 
-  <Target Name="SetVsSDKVersion" BeforeTargets="Build">
+  <Target Name="SetVsSDKVersion" BeforeTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VsSDKInstall)' != ''">
     <GetVsSDKTasksVersion AssemblyFile="$(VsSDKInstall)\$(VsSDKAssemblyFile)">
       <Output TaskParameter="Assembly" PropertyName="VsSDKTasksAssembly" />
       <Output TaskParameter="Version" PropertyName="VsSDKTasksVersion" />
@@ -37,7 +37,7 @@
         Assembly tasks;
         if (!File.Exists(this.AssemblyFile))
         {
-          Log.LogError("Did not find Microsoft.VsSDK.Build.Tasks loaded in AppDomain.");
+          Log.LogError("Did not find required VsSDK Tasks assembly at {0}.", new FileInfo(this.AssemblyFile).FullName);
           Success = false;
         }
         else
