@@ -10,11 +10,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Update="buildCrossTargeting\Xamarin.VsSDK.props">
-			<Kind>buildCrossTargeting</Kind>
+		<None Update="buildMultiTargeting\Xamarin.VsSDK.props">
+			<Kind>buildMultiTargeting</Kind>
 		</None>
-		<None Update="buildCrossTargeting\Xamarin.VsSDK.targets">
-			<Kind>buildCrossTargeting</Kind>
+		<None Update="buildMultiTargeting\Xamarin.VsSDK.targets">
+			<Kind>buildMultiTargeting</Kind>
 		</None>
 	</ItemGroup>
 
@@ -52,6 +52,10 @@
 
 	<ItemGroup Label="Visual Studio 2017">
 		<PackageFile Include="VSSDK_Reference_Assemblies" Version="15.0.26608" TargetFramework="net462" Kind="Dependency" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="NuGet.Build.Packaging" Version="0.1.323" />
 	</ItemGroup>
 
 </Project>

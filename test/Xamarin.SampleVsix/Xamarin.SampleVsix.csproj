@@ -20,8 +20,8 @@
 	<ItemGroup>
 		<PackageReference Include="MSBuilder.XmlPoke" Version="0.9.2" />
 		<!--<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="15.0.26201" />-->
-		<PackageReference Include="Xamarin.VSSDK" Version="0.2.1-pre-build0013" />
-		<PackageReference Include="Xamarin.VSSDK.BuildTools" Version="0.2.1-pre-build0013" />
+		<PackageReference Include="Xamarin.VSSDK" Version="0.2.1-pre-build0017" />
+		<PackageReference Include="Xamarin.VSSDK.BuildTools" Version="0.2.1-pre-build0017" />
 	</ItemGroup>
 
 	<ItemGroup>

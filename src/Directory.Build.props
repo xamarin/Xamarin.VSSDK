@@ -8,7 +8,7 @@
 		<NuGetBuildTasksPackTargets>DONT-WANT-SDK-PACK</NuGetBuildTasksPackTargets>
 
 		<!-- Packaging -->
-		<PackOnBuild Condition="'$(PackOnBuild)' == '' and '$(BuildingInsideVisualStudio)' != 'true'">true</PackOnBuild>
+		<PackOnBuild Condition="'$(PackOnBuild)' == '' and ('$(BuildingInsideVisualStudio)' != 'true' or '$(Configuration)' == 'Release')">true</PackOnBuild>
 		<PrimaryOutputKind>build</PrimaryOutputKind>
 		<InferLegacyPackageReferences>false</InferLegacyPackageReferences>
 		<PackageOutputPath>$(MSBuildThisFileDirectory)..\out</PackageOutputPath>
