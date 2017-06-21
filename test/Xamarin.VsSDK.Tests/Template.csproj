@@ -6,12 +6,12 @@
 		<SdkRootDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .editorconfig))\src\VsSDK\bin\$(Configuration)\</SdkRootDir>
 	</PropertyGroup>
 
-	<Import Project="$(SdkRootDir)buildCrossTargeting\Xamarin.VsSDK.props" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
+	<Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VsSDK.props" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
 	<Import Project="$(SdkRootDir)build\Xamarin.VsSDK.props" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
 
 	<ItemGroup Label="Test" />
 
 	<Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-	<Import Project="$(SdkRootDir)buildCrossTargeting\Xamarin.VsSDK.targets" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
+	<Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VsSDK.targets" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
 	<Import Project="$(SdkRootDir)build\Xamarin.VsSDK.targets" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
 </Project>
