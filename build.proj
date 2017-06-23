@@ -1,148 +1,166 @@
 <Project DefaultTargets="Build" InitialTargets="_Setup" TreatAsLocalProperty="Configuration">
-	<Import Project="build\corebuild.props" />
+  <Import Project="build\corebuild.props" />
 
-	<PropertyGroup>
-		<Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
-		<IntermediateOutputPath>$(RestoreOutputPath)\</IntermediateOutputPath>
-		<Out Condition="'$(Out)' == ''">$(MSBuildThisFileDirectory)out</Out>
-		<AdditionalProperties>Configuration=$(Configuration);PackageOutputPath=$(Out);NuGetBuildTasksPackTargets=DONT-WANT-SDK-PACK</AdditionalProperties>
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <IntermediateOutputPath>$(RestoreOutputPath)\</IntermediateOutputPath>
+    <Out Condition="'$(Out)' == ''">$(MSBuildThisFileDirectory)out</Out>
+    <AdditionalProperties>Configuration=$(Configuration);PackageOutputPath=$(Out);NuGetBuildTasksPackTargets=DONT-WANT-SDK-PACK</AdditionalProperties>
 
-		<!-- Validate/init feed before pushing. Typically, init is done once, manually. Validate takes time -->
-		<SleetValidate Condition="'$(SleetValidate)' == ''">false</SleetValidate>
-		<!-- Delete when https://github.com/emgarten/Sleet/issues/9 is implemented -->
-		<Sleet>$(NuGetPackageRoot)sleet\1.0.1\tools\Sleet.exe</Sleet>
-		<SleetConfig>$(MSBuildProjectDirectory)\sleet.json</SleetConfig>
-	</PropertyGroup>
+    <!-- Validate/init feed before pushing. Typically, init is done once, manually. Validate takes time -->
+    <SleetValidate Condition="'$(SleetValidate)' == ''">false</SleetValidate>
+    <!-- Delete when https://github.com/emgarten/Sleet/issues/9 is implemented -->
+    <Sleet>$(NuGetPackageRoot)sleet\1.0.1\tools\Sleet.exe</Sleet>
+    <SleetConfig>$(MSBuildProjectDirectory)\sleet.json</SleetConfig>
 
-	<ItemGroup>
+    <!-- Additional properties for Push -->
+    <NuGetPath Condition="'$(NuGetPath)' == ''">$(RestoreOutputPath)</NuGetPath>
+    <NuGet Condition="'$(NuGet)' == ''">$(NuGetPath)\nuget.exe</NuGet>
+    <NuGetSource Condition="'$(NuGetSource)' == ''">nuget.org</NuGetSource>
+    <NuGetUrl Condition="'$(NuGetUrl)' == ''">https://dist.nuget.org/win-x86-commandline/latest/nuget.exe</NuGetUrl>
+    <!--<NuGetApiKey>REQUIRED_API_KEY_FOR_PUSH</NuGetApiKey>-->
+  </PropertyGroup>
+
+  <ItemGroup>
     <PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
     <PackageReference Include="xunit.runner.console" Version="2.3.0-beta1-build3642" />
-		<PackageReference Include="Sleet" Version="1.0.1" />
-		<PackageReference Include="JsonPoke.MSBuild" Version="*" />
-	</ItemGroup>
+    <PackageReference Include="Sleet" Version="1.0.1" />
+    <PackageReference Include="JsonPoke.MSBuild" Version="*" />
+  </ItemGroup>
 
-	<ItemDefinitionGroup>
-		<Solution>
-			<AdditionalProperties>$(AdditionalProperties)</AdditionalProperties>
-		</Solution>
-	</ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <Solution>
+      <AdditionalProperties>$(AdditionalProperties)</AdditionalProperties>
+    </Solution>
+  </ItemDefinitionGroup>
 
-	<ItemGroup>
-		<Solution Include="src\*.sln" />
-	</ItemGroup>
+  <ItemGroup>
+    <Solution Include="src\*.sln" />
+  </ItemGroup>
 
-	<Target Name="Build">
-		<Message Text="Building AssemblyVersion=$(AssemblyVersion), PackageVersion=$(PackageVersion)" Importance="high" />
+  <Target Name="Build">
+    <Message Text="Building AssemblyVersion=$(AssemblyVersion), PackageVersion=$(PackageVersion)" Importance="high" />
     <Message Text="##vso[build.updatebuildnumber]$(PackageVersion)" Importance="high" Condition="'$(TF_BUILD)' == 'true'" />
-    
-		<MSBuild Projects="@(Solution)" Targets="Build" />
-		<Copy SourceFiles="NuGet.Config" DestinationFolder="$(Out)" />
-	</Target>
 
-	<Target Name="Publish">
-		<Error Condition="'$(StorageAccount)' == ''" Text="StorageAccount is not set via property or environment variable. Should be the Azure Storage account name." />
-		<Error Condition="'$(StorageAccessKey)' == ''" Text="StorageAccessKey is not set via property or environment variable. Should be the Azure Storage access key." />
-		<Error Condition="'$(StorageContainer)' == ''" Text="StorageContainer is not set via property or environment variable. Should be the Azure Storage blob container name." />
+    <MSBuild Projects="@(Solution)" Targets="Build" />
+    <Copy SourceFiles="NuGet.Config" DestinationFolder="$(Out)" />
+  </Target>
 
-		<Delete Files="$(SleetConfig)" Condition="Exists('$(SleetConfig)')" />
-		<Copy SourceFiles="$(MSBuildProjectDirectory)\sleet.in" DestinationFiles="$(SleetConfig)" />
+  <Target Name="Publish">
+    <Error Condition="'$(StorageAccount)' == ''" Text="StorageAccount is not set via property or environment variable. Should be the Azure Storage account name." />
+    <Error Condition="'$(StorageAccessKey)' == ''" Text="StorageAccessKey is not set via property or environment variable. Should be the Azure Storage access key." />
+    <Error Condition="'$(StorageContainer)' == ''" Text="StorageContainer is not set via property or environment variable. Should be the Azure Storage blob container name." />
 
-		<JsonPoke JsonInputPath="$(SleetConfig)"
+    <Delete Files="$(SleetConfig)" Condition="Exists('$(SleetConfig)')" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\sleet.in" DestinationFiles="$(SleetConfig)" />
+
+    <JsonPoke JsonInputPath="$(SleetConfig)"
               JValue="https://$(StorageAccount).blob.core.windows.net/$(StorageContainer)/"
               JPath="sources[0].path" />
-		<JsonPoke JsonInputPath="$(SleetConfig)"
+    <JsonPoke JsonInputPath="$(SleetConfig)"
               JValue="$(StorageContainer)"
               JPath="sources[0].container" />
-		<JsonPoke JsonInputPath="$(SleetConfig)"
+    <JsonPoke JsonInputPath="$(SleetConfig)"
               JValue="DefaultEndpointsProtocol=https;AccountName=$(StorageAccount);AccountKey=$(StorageAccessKey);EndpointSuffix=core.windows.net"
               JPath="sources[0].connectionString" />
 
-		<!-- First try to determine if the feed is valid -->
-		<Exec Command='"$(Sleet)" validate -s feed' Condition="'$(SleetValidate)' == 'true'" IgnoreExitCode="true">
-			<Output PropertyName='ExitCode' TaskParameter='ExitCode'/>
-		</Exec>
-		<!-- if not, initialize it -->
-		<Exec Command='"$(Sleet)" init -s feed' Condition="'$(SleetValidate)' == 'true' And $(ExitCode) != '0'" />
-		<!-- Finally (force, just in case) push packages -->
-		<Exec Command='"$(Sleet)" push "$(Out)" -f -s feed' />
+    <!-- First try to determine if the feed is valid -->
+    <Exec Command='"$(Sleet)" validate -s feed' Condition="'$(SleetValidate)' == 'true'" IgnoreExitCode="true">
+      <Output PropertyName='ExitCode' TaskParameter='ExitCode'/>
+    </Exec>
+    <!-- if not, initialize it -->
+    <Exec Command='"$(Sleet)" init -s feed' Condition="'$(SleetValidate)' == 'true' And $(ExitCode) != '0'" />
+    <!-- Finally (force, just in case) push packages -->
+    <Exec Command='"$(Sleet)" push "$(Out)" -f -s feed' />
 
-		<Delete Files="$(SleetConfig)" Condition="Exists('$(SleetConfig)')" />
-	</Target>
+    <Delete Files="$(SleetConfig)" Condition="Exists('$(SleetConfig)')" />
+  </Target>
 
-	<Target Name="Test" DependsOnTargets="Build">
-		<PropertyGroup>
-			<XmlTestFile>$(Out)\TestResults.xml</XmlTestFile>
-			<HtmlTestFile>$(Out)\TestResults.html</HtmlTestFile>
-		</PropertyGroup>
+  <Target Name="Push" AfterTargets="Publish" DependsOnTargets="_SetVersion"
+          Condition="'$(GitSemVerSource)' == 'Branch' or '$(GitSemVerSource)' == 'Tag'">
 
-		<ItemGroup>
-			<_TestAssembly Include="test\**\bin\**\*Tests.dll" />
-			<TestAssembly Include="@(_TestAssembly)"
+    <Error Condition="'$(NuGetApiKey)' == ''" Text="NuGetApiKey is not set via property or environment variable." />
+    
+    <Exec Condition="!Exists('$(NuGet)')"
+          Command="&quot;$(PS)&quot; -NoProfile -Command &quot;&amp; { (New-Object System.Net.WebClient).DownloadFile('$(NuGetUrl)', '$(NuGet)') }&quot;" />
+
+    <Exec Command='"$(NuGet)" Push "$(Out)\*$(PackageVersion).nupkg" -Source $(NuGetSource) -ApiKey $(NuGetApiKey)' />
+  </Target>
+
+  <Target Name="Test" DependsOnTargets="Build">
+    <PropertyGroup>
+      <XmlTestFile>$(Out)\TestResults.xml</XmlTestFile>
+      <HtmlTestFile>$(Out)\TestResults.html</HtmlTestFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_TestAssembly Include="test\**\bin\**\*Tests.dll" />
+      <TestAssembly Include="@(_TestAssembly)"
 									  Condition="$([System.String]::new('%(Filename)').EndsWith('AcceptanceTests')) == 'false' And '%(Filename)' != 'Roslyn.Services.Editor.UnitTests'" />
-		</ItemGroup>
+    </ItemGroup>
 
-		<Exec Command="&quot;$(XunitConsolePath)&quot; &quot;@(TestAssembly, '&quot; &quot;')&quot; $(XunitOptions) -html &quot;$(HtmlTestFile)&quot; -xml &quot;$(XmlTestFile)&quot;"
+    <Exec Command="&quot;$(XunitConsolePath)&quot; &quot;@(TestAssembly, '&quot; &quot;')&quot; $(XunitOptions) -html &quot;$(HtmlTestFile)&quot; -xml &quot;$(XmlTestFile)&quot;"
 			  Condition="'@(TestAssembly)' != ''">
-			<Output TaskParameter="ExitCode" PropertyName="ExitCode" />
-		</Exec>
+      <Output TaskParameter="ExitCode" PropertyName="ExitCode" />
+    </Exec>
 
-		<Message Text="All tests passed, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' == '0'" Importance="high" />
-		<Error Text="There were test failures, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' != '0'" />
-	</Target>
+    <Message Text="All tests passed, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' == '0'" Importance="high" />
+    <Error Text="There were test failures, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' != '0'" />
+  </Target>
 
-	<Target Name="Acceptance" DependsOnTargets="Build">
-		<PropertyGroup>
-			<XmlTestFile>$(Out)AcceptanceResults.xml</XmlTestFile>
-			<HtmlTestFile>$(Out)AcceptanceResults.html</HtmlTestFile>
-		</PropertyGroup>
+  <Target Name="Acceptance" DependsOnTargets="Build">
+    <PropertyGroup>
+      <XmlTestFile>$(Out)AcceptanceResults.xml</XmlTestFile>
+      <HtmlTestFile>$(Out)AcceptanceResults.html</HtmlTestFile>
+    </PropertyGroup>
 
-		<ItemGroup>
-			<TestAssembly Include="test\**\bin\**\*AcceptanceTests.dll" />
-		</ItemGroup>
+    <ItemGroup>
+      <TestAssembly Include="test\**\bin\**\*AcceptanceTests.dll" />
+    </ItemGroup>
 
-		<Exec Command="&quot;$(XunitConsolePath)&quot; &quot;@(TestAssembly, '&quot; &quot;')&quot; $(XunitOptions) -html &quot;$(HtmlTestFile)&quot; -xml &quot;$(XmlTestFile)&quot;"
+    <Exec Command="&quot;$(XunitConsolePath)&quot; &quot;@(TestAssembly, '&quot; &quot;')&quot; $(XunitOptions) -html &quot;$(HtmlTestFile)&quot; -xml &quot;$(XmlTestFile)&quot;"
 			  Condition="'@(TestAssembly)' != ''">
-			<Output TaskParameter="ExitCode" PropertyName="ExitCode" />
-		</Exec>
+      <Output TaskParameter="ExitCode" PropertyName="ExitCode" />
+    </Exec>
 
-		<Message Text="All tests passed, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' == '0'" Importance="high" />
-		<Error Text="There were test failures, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' != '0'" />
-	</Target>
+    <Message Text="All tests passed, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' == '0'" Importance="high" />
+    <Error Text="There were test failures, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' != '0'" />
+  </Target>
 
-	<Target Name="Clean">
-		<Exec Command='for /d /r . %%d in (bin,obj,.vs) do @if exist "%%d" rd /s/q "%%d"'
+  <Target Name="Clean">
+    <Exec Command='for /d /r . %%d in (bin,obj,.vs) do @if exist "%%d" rd /s/q "%%d"'
 		      Condition="'$(OS)' == 'Windows_NT'" />
-	</Target>
+  </Target>
 
-	<Target Name="All" DependsOnTargets="Rebuild;Test" />
+  <Target Name="All" DependsOnTargets="Rebuild;Test" />
 
-	<Target Name="Rebuild" DependsOnTargets="Clean;Restore;Build" />
+  <Target Name="Rebuild" DependsOnTargets="Clean;Restore;Build" />
 
-	<Target Name="_Restore" AfterTargets="Restore">
-		<MSBuild BuildInParallel="true" Projects="@(Solution);test\Xamarin.VsSDK.Tests\Xamarin.VsSDK.Tests.csproj" Targets="Restore" />
-	</Target>
+  <Target Name="_Restore" AfterTargets="Restore">
+    <MSBuild BuildInParallel="true" Projects="@(Solution);test\Xamarin.VsSDK.Tests\Xamarin.VsSDK.Tests.csproj" Targets="Restore" />
+  </Target>
 
-	<Target Name="GitVersion">
-		<PropertyGroup>
-			<GitBaseVersionMajor>0</GitBaseVersionMajor>
-			<GitBaseVersionMinor>1</GitBaseVersionMinor>
-			<GitBaseVersionPatch>0</GitBaseVersionPatch>
+  <Target Name="GitVersion">
+    <PropertyGroup>
+      <GitBaseVersionMajor>0</GitBaseVersionMajor>
+      <GitBaseVersionMinor>1</GitBaseVersionMinor>
+      <GitBaseVersionPatch>0</GitBaseVersionPatch>
       <GitSemVerMajor>0</GitSemVerMajor>
       <GitSemVerMinor>1</GitSemVerMinor>
       <GitSemVerPatch>0</GitSemVerPatch>
       <GitCommits>0</GitCommits>
-		</PropertyGroup>
-	</Target>
+    </PropertyGroup>
+  </Target>
 
-	<Target Name="_Setup" DependsOnTargets="SetVersion">
-		<!-- Update AppVeyor build # to match the actual one being used -->
-		<Exec Command="appveyor UpdateBuild -Version $(PackageVersion)"
+  <Target Name="_Setup" DependsOnTargets="_SetVersion">
+    <!-- Update AppVeyor build # to match the actual one being used -->
+    <Exec Command="appveyor UpdateBuild -Version $(PackageVersion)"
 			  Condition="'$(APPVEYOR)' == 'true' And '$(target)' != 'Restore'"
 			  ContinueOnError="true" />
 
-		<MakeDir Directories="$(Out)" Condition="!Exists('$(Out)')" />
-	</Target>
+    <MakeDir Directories="$(Out)" Condition="!Exists('$(Out)')" />
+  </Target>
 
-	<Import Project="src\Version.targets" />
-	<Import Project="build\corebuild.targets" />
+  <Import Project="src\Version.targets" />
+  <Import Project="build\corebuild.targets" />
 </Project>

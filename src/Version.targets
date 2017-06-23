@@ -4,12 +4,12 @@
   <PropertyGroup>
     <GitSkipCache>true</GitSkipCache>
     <BuildDependsOn>
-      SetVersion;
+      _SetVersion;
       $(BuildDependsOn)
     </BuildDependsOn>
   </PropertyGroup>
 
-  <Target Name="ClearTagVersion" AfterTargets="_GitBaseVersionTag" BeforeTargets="_GitBaseVersionFile">
+  <Target Name="_ClearTagVersion" AfterTargets="_GitBaseVersionTag" BeforeTargets="_GitBaseVersionFile">
     <PropertyGroup Condition="'$(GitBaseVersion)' != '' and '$(GitSemVerSource)' == 'Tag' and '$(GitCommits)' != '0'">
       <!-- If the current commit isn't exactly the tagged commit, remove the determined base version, 
            so that probing continues as usual (GitInfo file follows).
@@ -20,7 +20,7 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="SetVersion" BeforeTargets="GetPackageVersion" DependsOnTargets="GitVersion">
+  <Target Name="_SetVersion" BeforeTargets="GetPackageVersion" DependsOnTargets="GitVersion">
     <PropertyGroup>
       <!-- PR builds are *always* prerelease -->
       <!-- TFS case: BUILD_REASON=PullRequest and BUILD_SOURCEBRANCH=refs/pull/#/merge -->
@@ -35,7 +35,7 @@
       <AssemblyVersion>$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)</AssemblyVersion>
     </PropertyGroup>
   </Target>
-
+  
   <PropertyGroup>
     <VersionImported>true</VersionImported>
   </PropertyGroup>
