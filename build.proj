@@ -40,8 +40,7 @@
 
   <Target Name="Build">
     <Message Text="Building AssemblyVersion=$(AssemblyVersion), PackageVersion=$(PackageVersion)" Importance="high" />
-    <Message Text="##vso[build.updatebuildnumber]$(PackageVersion)" Importance="high" Condition="'$(TF_BUILD)' == 'true'" />
-
+    
     <MSBuild Projects="@(Solution)" Targets="Build" />
     <Copy SourceFiles="NuGet.Config" DestinationFolder="$(Out)" />
   </Target>
@@ -85,6 +84,7 @@
           Command="&quot;$(PS)&quot; -NoProfile -Command &quot;&amp; { (New-Object System.Net.WebClient).DownloadFile('$(NuGetUrl)', '$(NuGet)') }&quot;" />
 
     <Exec Command='"$(NuGet)" Push "$(Out)\*$(PackageVersion).nupkg" -Source $(NuGetSource) -ApiKey $(NuGetApiKey)' />
+    <Message Text="##vso[build.addbuildtag]Pushed" Importance="high" Condition="'$(TF_BUILD)' == 'true'" />
   </Target>
 
   <Target Name="Test" DependsOnTargets="Build">
@@ -157,6 +157,8 @@
     <Exec Command="appveyor UpdateBuild -Version $(PackageVersion)"
 			  Condition="'$(APPVEYOR)' == 'true' And '$(target)' != 'Restore'"
 			  ContinueOnError="true" />
+
+    <Message Text="##vso[build.updatebuildnumber]$(PackageVersion)" Importance="high" Condition="'$(TF_BUILD)' == 'true'" />
 
     <MakeDir Directories="$(Out)" Condition="!Exists('$(Out)')" />
   </Target>
