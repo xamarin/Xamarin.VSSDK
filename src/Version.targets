@@ -2,23 +2,35 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    <GitSkipCache>true</GitSkipCache>
     <BuildDependsOn>
       SetVersion;
       $(BuildDependsOn)
     </BuildDependsOn>
   </PropertyGroup>
 
+  <Target Name="ClearTagVersion" AfterTargets="_GitBaseVersionTag" BeforeTargets="_GitBaseVersionFile">
+    <PropertyGroup Condition="'$(GitBaseVersion)' != '' and '$(GitSemVerSource)' == 'Tag' and '$(GitCommits)' != '0'">
+      <!-- If the current commit isn't exactly the tagged commit, remove the determined base version, 
+           so that probing continues as usual (GitInfo file follows).
+           This means that we can push a version from master/dev without having to create a branch.
+           Typical "true" releases will likely come from versioned branches though.
+      -->
+      <GitBaseVersion></GitBaseVersion>
+    </PropertyGroup>
+  </Target>
+
   <Target Name="SetVersion" BeforeTargets="GetPackageVersion" DependsOnTargets="GitVersion">
     <PropertyGroup>
       <!-- PR builds are *always* prerelease -->
-      <!-- TFS case: BUILD_REASON=PullRequest and BUILD_SOURCEBRANCH=refs/pull/[#]/merge -->
+      <!-- TFS case: BUILD_REASON=PullRequest and BUILD_SOURCEBRANCH=refs/pull/#/merge -->
       <GitSemVerDashLabel Condition="'$(TF_BUILD)' == 'true' and '$(BUILD_REASON)' == 'PullRequest'">-pr$(BUILD_SOURCEBRANCH.Substring(10).TrimEnd('/merge'))</GitSemVerDashLabel>
       <GitSemVerDashLabel Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">-pr$(APPVEYOR_PULL_REQUEST_NUMBER)</GitSemVerDashLabel>
 
-      <!-- Non-prerelease versions will use the package version determined by SemVer -->
-      <PackageVersion Condition="'$(GitSemVerDashLabel)' == ''">$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</PackageVersion>
+      <!-- Non-prerelease and tagged versions will use the package version determined by SemVer -->
+      <PackageVersion Condition="'$(GitSemVerDashLabel)' == '' or '$(GitSemVerSource)' == 'Tag'">$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)$(GitSemVerDashLabel)</PackageVersion>
       <!-- Prerelease versions are fixed to the base version (this allows the stable versions to always be greater) and have the build number instead -->
-      <PackageVersion Condition="'$(GitSemVerDashLabel)' != ''">$(GitSemVerMajor).$(GitSemVerMinor).$(GitBaseVersionPatch)$(GitSemVerDashLabel)-build$(GitCommits.PadLeft(4, '0'))</PackageVersion>
+      <PackageVersion Condition="'$(GitSemVerDashLabel)' != '' and '$(GitSemVerSource)' != 'Tag'">$(GitSemVerMajor).$(GitSemVerMinor).$(GitBaseVersionPatch)$(GitSemVerDashLabel)-build$(GitCommits.PadLeft(4, '0'))</PackageVersion>
 
       <AssemblyVersion>$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)</AssemblyVersion>
     </PropertyGroup>
