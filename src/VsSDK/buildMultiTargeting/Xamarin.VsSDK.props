@@ -8,9 +8,14 @@
     <SupportedTargetFramework Include="net461" DisplayName="Visual Studio 2015" />
     <SupportedTargetFramework Include="net46" DisplayName="Visual Studio 2013" />
   </ItemGroup>
-
+  
   <PropertyGroup>
-    <_ShouldImportUserProj Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(Dev)' == '' and '$(ActiveDebugFramework)' == '' and Exists('$(MSBuildProjectFullPath).user')">true</_ShouldImportUserProj>
+    <_ShouldImportUserProj Condition="
+                           '$(ExcludeRestorePackageImports)' != 'true' and 
+                           '$(BuildingInsideVisualStudio)' == 'true' and
+                           '$(Dev)' == '' and 
+                           '$(ActiveDebugFramework)' == '' 
+                           and Exists('$(MSBuildProjectFullPath).user')">true</_ShouldImportUserProj>
     <MSBuildAllProjects Condition="'$(_ShouldImportUserProj)' == 'true'">$(MSBuildAllProjects);$(MSBuildProjectFullPath).user</MSBuildAllProjects>
   </PropertyGroup>
 
