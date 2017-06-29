@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<!-- The Run dropdown doesn't set the TargetFramework, so we do it ourselves -->
-		<TargetFramework Condition="'$(TargetFramework)' == '' and '$(ActiveDebugFramework)' != ''">$(ActiveDebugFramework)</TargetFramework>
+		<TargetFramework Condition="'$(TargetFramework)' == '' and '$(ActiveDebugFramework)' != '' and '$(BuildingInsideVisualStudio)' == 'true'">$(ActiveDebugFramework)</TargetFramework>
   </PropertyGroup>
 
 	<!-- 
