@@ -1,13 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <!-- 
-      Declare our supported frameworks so they show up in the target framework selection dropdown.
-  -->
-  <ItemGroup>
-    <SupportedTargetFramework Include="net462" DisplayName="Visual Studio 2017" />
-    <SupportedTargetFramework Include="net461" DisplayName="Visual Studio 2015" />
-    <SupportedTargetFramework Include="net46" DisplayName="Visual Studio 2013" />
-  </ItemGroup>
+  <Import Project="..\build\Xamarin.VsSDK.props" />
   
   <PropertyGroup>
     <_ShouldImportUserProj Condition="
