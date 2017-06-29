@@ -8,4 +8,7 @@
     <SupportedTargetFramework Include="net46" DisplayName="Visual Studio 2013" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+  </PropertyGroup>
 </Project>
