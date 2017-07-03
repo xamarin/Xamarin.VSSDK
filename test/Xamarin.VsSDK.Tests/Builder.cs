@@ -27,7 +27,7 @@ public static partial class Builder
         //if (!Debugger.IsAttached)
         // Without this, builds end up running in process and colliding with each other, 
         // especially around the current directory used to resolve relative paths in projects.
-        Environment.SetEnvironmentVariable("MSBUILDNOINPROCNODE", "0", EnvironmentVariableTarget.Process);
+        //Environment.SetEnvironmentVariable("MSBUILDNOINPROCNODE", "0", EnvironmentVariableTarget.Process);
 
         using (var manager = new BuildManager(Guid.NewGuid().ToString()))
         {
@@ -36,7 +36,7 @@ public static partial class Builder
             {
                 GlobalProperties = properties,
                 DisableInProcNode = false,
-                EnableNodeReuse = true,
+                EnableNodeReuse = false,
                 ShutdownInProcNodeOnBuildFinish = false,
                 LogInitialPropertiesAndItems = true,
                 LogTaskInputs = true,

@@ -45,7 +45,21 @@ namespace Xamarin.VSSDK.Tests
         }
 
         [Fact]
-        public void TargetFrameworkIsSetFromActiveDebugFrameworkWhenCrossTargeting()
+        public void TargetFrameworkIsSetFromActiveDebugFrameworkWhenCrossTargetingWhenBuildingInsideVisualStudio()
+        {
+            var project = new Project("Template.csproj", new Dictionary<string, string>
+            {
+                { "TargetFrameworks", "net46;net461;net462" },
+                { "ActiveDebugFramework", "net461" },
+                { "Configuration", ThisAssembly.Project.Properties.Configuration },
+                { "BuildingInsideVisualStudio", "true" }
+            }, "15.0", new ProjectCollection());
+
+            Assert.Equal("net461", project.GetPropertyValue("TargetFramework"));
+        }
+
+        [Fact]
+        public void TargetFrameworkIsNotSetFromActiveDebugFrameworkWhenCrossTargetingWhenNotBuildingInsideVisualStudio()
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
@@ -54,11 +68,11 @@ namespace Xamarin.VSSDK.Tests
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
             }, "15.0", new ProjectCollection());
 
-            Assert.Equal("net461", project.GetPropertyValue("TargetFramework"));
+            Assert.NotEqual("net461", project.GetPropertyValue("TargetFramework"));
         }
 
         [Fact]
-        public void TargetFrameworkIsSetFromDevWhenCrossTargeting()
+        public void TargetFrameworksIsSetFromDevWhenCrossTargeting()
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
@@ -67,7 +81,7 @@ namespace Xamarin.VSSDK.Tests
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
             }, "15.0", new ProjectCollection());
 
-            Assert.Equal("net462", project.GetPropertyValue("TargetFramework"));
+            Assert.Equal("net462", project.GetPropertyValue("TargetFrameworks"));
         }
 
         [Fact]
@@ -79,6 +93,7 @@ namespace Xamarin.VSSDK.Tests
                 { "ActiveDebugFramework", "net461" },
                 { "Dev", "15.0" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
+                { "BuildingInsideVisualStudio", "true" }
             }, "15.0", new ProjectCollection());
 
             Assert.Equal("net462", project.GetPropertyValue("TargetFramework"));
