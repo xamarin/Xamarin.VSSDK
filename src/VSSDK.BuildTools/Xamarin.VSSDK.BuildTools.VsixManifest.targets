@@ -1,5 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask TaskName="UpdateVsixManifest" AssemblyFile="Xamarin.VsSDK.BuildTools.dll" />
+  <UsingTask TaskName="UpdateVsixManifest" AssemblyFile="Xamarin.VSSDK.BuildTools.dll" />
 
   <PropertyGroup>
     <!-- Since we can augment the VSIX manifest from MSBuild, it might not be valid initially.
@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- We replace the VsSDK property so that the built-in DetokenizeVsixManifestFile target writes to 
+    <!-- We replace the VSSDK property so that the built-in DetokenizeVsixManifestFile target writes to 
          a tmp file which we can use as input for our incremental build support.
          We preserve the existing value as the one we will merge to later on. -->
     <MergedIntermediateVsixManifest>$(IntermediateVsixManifest)</MergedIntermediateVsixManifest>
@@ -27,11 +27,11 @@
                           Merge Vsix Manifest 
     =================================================================================
 
-    Here we take the intermediate manifest detokenized by VsSDK and augment it with 
+    Here we take the intermediate manifest detokenized by VSSDK and augment it with 
     items from the MSBuild project, and write it out to a target manifest.
   -->
   <Target Name="MergeVsixManifest" 
-          DependsOnTargets="SetVsSDKVersion" 
+          DependsOnTargets="SetVSSDKVersion" 
           Inputs="$(IntermediateVsixManifest);$(MSBuildAllProjects)" 
           Outputs="$(MergedIntermediateVsixManifest)">
 
@@ -69,9 +69,9 @@
       <Output TaskParameter="OutputFile" ItemName="FileWrites" />
     </DetokenizeVsixManifestSource>
 
-    <!-- In 15.3+ VsSDK, the schema path is not user-settable. -->
-    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" Condition="'$(VsSDKVersion)' &gt;= '15.0'"  />
-    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" VsixSchemaPath="$(VsixSchemaPath)" Condition="'$(VsSDKVersion)' &lt; '15.0'" />
+    <!-- In 15.3+ VSSDK, the schema path is not user-settable. -->
+    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" Condition="'$(VSSDKVersion)' &gt;= '15.0'"  />
+    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" VsixSchemaPath="$(VsixSchemaPath)" Condition="'$(VSSDKVersion)' &lt; '15.0'" />
   </Target>
 
   <!--

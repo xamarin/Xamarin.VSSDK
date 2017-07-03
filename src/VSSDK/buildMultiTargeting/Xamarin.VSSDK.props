@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="..\build\Xamarin.VsSDK.props" />
+  <Import Project="..\build\Xamarin.VSSDK.props" />
   
   <PropertyGroup>
     <_ShouldImportUserProj Condition="
@@ -20,7 +20,7 @@
   <Import Project="$(MSBuildProjectFullPath).user" Condition="'$(_ShouldImportUserProj)' == 'true'" />
 
   <!-- The defaults will not consider '*' for ActiveDebugFramework -> TargetFramework -> Dev mapping -->
-  <Import Project="..\build\Xamarin.VsSDK.Defaults.targets"
-          Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(XamarinVsSDKDefaultsImported)' != 'true'" />
+  <Import Project="..\build\Xamarin.VSSDK.Defaults.targets"
+          Condition="'$(ExcludeRestorePackageImports)' != 'true' and '$(XamarinVSSDKDefaultsImported)' != 'true'" />
 
 </Project>

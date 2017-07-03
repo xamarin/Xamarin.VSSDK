@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net46</TargetFramework>
-		<RootNamespace>Xamarin.VsSDK</RootNamespace>
+		<RootNamespace>Xamarin.VSSDK</RootNamespace>
 
 		<PackageId>Xamarin.VSSDK</PackageId>
 		<Title>$(PackageId)</Title>
@@ -10,10 +10,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Update="buildMultiTargeting\Xamarin.VsSDK.props">
+		<None Update="buildMultiTargeting\Xamarin.VSSDK.props">
 			<Kind>buildMultiTargeting</Kind>
 		</None>
-		<None Update="buildMultiTargeting\Xamarin.VsSDK.targets">
+		<None Update="buildMultiTargeting\Xamarin.VSSDK.targets">
 			<Kind>buildMultiTargeting</Kind>
 		</None>
 	</ItemGroup>

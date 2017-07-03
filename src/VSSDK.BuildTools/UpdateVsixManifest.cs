@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Xamarin.VsSDK.Properties;
+using Xamarin.VSSDK.Properties;
 using System.Xml.Linq;
 using System.Linq;
 using System.Collections;
@@ -9,7 +9,7 @@ using System.Xml;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-namespace Xamarin.VsSDK
+namespace Xamarin.VSSDK
 {
     /// <summary>
     /// Updates a VSIX manifest with information specified via the MSBuild project.
