@@ -1,29 +1,29 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <!-- Prior to 15.0, this property wasn't set and was hardcoded to this value -->
-    <VsSDKAssemblyFile Condition="'$(VsSDKAssemblyFile)' == ''">Microsoft.VSSDK.Build.Tasks.dll</VsSDKAssemblyFile>
+    <VSSDKAssemblyFile Condition="'$(VSSDKAssemblyFile)' == ''">Microsoft.VSSDK.Build.Tasks.dll</VSSDKAssemblyFile>
   </PropertyGroup>
 
-  <Target Name="SetVsSDKVersion" BeforeTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VsSDKInstall)' != ''">
-    <GetVsSDKTasksVersion AssemblyFile="$(VsSDKInstall)\$(VsSDKAssemblyFile)">
-      <Output TaskParameter="Assembly" PropertyName="VsSDKTasksAssembly" />
-      <Output TaskParameter="Version" PropertyName="VsSDKTasksVersion" />
-    </GetVsSDKTasksVersion>
+  <Target Name="SetVSSDKVersion" BeforeTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VSSDKInstall)' != ''">
+    <GetVSSDKTasksVersion AssemblyFile="$(VSSDKInstall)\$(VSSDKAssemblyFile)">
+      <Output TaskParameter="Assembly" PropertyName="VSSDKTasksAssembly" />
+      <Output TaskParameter="Version" PropertyName="VSSDKTasksVersion" />
+    </GetVSSDKTasksVersion>
     <PropertyGroup>
-      <VsSDKVersion>$(VsSDKTasksVersion.Substring(0, 4))</VsSDKVersion>
+      <VSSDKVersion>$(VSSDKTasksVersion.Substring(0, 4))</VSSDKVersion>
     </PropertyGroup>
   </Target>
 
   <!--
     =================================================================================
-                          Report VsSDK Tasks Version
+                          Report VSSDK Tasks Version
     =================================================================================
   -->
-  <Target Name="ReportVsSDKVersion" AfterTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VsSDKInstall)' != ''">
-    <Message Importance="normal" Text="Built for Dev$(Dev) ($(TargetFramework)) with $(VsSDKTasksAssembly), Version=$(VsSDKTasksVersion)" />
+  <Target Name="ReportVSSDKVersion" AfterTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VSSDKInstall)' != ''">
+    <Message Importance="normal" Text="Built for Dev$(Dev) ($(TargetFramework)) with $(VSSDKTasksAssembly), Version=$(VSSDKTasksVersion)" />
   </Target>
 
-  <UsingTask TaskName="GetVsSDKTasksVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+  <UsingTask TaskName="GetVSSDKTasksVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
       <AssemblyFile Required="true" />
       <Assembly Output="true" />
@@ -37,7 +37,7 @@
         Assembly tasks;
         if (!File.Exists(this.AssemblyFile))
         {
-          Log.LogError("Did not find required VsSDK Tasks assembly at {0}.", new FileInfo(this.AssemblyFile).FullName);
+          Log.LogError("Did not find required VSSDK Tasks assembly at {0}.", new FileInfo(this.AssemblyFile).FullName);
           Success = false;
         }
         else

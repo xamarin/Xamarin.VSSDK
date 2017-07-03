@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26620.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.VsSDK", "VSSDK\Xamarin.VsSDK.csproj", "{8224B403-29E1-49D9-B023-D82C2A0CA807}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.VSSDK", "VSSDK\Xamarin.VSSDK.csproj", "{8224B403-29E1-49D9-B023-D82C2A0CA807}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.VsSDK.BuildTools", "VSSDK.BuildTools\Xamarin.VsSDK.BuildTools.csproj", "{9AC63AB7-556B-45FA-A362-CB38710DC70D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.VSSDK.BuildTools", "VSSDK.BuildTools\Xamarin.VSSDK.BuildTools.csproj", "{9AC63AB7-556B-45FA-A362-CB38710DC70D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{99515836-5C56-48C5-88A1-74F0029FA2C5}"
 	ProjectSection(SolutionItems) = preProject
@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		VSL.Imports.targets = VSL.Imports.targets
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.VsSDK.Tests", "..\test\Xamarin.VsSDK.Tests\Xamarin.VsSDK.Tests.csproj", "{C6C20387-46D1-446E-80BC-4A446F7159F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.VSSDK.Tests", "..\test\Xamarin.VSSDK.Tests\Xamarin.VSSDK.Tests.csproj", "{C6C20387-46D1-446E-80BC-4A446F7159F1}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8224B403-29E1-49D9-B023-D82C2A0CA807} = {8224B403-29E1-49D9-B023-D82C2A0CA807}
 		{9AC63AB7-556B-45FA-A362-CB38710DC70D} = {9AC63AB7-556B-45FA-A362-CB38710DC70D}

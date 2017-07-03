@@ -138,7 +138,7 @@
   <Target Name="Rebuild" DependsOnTargets="Clean;Restore;Build" />
 
   <Target Name="_Restore" AfterTargets="Restore">
-    <MSBuild BuildInParallel="true" Projects="@(Solution);test\Xamarin.VsSDK.Tests\Xamarin.VsSDK.Tests.csproj" Targets="Restore" />
+    <MSBuild BuildInParallel="true" Projects="@(Solution);test\Xamarin.VSSDK.Tests\Xamarin.VSSDK.Tests.csproj" Targets="Restore" />
   </Target>
 
   <Target Name="GitVersion">

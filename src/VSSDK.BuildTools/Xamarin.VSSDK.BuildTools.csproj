@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net46</TargetFramework>
-		<RootNamespace>Xamarin.VsSDK</RootNamespace>
+		<RootNamespace>Xamarin.VSSDK</RootNamespace>
 
 		<PackageId>Xamarin.VSSDK.BuildTools</PackageId>
 		<Title>$(PackageId)</Title>
@@ -27,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\VSSDK\Xamarin.VsSDK.csproj">
+		<ProjectReference Include="..\VSSDK\Xamarin.VSSDK.csproj">
 			<TargetFramework>any</TargetFramework>
 		</ProjectReference>
 	</ItemGroup>
