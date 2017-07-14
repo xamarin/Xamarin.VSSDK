@@ -1,0 +1,19 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup>
+    <!-- We need this to provide the Microsoft SDK to the test projects-->
+    <PackageReference Include="VSSDK_Reference_Assemblies" Version="15.*" />
+  </ItemGroup>
+
+  <Target Name="GetVSSDK">
+    <ItemGroup>
+      <VSSDK Include="$(VSSDKInstall)\**\*.*" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CopyVSSDK" AfterTargets="Build" DependsOnTargets="GetVSSDK" 
+          Inputs="@(VSSDK)" Outputs="@(VSSDK->'$(OutputPath)\%(RecursiveDir)%(Filename)%(Extension)')">
+    <Copy SourceFiles="@(VSSDK)" DestinationFiles="@(VSSDK->'$(OutputPath)\%(RecursiveDir)%(Filename)%(Extension)')" OverwriteReadOnlyFiles="true" />
+  </Target>
+  
+</Project>

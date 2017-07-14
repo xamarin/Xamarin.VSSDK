@@ -100,7 +100,7 @@
 									  Condition="$([System.String]::new('%(Filename)').EndsWith('AcceptanceTests')) == 'false' And '%(Filename)' != 'Roslyn.Services.Editor.UnitTests'" />
     </ItemGroup>
 
-    <Exec Command="&quot;$(XunitConsolePath)&quot; &quot;@(TestAssembly, '&quot; &quot;')&quot; $(XunitOptions) -html &quot;$(HtmlTestFile)&quot; -xml &quot;$(XmlTestFile)&quot;"
+    <Exec Command="&quot;$(XunitConsolePathX86)&quot; &quot;@(TestAssembly, '&quot; &quot;')&quot; $(XunitOptions) -html &quot;$(HtmlTestFile)&quot; -xml &quot;$(XmlTestFile)&quot;"
 			  Condition="'@(TestAssembly)' != ''">
       <Output TaskParameter="ExitCode" PropertyName="ExitCode" />
     </Exec>
@@ -119,7 +119,7 @@
       <TestAssembly Include="test\**\bin\**\*AcceptanceTests.dll" />
     </ItemGroup>
 
-    <Exec Command="&quot;$(XunitConsolePath)&quot; &quot;@(TestAssembly, '&quot; &quot;')&quot; $(XunitOptions) -html &quot;$(HtmlTestFile)&quot; -xml &quot;$(XmlTestFile)&quot;"
+    <Exec Command="&quot;$(XunitConsolePathX86)&quot; &quot;@(TestAssembly, '&quot; &quot;')&quot; $(XunitOptions) -html &quot;$(HtmlTestFile)&quot; -xml &quot;$(XmlTestFile)&quot;"
 			  Condition="'@(TestAssembly)' != ''">
       <Output TaskParameter="ExitCode" PropertyName="ExitCode" />
     </Exec>
