@@ -1,0 +1,23 @@
+﻿<Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <IsCrossTargetingBuild Condition="'$(IsCrossTargetingBuild)' == '' and '$(TargetFrameworks)' != '' and '$(TargetFramework)' == ''">true</IsCrossTargetingBuild>
+    <SdkRootDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .editorconfig))\src\VSSDK\bin\$(Configuration)\</SdkRootDir>
+    <SdkToolsRootDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .editorconfig))\src\VSSDK.BuildTools\bin\$(Configuration)\</SdkToolsRootDir>
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+
+    <VSSDKInstall>$(MSBuildThisFileDirectory)</VSSDKInstall>
+    <VSSDKAssemblyFile>Microsoft.VisualStudio.Sdk.BuildTasks.15.0.dll</VSSDKAssemblyFile>
+  </PropertyGroup>
+  
+  <Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VSSDK.props" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
+  <Import Project="$(SdkRootDir)build\Xamarin.VSSDK.props" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
+
+  <Import Project="$(SdkToolsRootDir)build\Xamarin.VSSDK.BuildTools.props" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VSSDK.targets" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
+  <Import Project="$(SdkRootDir)build\Xamarin.VSSDK.targets" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
+  <Import Project="$(SdkToolsRootDir)build\Xamarin.VSSDK.BuildTools.targets" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
+</Project>
