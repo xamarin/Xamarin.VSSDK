@@ -31,6 +31,7 @@
     items from the MSBuild project, and write it out to a target manifest.
   -->
   <Target Name="MergeVsixManifest" 
+          Condition="'$(CreateVsixContainer)' == 'true'"
           DependsOnTargets="SetVSSDKVersion" 
           Inputs="$(IntermediateVsixManifest);$(MSBuildAllProjects)" 
           Outputs="$(MergedIntermediateVsixManifest)">

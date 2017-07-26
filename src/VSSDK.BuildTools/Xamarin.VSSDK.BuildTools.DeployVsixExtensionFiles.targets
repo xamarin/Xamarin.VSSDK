@@ -1,0 +1,114 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- This target improves the built-in DeployVsixExtensionFiles target by copying (instead of unzipping) the VSIX source items 
+       without requiring to set the CreateVsixContainer property. So this is much faster because:
+       
+       1. It does not zip the VSIX source items into the .vsix container file
+       2. It avoids to unzip its content into the VsixDeploymentPath
+       3. It uses Inputs/Outputs to avoid copying unchanged files
+  -->
+
+  <PropertyGroup>
+  </PropertyGroup>
+
+  <!--
+    =================================================================================
+                          Overrrides Deploy VSIX Extension Files
+    =================================================================================
+  -->
+
+  <PropertyGroup>
+    <DeployVsixExtensionFilesDependsOn>
+      $(DeployVsixExtensionFilesDependsOn);
+      _UninstallVsixExtension;
+      _GetVSIXSourceItemWithTargetPath;
+      _CopyVsixExtensionFiles;
+      _EnableVsixExtension
+    </DeployVsixExtensionFilesDependsOn>
+  </PropertyGroup>
+
+  <Target Name="DeployVsixExtensionFiles" Condition="'$(DeployExtension)'=='true'" DependsOnTargets="$(DeployVsixExtensionFilesDependsOn)" />
+
+  <Target Name="_UninstallVsixExtension"
+          Condition="'$(ExistingDeploymentPath)' != '$(VsixDeploymentPath)' AND '$(ExistingDeploymentPath)' != '' AND '$(AllUsersExtension)' != 'true'">
+
+    <!-- Uninstall any existing extension with the same identifier with a different deployment path.
+             We don't always call this because of the way Uninstall is implemented in Extension Manager.
+             An uninstall operation just marks the directory for deletion in the registry and does the actual
+             delete on the next instantiation of the Extension Manager service object. In our case, this happens
+             at the same time (or just after) we are copying files to that directory. Therefore, we should only
+             call uninstall if the existing installation directory is different than the one we're deploying files
+             to. -->
+    <UninstallExtension
+        VsixIdentifier="$(VsixID)"
+        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)"
+        FailIfNotInstalled="false" />
+
+    <Message Text="VsixID = $(VsixID)" />
+    <Message Text="VsixVersion = $(VsixVersion)" />
+    <Message Text="VsixDeploymentPath = $(VsixDeplsoymentPath)" />
+
+  </Target>
+
+  <Target Name="_GetVSIXSourceItemWithTargetPath" DependsOnTargets="GetVsixSourceItems">
+
+    <ItemGroup>
+      <VSIXSourceItemWithTargetPath Include="@(VSIXSourceItem->Distinct())" Condition="'%(VSIXSourceItem.TargetPath)' != ''" />
+      <VSIXSourceItemWithTargetPath Include="@(VSIXSourceItem->Distinct())" Condition="'%(VSIXSourceItem.TargetPath)' == ''">
+        <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
+      </VSIXSourceItemWithTargetPath>
+    </ItemGroup>
+
+  </Target>
+
+  <Target Name="_CopyVsixExtensionFiles"
+          Inputs="@(VSIXSourceItemWithTargetPath)"
+          Outputs="@(VSIXSourceItemWithTargetPath->'$(VsixDeploymentPath)%(TargetPath)')">
+
+    <Copy SourceFiles="@(VSIXSourceItemWithTargetPath)"
+          DestinationFiles="@(VSIXSourceItemWithTargetPath->'$(VsixDeploymentPath)%(TargetPath)')">
+      <Output TaskParameter="CopiedFiles" ItemName="_CopiedVsixExtensionFile" />
+    </Copy>
+
+  </Target>
+
+  <Target Name="_EnableVsixExtension" Condition="'@(_CopiedVsixExtensionFile)' != ''">
+    <!--Check if the user is an administrator and the user profile hasn't been setup for the target instance. -->
+    <CheckProfileSetup
+        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)">
+      <Output TaskParameter="IsAdministrator" PropertyName="IsCurrentUserAdministrator" />
+      <Output TaskParameter="IsProfileSetup" PropertyName="IsTargetProfileSetup" />
+    </CheckProfileSetup>
+
+    <!--Run devenv to setup the target profile if necessary -->
+    <Message
+        Importance="High"
+        Text="Setting up Visual Studio for debugging extensions. This one-time operation may take a minute or more."
+        Condition="'$(IsCurrentUserAdministrator)'=='True' And '$(IsTargetProfileSetup)'=='False'" />
+    <Devenv
+        Condition="'$(IsCurrentUserAdministrator)'=='True' And '$(IsTargetProfileSetup)'=='False'"
+        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)"
+        ResetSettingProfile="General.vssettings"
+        IsEmbedded="true" />
+
+    <!--Enable always loading extensions from LocalAppData -->
+    <EnableLoadingAllExtensions
+        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)" />
+
+    <!--Enable this extension via Extension Manager in Dev14 -->
+    <EnableExtension
+        Condition="'$(VSSDKVersion)' &lt; '15.0'"
+        VsixIdentifier="$(VsixID)"
+        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)"
+        FailIfNotInstalled="true" />
+
+    <!--Enable this extension via Extension Manager in Dev15+ -->
+    <EnableExtension
+        Condition="'$(VSSDKVersion)' &gt;= '15.0'"
+        VsixIdentifier="$(VsixID)"
+        VsixVersion="$(VsixVersion)"
+        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)"
+        FailIfNotInstalled="true" />
+  </Target>
+
+</Project>

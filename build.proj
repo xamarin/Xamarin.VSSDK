@@ -43,6 +43,10 @@
     <Message Text="##vso[build.updatebuildnumber]$(PackageVersion)" Importance="high" Condition="'$(TF_BUILD)' == 'true'" />
     
     <MSBuild Projects="@(Solution)" Targets="Build" />
+
+    <!-- Also build the tests for Dev14 (by default it's only compiled for dev15) -->
+    <MSBuild Projects="test\Xamarin.VSSDK.Tests\Xamarin.VSSDK.Tests.csproj" Targets="Build" Properties="$(AdditionalProperties);Dev=14.0" />
+
     <Copy SourceFiles="NuGet.Config" DestinationFolder="$(Out)" />
   </Target>
 
@@ -133,7 +137,7 @@
 		      Condition="'$(OS)' == 'Windows_NT'" />
   </Target>
 
-  <Target Name="All" DependsOnTargets="Rebuild;Test" />
+  <Target Name="All" DependsOnTargets="Rebuild" />
 
   <Target Name="Rebuild" DependsOnTargets="Clean;Restore;Build" />
 
