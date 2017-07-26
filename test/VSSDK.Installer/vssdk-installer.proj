@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net461;net462</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="VSSDK_Reference_Assemblies" Version="14.*" Condition="'$(TargetFramework)' == 'net461'" />
+    <PackageReference Include="VSSDK_Reference_Assemblies" Version="15.*" Condition="'$(TargetFramework)' == 'net462'" />
+  </ItemGroup>
+
+  <Target Name="GetVSSDK">
+    <ItemGroup>
+      <VSSDK Include="$(VSSDKInstall)\**\*.*" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="Install" DependsOnTargets="GetVSSDK"
+          Inputs="@(VSSDK)" Outputs="@(VSSDK->'$(OutputPath)\%(RecursiveDir)%(Filename)%(Extension)')">
+    <Copy SourceFiles="@(VSSDK)"
+          DestinationFiles="@(VSSDK->'$(OutputPath)\%(RecursiveDir)%(Filename)%(Extension)')"
+          OverwriteReadOnlyFiles="true" />
+  </Target>
+
+</Project>

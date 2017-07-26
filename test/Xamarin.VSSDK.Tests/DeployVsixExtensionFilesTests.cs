@@ -12,7 +12,15 @@ namespace Xamarin.VSSDK.Tests
 {
     public class DeployVsixExtensionFilesTests
     {
-        const string RootSuffix = "XamarinVSSDK_Tests";
+#if Dev14
+        const string RootSuffix = "XamarinVSSDK_Tests14.0";
+#elif Dev15
+        const string RootSuffix = "XamarinVSSDK_Tests15.0";
+#elif Dev16
+        const string RootSuffix = "XamarinVSSDK_Tests16.0";
+#elif Dev17
+        const string RootSuffix = "XamarinVSSDK_Tests17.0";
+#endif
 
         ITestOutputHelper output;
 
@@ -20,15 +28,15 @@ namespace Xamarin.VSSDK.Tests
         {
             this.output = output;
 
-            SetupVSInstallDirForVSSDK();
-        }
-
-        void SetupVSInstallDirForVSSDK() =>
+#if Dev15
             Assembly
                 .LoadFrom("Microsoft.VisualStudio.Sdk.BuildTasks.15.0.dll")
                 .GetType("Microsoft.VisualStudio.Sdk.BuildTasks.FolderLocator")
                 .GetProperty("InstanceInstallationPath", BindingFlags.Static | BindingFlags.Public)
                 .SetValue(null, Environment.GetEnvironmentVariable("VSINSTALLDIR"));
+#endif
+        }
+
 
         string GetTargetInstancePath() =>
             Directory
@@ -51,9 +59,15 @@ namespace Xamarin.VSSDK.Tests
             if (!string.IsNullOrEmpty(vsixDeploymentPath) && Directory.Exists(vsixDeploymentPath))
                 Directory.Delete(vsixDeploymentPath, true);
 
+#if Dev14
+            var targetFramework = "net461";
+#else
+            var targetFramework = "net462";
+#endif
+
             var project = new ProjectInstance("VsixTemplate.csproj", new Dictionary<string, string>
             {
-                { "TargetFramework", "net462" },
+                { "TargetFramework", targetFramework },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
                 { "VSSDKTargetPlatformRegRootSuffix", RootSuffix },
             }, "15.0", new ProjectCollection());

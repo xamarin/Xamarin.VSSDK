@@ -1,0 +1,22 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+    =======================================================================================================
+          Overrrides Find Existing Deployment Path (only for Dev15+, removed the CreateVsixContainer condition)
+    =======================================================================================================
+  -->
+
+  <Target Name="FindExistingDeploymentPath"
+          Condition="'$(DeployExtension)'=='true'"
+          DependsOnTargets="$(FindExistingDeploymentPathDependsOn)">
+    <FindInstalledExtension
+        VsixIdentifier="$(VsixID)"
+        InstallableExtensionVersion="$(VsixVersion)"
+        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)"
+        FailIfNotInstalled="false">
+      <Output TaskParameter="DeploymentPath" PropertyName="ExistingDeploymentPath" />
+      <Output TaskParameter="AllUsers" PropertyName="AllUsersExtension" />
+    </FindInstalledExtension>
+  </Target>
+
+</Project>

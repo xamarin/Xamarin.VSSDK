@@ -8,7 +8,10 @@
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
 
     <VSSDKInstall>$(MSBuildThisFileDirectory)</VSSDKInstall>
-    <VSSDKAssemblyFile>Microsoft.VisualStudio.Sdk.BuildTasks.15.0.dll</VSSDKAssemblyFile>
+    <VSSDKAssemblyFile Condition="'$(TargetFramework)' == 'net461'" >Microsoft.VsSDK.Build.Tasks.dll</VSSDKAssemblyFile>
+    <VSSDKAssemblyFile Condition="'$(TargetFramework)' == 'net462'" >Microsoft.VisualStudio.Sdk.BuildTasks.15.0.dll</VSSDKAssemblyFile>
+
+    <DeployVSTemplates>false</DeployVSTemplates>
   </PropertyGroup>
   
   <Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VSSDK.props" Condition="'$(IsCrossTargetingBuild)' == 'true'" />

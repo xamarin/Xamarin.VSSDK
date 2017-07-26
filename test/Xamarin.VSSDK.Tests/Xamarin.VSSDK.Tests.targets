@@ -1,19 +1,14 @@
 ﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <ItemGroup>
-    <!-- We need this to provide the Microsoft SDK to the test projects-->
-    <PackageReference Include="VSSDK_Reference_Assemblies" Version="15.*" />
-  </ItemGroup>
+  <Target Name="CopyVSSDK" AfterTargets="Build">
 
-  <Target Name="GetVSSDK">
-    <ItemGroup>
-      <VSSDK Include="$(VSSDKInstall)\**\*.*" />
-    </ItemGroup>
-  </Target>
-
-  <Target Name="CopyVSSDK" AfterTargets="Build" DependsOnTargets="GetVSSDK" 
-          Inputs="@(VSSDK)" Outputs="@(VSSDK->'$(OutputPath)\%(RecursiveDir)%(Filename)%(Extension)')">
-    <Copy SourceFiles="@(VSSDK)" DestinationFiles="@(VSSDK->'$(OutputPath)\%(RecursiveDir)%(Filename)%(Extension)')" OverwriteReadOnlyFiles="true" />
+    <PropertyGroup>
+      <_VSSDK_TF Condition="'$(Dev)' == '14.0'">net461</_VSSDK_TF>
+      <_VSSDK_TF Condition="'$(Dev)' == '15.0'">net462</_VSSDK_TF>
+    </PropertyGroup>
+    
+    <MSBuild Projects="..\VSSDK.Installer\vssdk-installer.proj" Targets="Restore" />
+    <MSBuild Projects="..\VSSDK.Installer\vssdk-installer.proj" Targets="Install" Properties="OutputPath=$(MSBuildThisFileDirectory)$(OutputPath);TargetFramework=$(_VSSDK_TF)" />
   </Target>
   
 </Project>

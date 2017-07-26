@@ -1,0 +1,15 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+    ==================================================================================================================
+          Overrrides Find Source Vsix Manifest File (only for Dev15+, removed the CreateVsixContainer condition)
+    ==================================================================================================================
+  -->
+  <Target Name="FindSourceVsixManifest">
+    <FindVsixManifest ItemsToConsider="@(None)"
+                      ProjectName="$(MSBuildProjectName)">
+      <Output TaskParameter="VsixManifest" ItemName="SourceVsixManifest"/>
+    </FindVsixManifest>
+  </Target>
+
+</Project>

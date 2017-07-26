@@ -1,0 +1,29 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+    =======================================================================================================
+          Overrrides Get Vsix Deployment Path (only for Dev15+, removed the CreateVsixContainer condition)
+    =======================================================================================================
+  -->
+  <Target
+      Name="GetVsixDeploymentPath"
+      Condition="'$(DeployExtension)'=='true'"
+      DependsOnTargets="$(GetVsixDeploymentPathDependsOn)">
+
+    <GetExtensionsPath
+        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)" >
+      <Output TaskParameter="LocalExtensionsPath" PropertyName="ExtensionsPath"/>
+    </GetExtensionsPath>
+
+    <GetDeploymentPathFromVsixManifest
+        Condition="Exists('$(IntermediateVsixManifest)')"
+        ExtensionsPath="$(ExtensionsPath)"
+        VsixManifest="$(IntermediateVsixManifest)"
+        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)">
+      <Output TaskParameter="DeploymentPath" PropertyName="VsixDeploymentPath"/>
+      <Output TaskParameter="VsixID" PropertyName="VsixID"/>
+      <Output TaskParameter="VsixVersion" PropertyName="VsixVersion"/>
+    </GetDeploymentPathFromVsixManifest>
+  </Target>
+  
+</Project>
