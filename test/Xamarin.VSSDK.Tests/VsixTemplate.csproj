@@ -5,14 +5,19 @@
     <IsCrossTargetingBuild Condition="'$(IsCrossTargetingBuild)' == '' and '$(TargetFrameworks)' != '' and '$(TargetFramework)' == ''">true</IsCrossTargetingBuild>
     <SdkRootDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .editorconfig))\src\VSSDK\bin\$(Configuration)\</SdkRootDir>
     <SdkToolsRootDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .editorconfig))\src\VSSDK.BuildTools\bin\$(Configuration)\</SdkToolsRootDir>
-    <GeneratePkgDefFile>false</GeneratePkgDefFile>
 
     <VSSDKInstall>$(MSBuildThisFileDirectory)</VSSDKInstall>
     <VSSDKAssemblyFile Condition="'$(TargetFramework)' == 'net461'" >Microsoft.VsSDK.Build.Tasks.dll</VSSDKAssemblyFile>
     <VSSDKAssemblyFile Condition="'$(TargetFramework)' == 'net462'" >Microsoft.VisualStudio.Sdk.BuildTasks.15.0.dll</VSSDKAssemblyFile>
 
-    <DeployVSTemplates>false</DeployVSTemplates>
+    <GeneratePkgDefFile Condition="'$(GeneratePkgDefFile)' == ''">false</GeneratePkgDefFile>
+    <DeployVSTemplates Condition="'$(DeployVSTemplates)' == ''">false</DeployVSTemplates>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Shell.14.0" Version="14.3.25407" Condition="'$(TargetFramework)' == 'net461'" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="15.0.26606" Condition="'$(TargetFramework)' == 'net462'" />
+  </ItemGroup>
   
   <Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VSSDK.props" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
   <Import Project="$(SdkRootDir)build\Xamarin.VSSDK.props" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
