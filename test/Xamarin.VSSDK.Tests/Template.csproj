@@ -1,17 +1,21 @@
 ﻿<Project>
-	<Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
-	<PropertyGroup>
-		<IsCrossTargetingBuild Condition="'$(IsCrossTargetingBuild)' == '' and '$(TargetFrameworks)' != '' and '$(TargetFramework)' == ''">true</IsCrossTargetingBuild>
-		<SdkRootDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .editorconfig))\src\VSSDK\bin\$(Configuration)\</SdkRootDir>
-	</PropertyGroup>
+  <PropertyGroup>
+    <IsCrossTargetingBuild Condition="'$(IsCrossTargetingBuild)' == '' and '$(TargetFrameworks)' != '' and '$(TargetFramework)' == ''">true</IsCrossTargetingBuild>
+    <SdkRootDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .editorconfig))\src\VSSDK\bin\$(Configuration)\</SdkRootDir>
+  </PropertyGroup>
 
-	<Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VSSDK.props" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
-	<Import Project="$(SdkRootDir)build\Xamarin.VSSDK.props" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
+  <Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VSSDK.props" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
+  <Import Project="$(SdkRootDir)build\Xamarin.VSSDK.props" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
 
-	<ItemGroup Label="Test" />
+  <ItemGroup Label="Test" />
 
-	<Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-	<Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VSSDK.targets" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
-	<Import Project="$(SdkRootDir)build\Xamarin.VSSDK.targets" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
+  <ItemGroup>
+    <Compile Remove="*.cs" />
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VSSDK.targets" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
+  <Import Project="$(SdkRootDir)build\Xamarin.VSSDK.targets" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
 </Project>

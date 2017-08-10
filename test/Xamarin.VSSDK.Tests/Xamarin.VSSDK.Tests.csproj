@@ -19,10 +19,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="VsixTemplatePackage.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="VsixTemplate.csproj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Template.csproj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="VsixTemplatePackage.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <ThisAssemblyProjectProperty Include="Configuration" />

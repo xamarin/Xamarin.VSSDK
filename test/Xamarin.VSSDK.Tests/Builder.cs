@@ -31,7 +31,7 @@ public static partial class Builder
 
         using (var manager = new BuildManager(Guid.NewGuid().ToString()))
         {
-            var request = new BuildRequestData(project, targets.Split(','));
+            var request = new BuildRequestData(project, targets.Split(';'));
             var parameters = new BuildParameters
             {
                 GlobalProperties = properties,

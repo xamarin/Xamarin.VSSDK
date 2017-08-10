@@ -23,5 +23,6 @@
   <Import Project="Xamarin.VSSDK.BuildTools.FindSourceVsixManifest.targets" Condition="'$(OverrideDeployVsixExtensionFiles)' == 'true' and '$(Dev)' &gt;= '15.0'" />
   <Import Project="Xamarin.VSSDK.BuildTools.GetVsixDeploymentPath.targets" Condition="'$(OverrideDeployVsixExtensionFiles)' == 'true' and '$(Dev)' &gt;= '15.0'" />
   <Import Project="Xamarin.VSSDK.BuildTools.FindExistingDeploymentPath.targets" Condition="'$(OverrideDeployVsixExtensionFiles)' == 'true' and '$(Dev)' &gt;= '15.0'" />
+  <Import Project="Xamarin.VSSDK.BuildTools.GeneratePkgDef.targets" />
 
 </Project>
