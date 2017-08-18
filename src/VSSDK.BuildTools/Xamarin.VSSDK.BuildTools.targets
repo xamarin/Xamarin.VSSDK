@@ -10,7 +10,7 @@
     <CreateVsixContainer Condition="'$(CreateVsixContainer)' == '' and '$(Configuration)' == 'Debug'">false</CreateVsixContainer>
   </PropertyGroup>
 
-  <Import Project="$(VSSDKInstall)\Microsoft.VSSDK.targets" Condition="'$(VSSDKInstall)' != ''" />
+  <Import Project="$(VsSDKInstall)\Microsoft.VSSDK.targets" Condition="'$(VsSDKInstall)' != ''" />
 
   <Import Project="Xamarin.VSSDK.BuildTools.VsixManifest.targets" />
   <Import Project="Xamarin.VSSDK.BuildTools.VSSDKVersion.targets" />
