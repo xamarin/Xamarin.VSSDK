@@ -41,7 +41,7 @@
        if the project cross-targets but we're building for more than one VS.
   -->
 	<Target Name="EnsureNoCrossTargeting" BeforeTargets="Build"
-          Condition="'$(BuildingInsideVisualStudio)' != 'true' and '$(TargetFrameworks)' != '' and '$(TargetFramework)' == '' and '$(ExcludeRestorePackageImports)' != 'true'">
+          Condition="'$(BuildingInsideVisualStudio)' != 'true' and $(TargetFrameworks.Contains(';')) and '$(TargetFramework)' == '' and '$(ExcludeRestorePackageImports)' != 'true'">
 		<ItemGroup>
 			<TargetedVisualStudio DisplayName="Visual Studio 2013 (net46,  Dev=12.0)" Condition="$(TargetFrameworks.Contains('net46'))"  />
 			<TargetedVisualStudio DisplayName="Visual Studio 2015 (net461, Dev=14.0)" Condition="$(TargetFrameworks.Contains('net461'))"  />
