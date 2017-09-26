@@ -54,7 +54,10 @@
 
     <ItemGroup>
       <VSIXSourceItemWithTargetPath Include="@(VSIXSourceItem->Distinct())" Condition="'%(VSIXSourceItem.TargetPath)' != ''" />
-      <VSIXSourceItemWithTargetPath Include="@(VSIXSourceItem->Distinct())" Condition="'%(VSIXSourceItem.TargetPath)' == ''">
+      <VSIXSourceItemWithTargetPath Include="@(VSIXSourceItem->Distinct())" Condition="'%(VSIXSourceItem.VSIXSubPath)' != '' and '%(VSIXSourceItem.TargetPath)' == ''">
+        <TargetPath>%(VSIXSourceItem.VSIXSubPath)\%(VSIXSourceItem.Filename)%(VSIXSourceItem.Extension)</TargetPath>
+      </VSIXSourceItemWithTargetPath>
+      <VSIXSourceItemWithTargetPath Include="@(VSIXSourceItem->Distinct())" Condition="'%(VSIXSourceItem.VSIXSubPath)' == '' and '%(VSIXSourceItem.TargetPath)' == ''">
         <TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
       </VSIXSourceItemWithTargetPath>
     </ItemGroup>
