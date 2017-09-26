@@ -15,4 +15,22 @@
 		</ProjectReference>
 	</ItemDefinitionGroup>
 
+	<!-- From https://github.com/dotnet/project-system/blob/master/build/Targets/VSL.Imports.targets#L187-L203 -->
+	<!-- Project language. This is needed to get xaml files to compile correctly. For some reason the ProjectLanguage is not
+		set and some of the tasks will fail -->
+	<PropertyGroup Condition="'$(ProjectLanguage)' == ''">
+		<ProjectLanguage Condition="'$(MSBuildProjectExtension)' == '.csproj' OR '$(Language)' == 'C#'">CSharp</ProjectLanguage>
+		<ProjectLanguage Condition="'$(MSBuildProjectExtension)' == '.vbproj' OR '$(Language)' == 'VB'">VB</ProjectLanguage>
+		<ProjectLanguage Condition="'$(MSBuildProjectExtension)' == '.vcxproj' OR '$(Language)' == 'C++'">C++</ProjectLanguage>
+	</PropertyGroup>
+
+	<!-- VSIX projects generate a temp project file which doesnt have any extension and needs to be built as C# projects. 
+		 The .NET SDK just imporrts Microsoft.Common.CurrentVersion.targets. 
+		 So set LanguageTargets to import CSharp.targets if the extension is unknown -->
+	<PropertyGroup Condition="'$(LanguageTargets)' == ''">
+		<LanguageTargets Condition="'$(MSBuildProjectExtension)' == '.csproj' OR '$(Language)' == 'C#'">$(MSBuildToolsPath)\Microsoft.CSharp.targets</LanguageTargets>
+		<LanguageTargets Condition="'$(MSBuildProjectExtension)' == '.vbproj' OR '$(Language)' == 'VB'">$(MSBuildToolsPath)\Microsoft.VisualBasic.targets</LanguageTargets>
+		<LanguageTargets Condition="'$(LanguageTargets)' == ''">$(MSBuildToolsPath)\Microsoft.CSharp.targets</LanguageTargets> 
+	</PropertyGroup>
+
 </Project>
