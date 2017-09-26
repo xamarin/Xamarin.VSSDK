@@ -9,8 +9,8 @@
 
     <!-- Validate/init feed before pushing. Typically, init is done once, manually. Validate takes time -->
     <SleetValidate Condition="'$(SleetValidate)' == ''">false</SleetValidate>
-    <!-- Delete when https://github.com/emgarten/Sleet/issues/9 is implemented -->
-    <Sleet>$(NuGetPackageRoot)sleet\1.0.1\tools\Sleet.exe</Sleet>
+    <!-- Delete when https://github.com/emgarten/Sleet/pull/12 is merged -->
+    <Sleet>$(NuGetPackageRoot)sleet\2.0.0\tools\Sleet.exe</Sleet>
     <SleetConfig>$(MSBuildProjectDirectory)\sleet.json</SleetConfig>
 
     <!-- Additional properties for Push -->
@@ -24,7 +24,7 @@
   <ItemGroup>
     <PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
     <PackageReference Include="xunit.runner.console" Version="2.3.0-beta1-build3642" />
-    <PackageReference Include="Sleet" Version="1.0.1" />
+    <PackageReference Include="Sleet" Version="2.0.0" />
     <PackageReference Include="JsonPoke.MSBuild" Version="*" />
   </ItemGroup>
 
