@@ -13,6 +13,7 @@
   <Import Project="$(VsSDKInstall)\Microsoft.VSSDK.targets" Condition="'$(VsSDKInstall)' != ''" />
 
   <Import Project="Xamarin.VSSDK.BuildTools.VsixManifest.targets" />
+  <Import Project="Xamarin.VSSDK.BuildTools.ValidateVsixReferencedAssemblies.targets" />
   <Import Project="Xamarin.VSSDK.BuildTools.VSSDKVersion.targets" />
 
   <PropertyGroup>

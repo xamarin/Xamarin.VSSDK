@@ -1,0 +1,40 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="ValidateVsixReferencedAssemblies" AssemblyFile="Xamarin.VSSDK.BuildTools.dll" />
+
+  <PropertyGroup>
+    <ValidateVsixReferencedAssemblies Condition="'$(ValidateVsixReferencedAssemblies)' == ''" >true</ValidateVsixReferencedAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ValidateVsixPartsDependsOn>
+      $(ValidateVsixPartsDependsOn);
+      ValidateVsixReferencedAssemblies
+    </ValidateVsixPartsDependsOn>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ReferencedAssembliesToValidate Include="Microsoft;VisualStudio" />
+  </ItemGroup>
+
+  <!--
+    =================================================================================
+                          Validate Vsix Referenced Assemblies
+    =================================================================================
+
+    Verifies if the vsix contains assembly references that might not be  
+    supported by the target VS version
+  -->
+  <Target Name="ValidateVsixReferencedAssemblies"
+          Condition="'$(ValidateVsixReferencedAssemblies)' == 'true' and '@(VSIXSourceItem)' != ''"
+          DependsOnTargets="GetVsixSourceItems">
+
+    <ValidateVsixReferencedAssemblies
+        VsixSourceItems="@(VSIXSourceItem->Distinct())"
+        ReferencedAssembliesToValidate="@(ReferencedAssembliesToValidate)"
+        ExcludeValidateReferencedAssemblies="@(ExcludeValidateVsixReferencedAssembly)"
+        Dev="$(Dev)">
+    </ValidateVsixReferencedAssemblies>
+    
+  </Target>
+  
+</Project>
