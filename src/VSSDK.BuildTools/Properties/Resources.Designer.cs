@@ -68,5 +68,14 @@ namespace Xamarin.VSSDK.Properties {
                 return ResourceManager.GetString("UpdateVsixManifest_XVS001", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The extension assembly &apos;{0}&apos; has a reference to &apos;{1}&apos; which could not be avalaible in VS {2}. If it&apos;s not the case, please add the reference to the ExcludeValidateVsixReferencedAssembly item in order to ignore this error in future builds..
+        /// </summary>
+        internal static string ValidateVsixReferencedAssemblies_XVS002 {
+            get {
+                return ResourceManager.GetString("ValidateVsixReferencedAssemblies_XVS002", resourceCulture);
+            }
+        }
     }
 }

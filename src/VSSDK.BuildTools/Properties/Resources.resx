@@ -120,4 +120,7 @@
   <data name="UpdateVsixManifest_XVS001" xml:space="preserve">
     <value>Source VSIX file '{0}' not found.</value>
   </data>
+  <data name="ValidateVsixReferencedAssemblies_XVS002" xml:space="preserve">
+    <value>The extension assembly '{0}' has a reference to '{1}' which could not be avalaible in VS {2}. If it's not the case, please add the reference to the ExcludeValidateVsixReferencedAssembly item in order to ignore this error in future builds.</value>
+  </data>
 </root>
