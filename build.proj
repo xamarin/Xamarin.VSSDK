@@ -9,9 +9,6 @@
 
     <!-- Validate/init feed before pushing. Typically, init is done once, manually. Validate takes time -->
     <SleetValidate Condition="'$(SleetValidate)' == ''">false</SleetValidate>
-    <!-- Delete when https://github.com/emgarten/Sleet/pull/12 is merged -->
-    <Sleet>$(NuGetPackageRoot)sleet\2.0.0\tools\Sleet.exe</Sleet>
-    <SleetConfig>$(MSBuildProjectDirectory)\sleet.json</SleetConfig>
 
     <!-- Additional properties for Push -->
     <NuGetPath Condition="'$(NuGetPath)' == ''">$(RestoreOutputPath)</NuGetPath>
@@ -24,7 +21,7 @@
   <ItemGroup>
     <PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
     <PackageReference Include="xunit.runner.console" Version="2.3.0-beta1-build3642" />
-    <PackageReference Include="Sleet" Version="2.0.0" />
+    <PackageReference Include="Sleet.Azure" Version="*" />
     <PackageReference Include="JsonPoke.MSBuild" Version="*" />
   </ItemGroup>
 
@@ -50,47 +47,13 @@
     <Copy SourceFiles="NuGet.Config" DestinationFolder="$(Out)" />
   </Target>
 
-  <Target Name="Publish">
-    <Error Condition="'$(StorageAccount)' == ''" Text="StorageAccount is not set via property or environment variable. Should be the Azure Storage account name." />
-    <Error Condition="'$(StorageAccessKey)' == ''" Text="StorageAccessKey is not set via property or environment variable. Should be the Azure Storage access key." />
-    <Error Condition="'$(StorageContainer)' == ''" Text="StorageContainer is not set via property or environment variable. Should be the Azure Storage blob container name." />
-
-    <Delete Files="$(SleetConfig)" Condition="Exists('$(SleetConfig)')" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\sleet.in" DestinationFiles="$(SleetConfig)" />
-
-    <JsonPoke JsonInputPath="$(SleetConfig)"
-              JValue="https://$(StorageAccount).blob.core.windows.net/$(StorageContainer)/"
-              JPath="sources[0].path" />
-    <JsonPoke JsonInputPath="$(SleetConfig)"
-              JValue="$(StorageContainer)"
-              JPath="sources[0].container" />
-    <JsonPoke JsonInputPath="$(SleetConfig)"
-              JValue="DefaultEndpointsProtocol=https;AccountName=$(StorageAccount);AccountKey=$(StorageAccessKey);EndpointSuffix=core.windows.net"
-              JPath="sources[0].connectionString" />
-
-    <!-- First try to determine if the feed is valid -->
-    <Exec Command='"$(Sleet)" validate -s feed' Condition="'$(SleetValidate)' == 'true'" IgnoreExitCode="true">
-      <Output PropertyName='ExitCode' TaskParameter='ExitCode'/>
-    </Exec>
-    <!-- if not, initialize it -->
-    <Exec Command='"$(Sleet)" init -s feed' Condition="'$(SleetValidate)' == 'true' And $(ExitCode) != '0'" />
-    <!-- Finally (force, just in case) push packages -->
-    <Exec Command='"$(Sleet)" push "$(Out)" -f -s feed' />
-
-    <Delete Files="$(SleetConfig)" Condition="Exists('$(SleetConfig)')" />
+  <Target Name="BeforePush" BeforeTargets="Push">
+    <ItemGroup>
+      <Package Include="$(Out)\*.nupkg" />
+    </ItemGroup>
   </Target>
 
-  <Target Name="Push" AfterTargets="Publish" DependsOnTargets="_SetVersion"
-          Condition="'$(GitSemVerSource)' == 'Branch' or '$(GitSemVerSource)' == 'Tag'">
-
-    <Error Condition="'$(NuGetApiKey)' == ''" Text="NuGetApiKey is not set via property or environment variable." />
-    
-    <Exec Condition="!Exists('$(NuGet)')"
-          Command="&quot;$(PS)&quot; -NoProfile -Command &quot;&amp; { (New-Object System.Net.WebClient).DownloadFile('$(NuGetUrl)', '$(NuGet)') }&quot;" />
-
-    <Exec Command='"$(NuGet)" Push "$(Out)\*$(PackageVersion).nupkg" -Source $(NuGetSource) -ApiKey $(NuGetApiKey)' />
-    <Message Text="##vso[build.addbuildtag]Pushed" Importance="high" Condition="'$(TF_BUILD)' == 'true'" />
-  </Target>
+  <Target Name="Publish" DependsOnTargets="Push" />
 
   <Target Name="Test" DependsOnTargets="Build">
     <PropertyGroup>
