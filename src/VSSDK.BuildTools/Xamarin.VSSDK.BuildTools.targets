@@ -26,4 +26,18 @@
   <Import Project="Xamarin.VSSDK.BuildTools.FindExistingDeploymentPath.targets" Condition="'$(OverrideDeployVsixExtensionFiles)' == 'true' and '$(Dev)' &gt;= '15.0'" />
   <Import Project="Xamarin.VSSDK.BuildTools.GeneratePkgDef.targets" />
 
+  <!-- This fixes the GetVsixSourceItems target when the project references are being evaluated in a cross targeting build -->
+  <Target Name="AppendTargetFrameworkToProjectReferencesWithConfiguration" Inputs="@(_MSBuildProjectReferenceExistent)" Outputs="%(_MSBuildProjectReferenceExistent.Identity)-BATCH" AfterTargets="PrepareProjectReferences" Returns="@(ProjectReferenceWithConfiguration)">
+    <PropertyGroup>
+      <_ProjectReferenceIdentity>%(_MSBuildProjectReferenceExistent.Identity)</_ProjectReferenceIdentity>
+      <_ProjectReferenceSetTargetFramework>%(_MSBuildProjectReferenceExistent.SetTargetFramework)</_ProjectReferenceSetTargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReferenceWithConfiguration Condition="'%(Identity)' == '$(_ProjectReferenceIdentity)'">
+        <AdditionalProperties Condition="'%(ProjectReferenceWithConfiguration.AdditionalProperties)' != ''">%(ProjectReferenceWithConfiguration.AdditionalProperties);$(_ProjectReferenceSetTargetFramework)</AdditionalProperties>
+        <AdditionalProperties Condition="'%(ProjectReferenceWithConfiguration.AdditionalProperties)' == ''">$(_ProjectReferenceSetTargetFramework)</AdditionalProperties>
+      </ProjectReferenceWithConfiguration>
+    </ItemGroup>
+  </Target>
+
 </Project>
