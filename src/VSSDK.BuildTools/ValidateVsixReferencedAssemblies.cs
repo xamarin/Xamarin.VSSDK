@@ -40,7 +40,9 @@ namespace Xamarin.VSSDK
 
         public override bool Execute()
         {
-            var devVersion = Version.Parse(Dev);
+            var devVersion = Dev.IndexOf('.') == -1 ? 
+                new Version(int.Parse(Dev), 0) :
+                Version.Parse(Dev);
 
             if (ExcludeValidateReferencedAssemblies == null)
                 ExcludeValidateReferencedAssemblies = Array.Empty<ITaskItem>();
