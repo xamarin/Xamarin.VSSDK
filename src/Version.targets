@@ -33,6 +33,9 @@ AssemblyVersion=$(AssemblyVersion)" />
     </PropertyGroup>
   </Target>
 
+  <!-- Redeclared after Restore -->
+  <Target Name="GitVersion" />
+
   <!-- '$(ExcludeRestorePackageImports)' == 'true' when invoking /t:Restore -->
   <Target Name="_SetVersion" DependsOnTargets="GitVersion" Condition="'$(ExcludeRestorePackageImports)' != 'true'">
     <PropertyGroup>
