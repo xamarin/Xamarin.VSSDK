@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project InitialTargets="_SetVersion" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
     <GitSkipCache>true</GitSkipCache>
@@ -10,7 +10,7 @@
     <PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
   </ItemGroup>
 
-  <Target Name="Version" DependsOnTargets="_SetVersion">
+  <Target Name="Version" DependsOnTargets="SetVersion">
     <Message Importance="high" Text="PackageVersion=$(PackageVersion)
 AssemblyVersion=$(AssemblyVersion)" />
   </Target>
@@ -33,11 +33,8 @@ AssemblyVersion=$(AssemblyVersion)" />
     </PropertyGroup>
   </Target>
 
-  <!-- Redeclared after Restore -->
-  <Target Name="GitVersion" />
-
   <!-- '$(ExcludeRestorePackageImports)' == 'true' when invoking /t:Restore -->
-  <Target Name="_SetVersion" DependsOnTargets="GitVersion" Condition="'$(ExcludeRestorePackageImports)' != 'true'">
+  <Target Name="SetVersion" BeforeTargets="Build" DependsOnTargets="GitVersion" Condition="'$(ExcludeRestorePackageImports)' != 'true'">
     <PropertyGroup>
       <!-- PR builds are *always* prerelease -->
       <!-- TFS case: BUILD_REASON=PullRequest and BUILD_SOURCEBRANCH=refs/pull/#/merge -->
