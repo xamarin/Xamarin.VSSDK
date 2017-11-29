@@ -1,17 +1,17 @@
 <Project>
-	<PropertyGroup>
-		<MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
 
-		<!--<DocumentationFile Condition="'$(DocumentationFile)' == ''">$(OutputPath)$(AssemblyName).xml</DocumentationFile>-->
-		<SignAssembly Condition="'$(SignAssembly)' == ''">false</SignAssembly>
-	</PropertyGroup>
+    <!--<DocumentationFile Condition="'$(DocumentationFile)' == ''">$(OutputPath)$(AssemblyName).xml</DocumentationFile>-->
+    <SignAssembly Condition="'$(SignAssembly)' == ''">false</SignAssembly>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
-		<PackageReference Include="MicroBuild.Core" Version="0.2.0" PrivateAssets="all" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MSBuilder.CI" Version="*" PrivateAssets="all" />
+    <PackageReference Include="MicroBuild.Core" Version="0.2.0" PrivateAssets="all" />
+  </ItemGroup>
 
-  <Target Name="PruneCachedPackage" Condition="'$(Configuration)' == 'Debug'" AfterTargets="Build">
+  <Target Name="PruneCachedPackage" Condition="'$(CI)' != 'true'" AfterTargets="Build">
     <Exec Command='rd "$(NuGetPackageRoot)$(PackageId.ToLowerInvariant())" /q /s' />
   </Target>
 
@@ -21,5 +21,5 @@
   </Target>
 
   <Import Project="Version.targets" />
-	<Import Project="VSL.Imports.targets" />
+  <Import Project="VSL.Imports.targets" />
 </Project>
