@@ -12,7 +12,7 @@ public class TestOutputLogger : ILogger
 	public TestOutputLogger(ITestOutputHelper output, LoggerVerbosity? verbosity = LoggerVerbosity.Quiet)
 	{
 		this.output = output;
-		this.Verbosity = verbosity.GetValueOrDefault();
+		Verbosity = verbosity.GetValueOrDefault();
 	}
 
 	public void Reset()
@@ -23,6 +23,8 @@ public class TestOutputLogger : ILogger
 		FinishedTargets = new List<TargetFinishedEventArgs>();
 		FinishedTasks = new List<TaskFinishedEventArgs>();
 	}
+
+    public ITestOutputHelper Output => output;
 
 	public LoggerVerbosity Verbosity { get; set; }
 

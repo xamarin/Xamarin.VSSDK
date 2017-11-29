@@ -3,11 +3,17 @@
 
   <PropertyGroup>
     <GitSkipCache>true</GitSkipCache>
-    <BuildDependsOn>
-      _SetVersion;
-      $(BuildDependsOn)
-    </BuildDependsOn>
+    <GitIgnoreTagVersion>true</GitIgnoreTagVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
+  </ItemGroup>
+
+  <Target Name="Version" DependsOnTargets="SetVersion">
+    <Message Importance="high" Text="PackageVersion=$(PackageVersion)
+AssemblyVersion=$(AssemblyVersion)" />
+  </Target>
 
   <Target Name="_ClearTagVersion" AfterTargets="_GitBaseVersionTag" BeforeTargets="_GitBaseVersionFile">
     <PropertyGroup Condition="'$(GitBaseVersion)' != '' and '$(GitSemVerSource)' == 'Tag' and '$(GitCommits)' != '0'">
@@ -20,19 +26,33 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="_SetVersion" BeforeTargets="GetPackageVersion" DependsOnTargets="GitVersion">
+  <Target Name="_SetLocalCommits" BeforeTargets="_GitPopulateVersionInfo" Condition="'$(CI)' != 'true'">
+    <PropertyGroup>
+      <!-- Local builds should always be commit count +1, since we'll be always working on the next version to be published. -->
+      <GitCommits>$([MSBuild]::Add('$(GitCommits)', '1'))</GitCommits>
+    </PropertyGroup>
+  </Target>
+
+  <!-- '$(ExcludeRestorePackageImports)' == 'true' when invoking /t:Restore -->
+  <Target Name="SetVersion" BeforeTargets="Build;GetPackageVersion" DependsOnTargets="GitVersion" Condition="'$(ExcludeRestorePackageImports)' != 'true'">
     <PropertyGroup>
       <!-- PR builds are *always* prerelease -->
       <!-- TFS case: BUILD_REASON=PullRequest and BUILD_SOURCEBRANCH=refs/pull/#/merge -->
       <GitSemVerDashLabel Condition="'$(TF_BUILD)' == 'true' and '$(BUILD_REASON)' == 'PullRequest'">-pr$(BUILD_SOURCEBRANCH.Substring(10).TrimEnd('/merge'))</GitSemVerDashLabel>
       <GitSemVerDashLabel Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">-pr$(APPVEYOR_PULL_REQUEST_NUMBER)</GitSemVerDashLabel>
 
-      <!-- Non-prerelease and tagged versions will use the package version determined by SemVer -->
-      <PackageVersion Condition="'$(GitSemVerDashLabel)' == '' or '$(GitSemVerSource)' == 'Tag'">$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)$(GitSemVerDashLabel)</PackageVersion>
-      <!-- Prerelease versions are fixed to the base version (this allows the stable versions to always be greater) and have the build number instead -->
-      <PackageVersion Condition="'$(GitSemVerDashLabel)' != '' and '$(GitSemVerSource)' != 'Tag'">$(GitSemVerMajor).$(GitSemVerMinor).$(GitBaseVersionPatch)$(GitSemVerDashLabel)-build$(GitCommits.PadLeft(4, '0'))</PackageVersion>
+      <!-- NOTE: build metadata does not affect version matching, so even if you work from a different branch+commit that gets 
+           rebased+merged later on, the version # might still be the same (provided there weren't additional commits in master 
+           before the rebase+merge.
+      -->
+      <_IndexOfBranchSlash>$(GitBranch.LastIndexOf('/'))</_IndexOfBranchSlash>
+      <_IndexOfBranchSubstring>$([MSBuild]::Add('$(_IndexOfBranchSlash)', '1'))</_IndexOfBranchSubstring>
+      <_GitBranch Condition="'$(_IndexOfBranchSlash)' != '0'">$(GitBranch.Substring($(_IndexOfBranchSubstring)))</_GitBranch>
+      <_GitBranch Condition="'$(_IndexOfBranchSlash)' == '0'">$(GitBranch)</_GitBranch>
 
-      <AssemblyVersion>$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)</AssemblyVersion>
+      <PackageVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)$(GitSemVerDashLabel)+$(_GitBranch).$(GitCommit)</PackageVersion>
+      <AssemblyVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</AssemblyVersion>
+      <InformationalVersion>$(PackageVersion)</InformationalVersion>
     </PropertyGroup>
   </Target>
   

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Xml.Linq;
-using Microsoft.Build.Evaluation;
+using System.Runtime.CompilerServices;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Logging.StructuredLogger;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -19,7 +18,10 @@ public static partial class Builder
 {
     const string ToolsVersion = "15.0";
 
-    public static TargetResult Build(ProjectInstance project, string targets, Dictionary<string, string> properties = null, ITestOutputHelper output = null, LoggerVerbosity? verbosity = null)
+    public static TargetResult Build(ProjectInstance project, string targets, 
+        Dictionary<string, string> properties = null, 
+        ITestOutputHelper output = null, LoggerVerbosity? verbosity = null, 
+        [CallerMemberName] string caller = "")
     {
         properties = properties ?? new Dictionary<string, string>();
         properties["Configuration"] = ThisAssembly.Project.Properties.Configuration;
@@ -43,28 +45,36 @@ public static partial class Builder
             };
 
             var logger = new TestOutputLogger(output, verbosity);
-            parameters.Loggers = new[] { logger };
+            var structured = new StructuredLogger { Verbosity = verbosity.GetValueOrDefault(), Parameters = caller + ".binlog" };
+            parameters.Loggers = new ILogger[] { logger, structured };
 
             var result = manager.Build(parameters, request);
+            if (verbosity >= LoggerVerbosity.Detailed)
+                output.WriteLine($"msbuild {project.ProjectFileLocation.File} /t:{targets.Replace(';', ',')} " +
+                    string.Join(" ", properties.Select(kv => $"/p:{kv.Key}=\"{kv.Value}\"")) + " " + 
+                    string.Join(" ", project.GlobalProperties.Select(kv => $"/p:{kv.Key}=\"{kv.Value}\"")));
 
-            return new TargetResult(result, targets, logger);
+            return new TargetResult(result, targets, logger, structured);
         }
     }
 
     public class TargetResult : ITargetResult
     {
-        public TargetResult(BuildResult result, string target, TestOutputLogger logger)
+        public TargetResult(BuildResult result, string target, TestOutputLogger logger, StructuredLogger structured)
         {
             BuildResult = result;
             Target = target;
             Logger = logger;
+            StructuredLogger = structured;
         }
 
-        public BuildResult BuildResult { get; private set; }
+        public BuildResult BuildResult { get; }
 
-        public TestOutputLogger Logger { get; private set; }
+        public StructuredLogger StructuredLogger { get; }
 
-        public string Target { get; private set; }
+        public TestOutputLogger Logger { get; }
+
+        public string Target { get; }
 
         public Exception Exception => BuildResult[Target].Exception;
 
@@ -72,18 +82,24 @@ public static partial class Builder
 
         public TargetResultCode ResultCode => BuildResult[Target].ResultCode;
 
-        public void AssertSuccess(ITestOutputHelper output)
+        public TargetResult AssertSuccess()
         {
             if (!BuildResult.ResultsByTarget.ContainsKey(Target))
             {
-                output.WriteLine(this.ToString());
+                Logger.Output?.WriteLine(ToString());
                 Assert.False(true, "Build results do not contain output for target " + Target);
             }
 
             if (ResultCode != TargetResultCode.Success)
-                output.WriteLine(this.ToString());
+            {
+                Logger.Output?.WriteLine(ToString());
+#if DEBUG
+                Process.Start(StructuredLogger.Parameters);
+#endif
+            }
 
             Assert.Equal(TargetResultCode.Success, ResultCode);
+            return this;
         }
 
         public override string ToString()

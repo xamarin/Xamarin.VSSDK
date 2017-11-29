@@ -18,13 +18,69 @@
     <PackageReference Include="Microsoft.VisualStudio.Shell.14.0" Version="14.3.25407" Condition="'$(TargetFramework)' == 'net461'" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="15.0.26606" Condition="'$(TargetFramework)' == 'net462'" />
   </ItemGroup>
-  
+
+  <!-- Duplicate Xamarin.VSSDK package reference dependencies -->
+  <ItemGroup Label="Visual Studio 2013" Condition="'$(TargetFramework)' == 'net46'" >
+    <PackageReference Include="VSSDK_Reference_Assemblies" Version="12.0.21005" />
+
+    <!-- Missing EnvDTE + VSLangProj -->
+    <PackageReference Include="EnvDTE100" Version="10.0.1" />
+    <PackageReference Include="VSLangProj100" Version="10.0.30319" />
+    <PackageReference Include="VSLangProj110" Version="11.0.61030" />
+
+    <!-- Workaround for warning on wrong dep. for 12.0.* -->
+    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="12.2.0" />
+    <PackageReference Include="VSSDK.Shell.12" Version="12.0.4" />
+    <PackageReference Include="VSSDK.ComponentModelHost" Version="12.0.4" />
+  </ItemGroup>
+
+  <ItemGroup Label="Visual Studio 2015" Condition="'$(TargetFramework)' == 'net461'">
+    <PackageReference Include="VSSDK_Reference_Assemblies" Version="14.3.25407" />
+
+    <!-- Missing EnvDTE + VSLangProj -->
+    <PackageReference Include="EnvDTE100" Version="10.0.1" />
+    <PackageReference Include="VSLangProj100" Version="10.0.30319" />
+    <PackageReference Include="VSLangProj110" Version="11.0.61030" />
+    <PackageReference Include="VSLangProj140" Version="14.0.25029" />
+
+    <PackageReference Include="Microsoft.VisualStudio.ComponentModelHost" Version="14.0.25424" />
+  </ItemGroup>
+
+  <ItemGroup Label="Visual Studio 2017" Condition="'$(TargetFramework)' == 'net462'" >
+    <PackageReference Include="VSSDK_Reference_Assemblies" Version="15.0.26608" />
+  </ItemGroup>
+
+  <Target Name="_EnsureExperimental" BeforeTargets="GetVsixDeploymentPath">
+    <!--Check if the user is an administrator and the user profile hasn't been setup for the target instance. -->
+    <CheckProfileSetup
+        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)">
+      <Output TaskParameter="IsAdministrator" PropertyName="IsCurrentUserAdministrator" />
+      <Output TaskParameter="IsProfileSetup" PropertyName="IsTargetProfileSetup" />
+    </CheckProfileSetup>
+
+    <!--Run devenv to setup the target profile if necessary -->
+    <Message
+        Importance="High"
+        Text="Setting up Visual Studio for debugging extensions. This one-time operation may take a minute or more."
+        Condition="'$(IsCurrentUserAdministrator)'=='True' And '$(IsTargetProfileSetup)'=='False'" />
+    <Devenv
+        Condition="'$(IsCurrentUserAdministrator)'=='True' And '$(IsTargetProfileSetup)'=='False'"
+        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)"
+        ResetSettingProfile="General.vssettings"
+        IsEmbedded="true" />
+
+    <!--Enable always loading extensions from LocalAppData -->
+    <EnableLoadingAllExtensions
+        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)" />
+  </Target>
+
   <Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VSSDK.props" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
   <Import Project="$(SdkRootDir)build\Xamarin.VSSDK.props" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
 
   <Import Project="$(SdkToolsRootDir)build\Xamarin.VSSDK.BuildTools.props" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="$(NuGetRestoreTargets)"/>
   <Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VSSDK.targets" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
   <Import Project="$(SdkRootDir)build\Xamarin.VSSDK.targets" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
   <Import Project="$(SdkToolsRootDir)build\Xamarin.VSSDK.BuildTools.targets" Condition="'$(IsCrossTargetingBuild)' != 'true'" />

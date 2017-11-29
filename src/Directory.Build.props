@@ -1,19 +1,19 @@
 <Project>
-	<PropertyGroup>
-		<MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-	</PropertyGroup>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
 
-	<PropertyGroup>
-		<!-- This property still needs to be passed-in via build.cmd in order for it to work properly pre-15.2 -->
-		<NuGetBuildTasksPackTargets>DONT-WANT-SDK-PACK</NuGetBuildTasksPackTargets>
+  <PropertyGroup>
+    <!-- This property still needs to be passed-in via build.cmd in order for it to work properly pre-15.2 -->
+    <NuGetBuildTasksPackTargets>DONT-WANT-SDK-PACK</NuGetBuildTasksPackTargets>
 
-		<!-- Packaging -->
-		<PackOnBuild Condition="'$(PackOnBuild)' == '' and ('$(BuildingInsideVisualStudio)' != 'true' or '$(Configuration)' == 'Release')">true</PackOnBuild>
-		<PrimaryOutputKind>build</PrimaryOutputKind>
-		<InferLegacyPackageReferences>false</InferLegacyPackageReferences>
-		<PackageOutputPath>$(MSBuildThisFileDirectory)..\out</PackageOutputPath>
+    <!-- Packaging -->
+    <PackOnBuild>true</PackOnBuild>
+    <PrimaryOutputKind>build</PrimaryOutputKind>
+    <InferLegacyPackageReferences>false</InferLegacyPackageReferences>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)..\out</PackageOutputPath>
 
-		<!-- Build -->
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	</PropertyGroup>
+    <!-- Build -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
 </Project>

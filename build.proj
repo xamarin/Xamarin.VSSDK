@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" InitialTargets="_Setup" TreatAsLocalProperty="Configuration">
+<Project DefaultTargets="Build" TreatAsLocalProperty="Configuration">
   <Import Project="build\corebuild.props" />
 
   <PropertyGroup>
@@ -9,18 +9,12 @@
 
     <!-- Validate/init feed before pushing. Typically, init is done once, manually. Validate takes time -->
     <SleetValidate Condition="'$(SleetValidate)' == ''">false</SleetValidate>
-
-    <!-- Additional properties for Push -->
-    <NuGetPath Condition="'$(NuGetPath)' == ''">$(RestoreOutputPath)</NuGetPath>
-    <NuGet Condition="'$(NuGet)' == ''">$(NuGetPath)\nuget.exe</NuGet>
-    <NuGetSource Condition="'$(NuGetSource)' == ''">nuget.org</NuGetSource>
-    <NuGetUrl Condition="'$(NuGetUrl)' == ''">https://dist.nuget.org/win-x86-commandline/latest/nuget.exe</NuGetUrl>
-    <!--<NuGetApiKey>REQUIRED_API_KEY_FOR_PUSH</NuGetApiKey>-->
+    <StorageAccount>kzu</StorageAccount>
+    <StorageContainer>nuget</StorageContainer>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
-    <PackageReference Include="xunit.runner.console" Version="2.3.0-beta1-build3642" />
+    <PackageReference Include="xunit.runner.console" Version="2.3.1" />
     <PackageReference Include="Sleet.Azure" Version="*" />
     <PackageReference Include="JsonPoke.MSBuild" Version="*" />
   </ItemGroup>
@@ -35,10 +29,11 @@
     <Solution Include="src\*.sln" />
   </ItemGroup>
 
-  <Target Name="Build">
+  <Target Name="Build" DependsOnTargets="SetVersion">
     <Message Text="Building AssemblyVersion=$(AssemblyVersion), PackageVersion=$(PackageVersion)" Importance="high" />
     <Message Text="##vso[build.updatebuildnumber]$(PackageVersion)" Importance="high" Condition="'$(TF_BUILD)' == 'true'" />
-    
+
+    <MakeDir Directories="$(Out)" Condition="!Exists('$(Out)')" />
     <MSBuild Projects="@(Solution)" Targets="Build" />
 
     <!-- Also build the tests for Dev14 (by default it's only compiled for dev15) -->
@@ -47,13 +42,19 @@
     <Copy SourceFiles="NuGet.Config" DestinationFolder="$(Out)" />
   </Target>
 
-  <Target Name="BeforePush" BeforeTargets="Push">
+  <Target Name="_AddPackages" BeforeTargets="Push">
     <ItemGroup>
       <Package Include="$(Out)\*.nupkg" />
     </ItemGroup>
   </Target>
 
   <Target Name="Publish" DependsOnTargets="Push" />
+
+  <Target Name="Delete" DependsOnTargets="_SleetValidateStorage;_SleetConfigCreate;SetVersion">
+    <Error Condition="'$(DeleteVersion)' == ''" Text="Please specify the version of the Xamarin.VSSDK packages to delete as /p:DeleteVersion" />
+    <Exec Command='"$(Sleet)" delete -i Xamarin.VSSDK -v $(DeleteVersion) -s feed -c $(_SleetConfig)' ContinueOnError='true' />
+    <Exec Command='"$(Sleet)" delete -i Xamarin.VSSDK.BuildTools -v $(DeleteVersion) -s feed -c $(_SleetConfig)' ContinueOnError='true' />
+  </Target>
 
   <Target Name="Test" DependsOnTargets="Build">
     <PropertyGroup>
@@ -106,27 +107,6 @@
 
   <Target Name="_Restore" AfterTargets="Restore">
     <MSBuild BuildInParallel="true" Projects="@(Solution);test\Xamarin.VSSDK.Tests\Xamarin.VSSDK.Tests.csproj" Targets="Restore" />
-  </Target>
-
-  <Target Name="GitVersion">
-    <PropertyGroup>
-      <GitBaseVersionMajor>0</GitBaseVersionMajor>
-      <GitBaseVersionMinor>1</GitBaseVersionMinor>
-      <GitBaseVersionPatch>0</GitBaseVersionPatch>
-      <GitSemVerMajor>0</GitSemVerMajor>
-      <GitSemVerMinor>1</GitSemVerMinor>
-      <GitSemVerPatch>0</GitSemVerPatch>
-      <GitCommits>0</GitCommits>
-    </PropertyGroup>
-  </Target>
-
-  <Target Name="_Setup" DependsOnTargets="_SetVersion">
-    <!-- Update AppVeyor build # to match the actual one being used -->
-    <Exec Command="appveyor UpdateBuild -Version $(PackageVersion)"
-			  Condition="'$(APPVEYOR)' == 'true' And '$(target)' != 'Restore'"
-			  ContinueOnError="true" />
-
-    <MakeDir Directories="$(Out)" Condition="!Exists('$(Out)')" />
   </Target>
 
   <Import Project="src\Version.targets" />

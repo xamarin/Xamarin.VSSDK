@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
@@ -9,6 +10,11 @@ namespace Xamarin.VSSDK.Tests
 {
     public class TargetsTests
     {
+        // This resolves the SDKs to the same location that was used to compile this project.
+        static TargetsTests() => Environment.SetEnvironmentVariable(
+            nameof(ThisAssembly.Project.Properties.MSBuildSDKsPath), 
+            ThisAssembly.Project.Properties.MSBuildSDKsPath);
+
         ITestOutputHelper output;
 
         public TargetsTests(ITestOutputHelper output) => this.output = output;
@@ -93,7 +99,7 @@ namespace Xamarin.VSSDK.Tests
                 { "ActiveDebugFramework", "net461" },
                 { "Dev", "15.0" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
-                { "BuildingInsideVisualStudio", "true" }
+                { "BuildingInsideVisualStudio", "true" },
             }, "15.0", new ProjectCollection());
 
             Assert.Equal("net462", project.GetPropertyValue("TargetFramework"));
