@@ -9,18 +9,12 @@
 
     <!-- Validate/init feed before pushing. Typically, init is done once, manually. Validate takes time -->
     <SleetValidate Condition="'$(SleetValidate)' == ''">false</SleetValidate>
-
-    <!-- Additional properties for Push -->
-    <NuGetPath Condition="'$(NuGetPath)' == ''">$(RestoreOutputPath)</NuGetPath>
-    <NuGet Condition="'$(NuGet)' == ''">$(NuGetPath)\nuget.exe</NuGet>
-    <NuGetSource Condition="'$(NuGetSource)' == ''">nuget.org</NuGetSource>
-    <NuGetUrl Condition="'$(NuGetUrl)' == ''">https://dist.nuget.org/win-x86-commandline/latest/nuget.exe</NuGetUrl>
-    <!--<NuGetApiKey>REQUIRED_API_KEY_FOR_PUSH</NuGetApiKey>-->
+    <StorageAccount>kzu</StorageAccount>
+    <StorageContainer>nuget</StorageContainer>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitInfo" Version="*" PrivateAssets="all" />
-    <PackageReference Include="xunit.runner.console" Version="2.3.0-beta1-build3642" />
+    <PackageReference Include="xunit.runner.console" Version="2.3.1" />
     <PackageReference Include="Sleet.Azure" Version="*" />
     <PackageReference Include="JsonPoke.MSBuild" Version="*" />
   </ItemGroup>
@@ -47,7 +41,7 @@
     <Copy SourceFiles="NuGet.Config" DestinationFolder="$(Out)" />
   </Target>
 
-  <Target Name="BeforePush" BeforeTargets="Push">
+  <Target Name="_AddPackages" BeforeTargets="Push">
     <ItemGroup>
       <Package Include="$(Out)\*.nupkg" />
     </ItemGroup>
@@ -106,18 +100,6 @@
 
   <Target Name="_Restore" AfterTargets="Restore">
     <MSBuild BuildInParallel="true" Projects="@(Solution);test\Xamarin.VSSDK.Tests\Xamarin.VSSDK.Tests.csproj" Targets="Restore" />
-  </Target>
-
-  <Target Name="GitVersion">
-    <PropertyGroup>
-      <GitBaseVersionMajor>0</GitBaseVersionMajor>
-      <GitBaseVersionMinor>1</GitBaseVersionMinor>
-      <GitBaseVersionPatch>0</GitBaseVersionPatch>
-      <GitSemVerMajor>0</GitSemVerMajor>
-      <GitSemVerMinor>1</GitSemVerMinor>
-      <GitSemVerPatch>0</GitSemVerPatch>
-      <GitCommits>0</GitCommits>
-    </PropertyGroup>
   </Target>
 
   <Target Name="_Setup" DependsOnTargets="_SetVersion">
