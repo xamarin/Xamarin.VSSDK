@@ -50,6 +50,12 @@
 
   <Target Name="Publish" DependsOnTargets="Push" />
 
+  <Target Name="Delete" DependsOnTargets="_SleetValidateStorage;_SleetConfigCreate;SetVersion">
+    <Error Condition="'$(DeleteVersion)' == ''" Text="Please specify the version of the Xamarin.VSSDK packages to delete as /p:DeleteVersion" />
+    <Exec Command='"$(Sleet)" delete -i Xamarin.VSSDK -v $(DeleteVersion) -s feed -c $(_SleetConfig)' ContinueOnError='true' />
+    <Exec Command='"$(Sleet)" delete -i Xamarin.VSSDK.BuildTools -v $(DeleteVersion) -s feed -c $(_SleetConfig)' ContinueOnError='true' />
+  </Target>
+
   <Target Name="Test" DependsOnTargets="Build">
     <PropertyGroup>
       <XmlTestFile>$(Out)\TestResults.xml</XmlTestFile>
