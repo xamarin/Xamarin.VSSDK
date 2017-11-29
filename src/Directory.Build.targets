@@ -11,12 +11,15 @@
     <PackageReference Include="MicroBuild.Core" Version="0.2.0" PrivateAssets="all" />
   </ItemGroup>
 
-  <Target Name="PruneCachedPackage" Condition="'$(CI)' != 'true'" AfterTargets="Build">
-    <Exec Command='rd "$(NuGetPackageRoot)$(PackageId.ToLowerInvariant())" /q /s' />
+  <Target Name="LocalPublish" Condition="'$(CI)' != 'true'" AfterTargets="Pack">
+    <Exec Command='rd "$(NuGetPackageRoot)$(PackageId.ToLowerInvariant())" /q /s' Condition="Exists('$(NuGetPackageRoot)$(PackageId.ToLowerInvariant())')" />
+    <Exec Command="del $(TEMP)\packages\$(PackageId)*.nupkg" Condition="Exists('$(TEMP)\packages')" ContinueOnError="true" />
+    <MakeDir Directories="$(TEMP)\packages" Condition="!Exists('$(TEMP)\packages')" />
+    <Copy SourceFiles="$(PackageTargetPath)" DestinationFolder="$(TEMP)\packages" />
   </Target>
 
   <Target Name="Layout" AfterTargets="Build" BeforeTargets="Pack">
-    <Copy SourceFiles="@(None)" DestinationFiles="$(OutputPath)%(None.Kind)\%(None.Filename)%(None.Extension)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="%(None.FullPath)" DestinationFiles="$(OutputPath)%(None.Kind)\%(None.Filename)%(None.Extension)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(BuiltProjectOutputGroupKeyOutput -> '%(FinalOutputPath)');@(DebugSymbolsProjectOutputGroupOutput -> '%(FinalOutputPath)')" DestinationFiles="$(OutputPath)build\%(Filename)%(Extension)" SkipUnchangedFiles="true" />
   </Target>
 
