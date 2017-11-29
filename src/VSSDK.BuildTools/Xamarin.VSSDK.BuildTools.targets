@@ -17,7 +17,7 @@
   <Import Project="Xamarin.VSSDK.BuildTools.VSSDKVersion.targets" />
 
   <PropertyGroup>
-    <OverrideDeployVsixExtensionFiles Condition="'$(OverrideDeployVsixExtensionFiles)' == '' and '$(Dev)' &gt;= '14.0'">true</OverrideDeployVsixExtensionFiles>
+    <OverrideDeployVsixExtensionFiles Condition="'$(OverrideDeployVsixExtensionFiles)' == '' and '$(Dev)' != '' and '$(Dev)' &gt;= '14.0'">true</OverrideDeployVsixExtensionFiles>
   </PropertyGroup>
 
   <Import Project="Xamarin.VSSDK.BuildTools.DeployVsixExtensionFiles.targets" Condition="'$(OverrideDeployVsixExtensionFiles)' == 'true'" />
