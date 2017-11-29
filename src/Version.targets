@@ -50,8 +50,9 @@ AssemblyVersion=$(AssemblyVersion)" />
       <_GitBranch Condition="'$(_IndexOfBranchSlash)' != '0'">$(GitBranch.Substring($(_IndexOfBranchSubstring)))</_GitBranch>
       <_GitBranch Condition="'$(_IndexOfBranchSlash)' == '0'">$(GitBranch)</_GitBranch>
 
-      <PackageVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitBaseVersionPatch)$(GitSemVerDashLabel)+$(_GitBranch).$(GitCommit)</PackageVersion>
-      <AssemblyVersion>$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)</AssemblyVersion>
+      <PackageVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)$(GitSemVerDashLabel)+$(_GitBranch).$(GitCommit)</PackageVersion>
+      <AssemblyVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</AssemblyVersion>
+      <InformationalVersion>$(PackageVersion)</InformationalVersion>
     </PropertyGroup>
   </Target>
   
