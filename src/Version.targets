@@ -38,8 +38,8 @@ AssemblyVersion=$(AssemblyVersion)" />
     <PropertyGroup>
       <!-- PR builds are *always* prerelease -->
       <!-- TFS case: BUILD_REASON=PullRequest and BUILD_SOURCEBRANCH=refs/pull/#/merge -->
-      <GitSemVerDashLabel Condition="'$(TF_BUILD)' == 'true' and '$(BUILD_REASON)' == 'PullRequest'">-pr$(BUILD_SOURCEBRANCH.Substring(10).TrimEnd('/merge'))</GitSemVerDashLabel>
-      <GitSemVerDashLabel Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">-pr$(APPVEYOR_PULL_REQUEST_NUMBER)</GitSemVerDashLabel>
+      <GitSemVerDashLabel Condition="'$(TF_BUILD)' == 'true' and '$(BUILD_REASON)' == 'PullRequest'">$(GitSemVerDashLabel)-pr$(BUILD_SOURCEBRANCH.Substring(10).TrimEnd('/merge'))</GitSemVerDashLabel>
+      <GitSemVerDashLabel Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">$(GitSemVerDashLabel)-pr$(APPVEYOR_PULL_REQUEST_NUMBER)</GitSemVerDashLabel>
 
       <!-- NOTE: build metadata does not affect version matching, so even if you work from a different branch+commit that gets 
            rebased+merged later on, the version # might still be the same (provided there weren't additional commits in master 
@@ -50,12 +50,20 @@ AssemblyVersion=$(AssemblyVersion)" />
       <_GitBranch Condition="'$(_IndexOfBranchSlash)' != '0'">$(GitBranch.Substring($(_IndexOfBranchSubstring)))</_GitBranch>
       <_GitBranch Condition="'$(_IndexOfBranchSlash)' == '0'">$(GitBranch)</_GitBranch>
 
-      <PackageVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)$(GitSemVerDashLabel)+$(_GitBranch).$(GitCommit)</PackageVersion>
-      <AssemblyVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</AssemblyVersion>
+      <!-- We'll use GitFlow and ship publicly from master, meaning we don't need branch metadata from there -->
+      <SemVerMetadata Condition="'$(_GitBranch)' != 'master'">$(_GitBranch).</SemVerMetadata>
+      <SemVerMetadata>$(SemVerMetadata)sha.$(GitCommit)</SemVerMetadata>
+
+      <!-- If there is a pre-release label, fix the major.minor.build and increment the release label digit instead. -->
+      <PackageVersion Condition="'$(GitSemVerDashLabel)' != ''">$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)$(GitSemVerDashLabel).$(GitCommits)+$(SemVerMetadata)</PackageVersion>
+      <!-- If shipping stable, semver the package version -->
+      <PackageVersion Condition="'$(GitSemVerDashLabel)' == ''">$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)+$(SemVerMetadata)</PackageVersion>
+      <AssemblyVersion>$(GitBaseVersionMajor).$(GitBaseVersionMinor).$(GitBaseVersionPatch)</AssemblyVersion>
+      <FileVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</FileVersion>
       <InformationalVersion>$(PackageVersion)</InformationalVersion>
     </PropertyGroup>
   </Target>
-  
+
   <PropertyGroup>
     <VersionImported>true</VersionImported>
   </PropertyGroup>
