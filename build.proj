@@ -7,8 +7,7 @@
     <Out Condition="'$(Out)' == ''">$(MSBuildThisFileDirectory)out</Out>
     <AdditionalProperties>Configuration=$(Configuration);PackageOutputPath=$(Out);NuGetBuildTasksPackTargets=DONT-WANT-SDK-PACK</AdditionalProperties>
 
-    <!-- Validate/init feed before pushing. Typically, init is done once, manually. Validate takes time -->
-    <SleetValidate Condition="'$(SleetValidate)' == ''">false</SleetValidate>
+    <SleetInit Condition="'$(SleetInit)' == ''">false</SleetInit>
     <StorageAccount>kzu</StorageAccount>
     <StorageContainer>nuget</StorageContainer>
   </PropertyGroup>
