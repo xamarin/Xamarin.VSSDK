@@ -11,4 +11,4 @@ obj
 *.user
 *.cache
 *.log
-/sleet.json
+*.rsp

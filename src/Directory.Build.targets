@@ -13,7 +13,12 @@
 
   <Target Name="LocalPublish" Condition="'$(CI)' != 'true'" AfterTargets="Pack">
     <Exec Command='rd "$(NuGetPackageRoot)$(PackageId.ToLowerInvariant())" /q /s' Condition="Exists('$(NuGetPackageRoot)$(PackageId.ToLowerInvariant())')" />
-    <Exec Command="del $(TEMP)\packages\$(PackageId)*.nupkg" Condition="Exists('$(TEMP)\packages')" ContinueOnError="true" />
+    
+    <ItemGroup>
+      <ToDelete Include="$(TEMP)\packages\$(PackageId)*.nupkg" />
+    </ItemGroup>
+    <Delete Files="@(ToDelete)" />
+
     <MakeDir Directories="$(TEMP)\packages" Condition="!Exists('$(TEMP)\packages')" />
     <Copy SourceFiles="$(PackageTargetPath)" DestinationFolder="$(TEMP)\packages" />
   </Target>
