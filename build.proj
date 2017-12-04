@@ -8,8 +8,8 @@
     <AdditionalProperties>Configuration=$(Configuration);PackageOutputPath=$(Out);NuGetBuildTasksPackTargets=DONT-WANT-SDK-PACK</AdditionalProperties>
 
     <SleetInit Condition="'$(SleetInit)' == ''">false</SleetInit>
-    <StorageAccount>kzu</StorageAccount>
-    <StorageContainer>nuget</StorageContainer>
+    <StorageAccount>nugets</StorageAccount>
+    <StorageContainer>xvssdk</StorageContainer>
   </PropertyGroup>
 
   <ItemGroup>
