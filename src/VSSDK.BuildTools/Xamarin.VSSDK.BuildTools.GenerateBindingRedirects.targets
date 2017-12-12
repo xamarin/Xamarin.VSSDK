@@ -8,8 +8,7 @@
        
        Old version %(From) is optional and defaults to 0.0.0.0.
        Old version %(To) is optional and defaults to the referenced assembly, 
-       unless $(BindingRedirectAllVersions) is 'true', in which case it defaults
-       to 99.9.9.9 (use with care, you may be downgrading assemblies).
+       unless $(BindingDefaultTo) specifies a non-empty value.
        
        Examples:
        
@@ -20,12 +19,13 @@
   -->
 
   <PropertyGroup>
-    <!-- If specified, the redirected max version will be 99.9.9.9 by default. 
-         Can be overriden for specific references by adding %(BindingRedirected.To) metadata.
-			   If 'false' (the defautl), the determined fusion version of the resolved @(ReferencePath) will 
-         be used instead. -->
-    <BindingRedirectAllVersions Condition="'$(BindingRedirectAllVersions)' == ''">false</BindingRedirectAllVersions>
+    <!-- Default min range for the old version to redirect, defaults to 0.0.0.0 -->
+    <BindingDefaultFrom>0.0.0.0</BindingDefaultFrom>
 
+    <!-- If specified, changes the default max range for the old version to redirect, which otherwise 
+         equals the resolved reference version. -->
+    <BindingDefaultTo />
+    
     <_BindingRedirects>BindingRedirects.pkgdef</_BindingRedirects>
     <_GenerateBindingRedirects Condition="'$(BindingRedirectFusionExpr)' != ''">true</_GenerateBindingRedirects>
   </PropertyGroup>
@@ -120,9 +120,9 @@
         <To>$(_OldTo)</To>
       </BindingRedirected>
       <BindingRedirected Update="@(_BindingRedirected)">
-        <From Condition="'%(From)' == ''">0.0.0.0</From>
-        <To Condition="'%(To)' == '' And '$(BindingRedirectAllVersions)' == 'true'">99.9.9.9</To>
-        <To Condition="'%(To)' == '' And '$(BindingRedirectAllVersions)' != 'true'">%(Version)</To>
+        <From Condition="'%(From)' == ''">$(BindingDefaultFrom)</From>
+        <To Condition="'%(To)' == '' And '$(BindingDefaultTo)' != ''">$(BindingDefaultTo)</To>
+        <To Condition="'%(To)' == '' And '$(BindingDefaultTo)' == ''">%(Version)</To>
       </BindingRedirected>
     </ItemGroup>
 
