@@ -15,5 +15,8 @@
 
     <!-- Build -->
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <SkipGitCache>true</SkipGitCache>
+    <SkipWriteGitCache>true</SkipWriteGitCache>
+    <SkipReadGitCache>true</SkipReadGitCache>
   </PropertyGroup>
 </Project>

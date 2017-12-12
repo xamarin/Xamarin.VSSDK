@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="BindRedirected.csproj" />
     <None Include="VsixTemplate.csproj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -82,6 +83,10 @@
   <ItemGroup>
     <None Update="source.extension.vsixmanifest">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="BindRedirected.csproj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Visible>$([MSBuild]::ValueOrDefault('%(None.NuGetPackageId)', '').Equals(''))</Visible>
     </None>
   </ItemGroup>
 

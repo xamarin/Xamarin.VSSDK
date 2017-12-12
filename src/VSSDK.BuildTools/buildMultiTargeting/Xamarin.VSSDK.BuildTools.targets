@@ -1,0 +1,33 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+	============================================================
+                      CreateVsixContainer
+   Cross-targeting version of CreateVsixContainer. 
+   NOTE: depends on Microsoft.Common.CrossTargeting.targets
+   
+   [OUT]
+   @(InnerOutput) - The combined output items of the inner targets across
+                    all builds.
+  ============================================================
+  -->
+  <Target Name="CreateVsixContainer" DependsOnTargets="_SetCreateVsixContainerInnerTarget;DispatchToInnerBuilds" Returns="@(InnerOutput)" />
+
+  <Target Name="_SetCreateVsixContainerInnerTarget">
+    <PropertyGroup>
+      <InnerTargets>CreateVsixContainer</InnerTargets>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_AddCreateVsixExtrension" BeforeTargets="DispatchToInnerBuilds">
+    <PropertyGroup>
+      <CreateVsixContainer Condition="'$(CreateVsixContainer)' == ''">true</CreateVsixContainer>
+    </PropertyGroup>
+    <ItemGroup>
+      <_InnerBuildProjects>
+        <AdditionalProperties>%(AdditionalProperties);CreateVsixContainer=$(CreateVsixContainer)</AdditionalProperties>
+      </_InnerBuildProjects>
+    </ItemGroup>
+  </Target>
+
+</Project>
