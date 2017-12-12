@@ -1,8 +1,11 @@
 <Project DefaultTargets="Build" TreatAsLocalProperty="Configuration">
   <Import Project="build\corebuild.props" />
+  <Import Project="src\Directory.Build.props"/>
 
   <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == '' and '$(CI)' == 'true'">Release</Configuration>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    
     <IntermediateOutputPath>$(RestoreOutputPath)\</IntermediateOutputPath>
     <Out Condition="'$(Out)' == ''">$(MSBuildThisFileDirectory)out</Out>
     <AdditionalProperties>Configuration=$(Configuration);PackageOutputPath=$(Out);NuGetBuildTasksPackTargets=DONT-WANT-SDK-PACK</AdditionalProperties>
@@ -28,8 +31,7 @@
     <Solution Include="src\*.sln" />
   </ItemGroup>
 
-  <Target Name="Build" DependsOnTargets="SetVersion">
-    <Message Text="Building AssemblyVersion=$(AssemblyVersion), PackageVersion=$(PackageVersion)" Importance="high" />
+  <Target Name="Build" DependsOnTargets="Version">
     <Message Text="##vso[build.updatebuildnumber]$(PackageVersion)" Importance="high" Condition="'$(TF_BUILD)' == 'true'" />
 
     <MakeDir Directories="$(Out)" Condition="!Exists('$(Out)')" />

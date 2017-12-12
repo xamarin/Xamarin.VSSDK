@@ -7,6 +7,9 @@
     <!-- This property still needs to be passed-in via build.cmd in order for it to work properly pre-15.2 -->
     <NuGetBuildTasksPackTargets>DONT-WANT-SDK-PACK</NuGetBuildTasksPackTargets>
 
+    <CI Condition="'$(CI)' == '' and '$(TF_BUILD)' == 'true'">true</CI>
+    <CI Condition="'$(CI)' == '' and '$(APPVEYOR)' != ''">true</CI>
+
     <!-- Packaging -->
     <PackOnBuild>true</PackOnBuild>
     <PrimaryOutputKind>build</PrimaryOutputKind>
