@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <TargetFramework>net461</TargetFramework>
+    
+    <ToolsRootDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .editorconfig))\src\VSSDK.BuildTools\</ToolsRootDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="automapper" Version="6.2.2" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Causes default old version from to be 99.9.9.9 -->
+    <BindingRedirectAllVersions>true</BindingRedirectAllVersions>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <BindingRedirected Include="Newtonsoft.Json">
+      <!-- Showcases specifying only From metadata -->
+      <From>6.0.0.0</From>
+    </BindingRedirected>
+    <!-- Showcases specifying no From/To metadata at all, and case-insensitive matching -->
+    <BindingRedirected Include="automapper" />
+    <!-- Showcases matching a specific assembly -->
+    <BindingRedirected Include="^System, Version=4.0.0.0" From="2.0.0.0" />
+    <!-- Showcases matching with a regex that matches two assemblies -->
+    <BindingRedirected Include="System.Xml+" From="3.0.0.0" />
+  </ItemGroup>
+
+  <Import Project="$(NuGetRestoreTargets)" Condition="'$(NuGetRestoreTargets)' != '' and '$(IsRestoreTargetsFileLoaded)' != 'true'" />
+  <Import Project="$(ToolsRootDir)Xamarin.VSSDK.BuildTools.GenerateBindingRedirects.targets" />
+</Project>

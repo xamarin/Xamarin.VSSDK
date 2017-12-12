@@ -1,0 +1,190 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- This targets file automatically generates a BindingRedirects.pkgdef that 
+       provides fusion binding redirects for assemblies whose %(FusionName) metadata 
+       matches the specified @(BindingRedirect) identity/spec (evaluated as a regex), 
+       using the provided %(From) and %(To) metadata for the old version range to 
+       redirect to the matching referenced assemblies' current version. 
+       
+       Old version %(From) is optional and defaults to 0.0.0.0.
+       Old version %(To) is optional and defaults to the referenced assembly, 
+       unless $(BindingRedirectAllVersions) is 'true', in which case it defaults
+       to 99.9.9.9 (use with care, you may be downgrading assemblies).
+       
+       Examples:
+       
+       <ItemGroup>
+         <BindingRedirected Include="Newtonsoft.Json" />
+         <BindingRedirected Include="Octokit.+" From="0.28.0.0" />
+       </ItemGroup>
+  -->
+
+  <PropertyGroup>
+    <!-- If specified, the redirected max version will be 99.9.9.9 by default. 
+         Can be overriden for specific references by adding %(BindingRedirected.To) metadata.
+			   If 'false' (the defautl), the determined fusion version of the resolved @(ReferencePath) will 
+         be used instead. -->
+    <BindingRedirectAllVersions Condition="'$(BindingRedirectAllVersions)' == ''">false</BindingRedirectAllVersions>
+
+    <_BindingRedirects>BindingRedirects.pkgdef</_BindingRedirects>
+    <_GenerateBindingRedirects Condition="'$(BindingRedirectFusionExpr)' != ''">true</_GenerateBindingRedirects>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(_GenerateBindingRedirects)' == 'true'">
+    <GetCopyToOutputDirectoryItemsDependsOn>
+      BindingRedirects;
+      $(GetCopyToOutputDirectoryItemsDependsOn)
+    </GetCopyToOutputDirectoryItemsDependsOn>
+    <ResolveReferencesDependsOn>
+      $(ResolveReferencesDependsOn);
+      BindingRedirects
+    </ResolveReferencesDependsOn>
+    <BuildDependsOn Condition="'$(Configuration)' == 'Release'">
+      $(BuildDependsOn);
+      ReportBindingRedirects
+    </BuildDependsOn>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(_GenerateBindingRedirects)' == 'true'">
+    <Content Include="$(IntermediateOutputPath)$(_BindingRedirects)">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>$(BindingRedirects)</Link>
+      <Visible>false</Visible>
+    </Content>
+  </ItemGroup>
+
+  <ItemDefinitionGroup>
+    <!-- Facade assemblies don't have this metadata attribute, so default it to empty -->
+    <ReferencePath>
+      <FusionName />
+    </ReferencePath>
+  </ItemDefinitionGroup>
+
+
+  <!--
+    =================================================================================
+    Generates the required binding redirects for the matching resolved references.
+    =================================================================================
+  -->
+  <Target Name="BindingRedirects" DependsOnTargets="$(BindingRedirectsDependsOn)" />
+
+  <PropertyGroup>
+    <BindingRedirectsDependsOn>
+      _CollectBindingRedirected;
+      _CleanBindingRedirectsPackage;
+      _GenerateBindingRedirectsPackage
+    </BindingRedirectsDependsOn>
+  </PropertyGroup>
+
+  <!--
+    =================================================================================
+    Reports the generated binding redirects
+    =================================================================================
+  -->
+  <Target Name="ReportBindingRedirects" DependsOnTargets="BindingRedirects">
+
+    <Message Text="Binding redirection applied for @(BindingRedirected -> Count()) assemblies"
+             Condition="@(BindingRedirected -> Count()) != 0"
+             Importance="high" />
+    <Message Text="    - %(BindingRedirected.Filename)%(BindingRedirected.Extension)" 
+             Condition="@(BindingRedirected -> Count()) != 0" 
+             Importance="normal" />
+
+  </Target>
+
+  <Target Name="_CollectBindingRedirected"
+          Inputs="@(BindingRedirected)"
+          Outputs="%(Identity)-BATCH"
+          DependsOnTargets="ResolveAssemblyReferences"
+          Returns="@(BindingRedirected)">
+
+    <PropertyGroup>
+      <_FusionExpression>%(BindingRedirected.Identity)</_FusionExpression>
+      <_OldFrom>%(BindingRedirected.From)</_OldFrom>
+      <_OldTo>%(BindingRedirected.To)</_OldTo>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_BindingRedirectedReference Include="@(ReferencePath)"
+                                   Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(ReferencePath.FusionName)', '$(_FusionExpression)', RegexOptions.IgnoreCase))" />
+      <_BindingRedirected Include="@(_BindingRedirectedReference -> Distinct())" />
+    </ItemGroup>
+
+    <Error Condition="'@(_BindingRedirected)' == ''" Text="No assembly references match the specified binding redirect expression '$(_FusionExpression)'." />
+
+    <ItemGroup>
+      <BindingRedirected Remove="@(BindingRedirected)" />
+      <BindingRedirected Include="@(_BindingRedirected)">
+        <From>$(_OldFrom)</From>
+        <To>$(_OldTo)</To>
+      </BindingRedirected>
+      <BindingRedirected Update="@(_BindingRedirected)">
+        <From Condition="'%(From)' == ''">0.0.0.0</From>
+        <To Condition="'%(To)' == '' And '$(BindingRedirectAllVersions)' == 'true'">99.9.9.9</To>
+        <To Condition="'%(To)' == '' And '$(BindingRedirectAllVersions)' != 'true'">%(Version)</To>
+      </BindingRedirected>
+    </ItemGroup>
+
+  </Target>
+
+  <Target Name="_CleanBindingRedirectsPackage"
+          Inputs="@(ReferencePath);$(MSBuildThisFileFullPath);$(MSBuildProjectFullPath)"
+          Outputs="$(IntermediateOutputPath)$(_BindingRedirects)">
+
+    <!-- If we're in this target, it's because the file is out of date, or it doesn't exist -->
+    <Delete Files="$(IntermediateOutputPath)$(_BindingRedirects)"
+            Condition="Exists('$(IntermediateOutputPath)$(_BindingRedirects)')" />
+
+  </Target>
+
+  <Target Name="_GenerateBindingRedirectsPackage"
+          DependsOnTargets="_CollectBindingRedirected"
+          Inputs="@(BindingRedirected)"
+          Outputs="%(Identity)-BATCH">
+
+    <PropertyGroup>
+      <_FusionName>%(BindingRedirected.FusionName)</_FusionName>
+      <_IsStrongNamed Condition="$(_FusionName.IndexOf(',')) != '-1'">true</_IsStrongNamed>
+    </PropertyGroup>
+
+    <!-- There is no need to redirect assemblies that don't have a strong name -->
+    <PropertyGroup Condition="'$(_IsStrongNamed)' == 'true'">
+      <_Name>$(_FusionName.Substring(0, $(_FusionName.IndexOf(','))))</_Name>
+      <_IndexOfToken>$(_FusionName.IndexOf('PublicKeyToken='))</_IndexOfToken>
+      <_IndexOfToken>$([MSBuild]::Add($(_IndexOfToken), 15))</_IndexOfToken>
+      <_Token>$(_FusionName.Substring($(_IndexOfToken)))</_Token>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(_IsStrongNamed)' == 'true'">
+      <BindingRedirected Update="@(BindingRedirected)">
+        <!-- The registry entries need a Guid, but it doesn't need to be preserved -->
+        <Guid>$([System.Guid]::NewGuid().ToString().ToUpper())</Guid>
+        <AssemblyName>$(_Name)</AssemblyName>
+        <PublicKeyToken>$(_Token)</PublicKeyToken>
+      </BindingRedirected>
+    </ItemGroup>
+
+    <MakeDir Directories="$(IntermediateOutputPath)" Condition="!Exists('$(IntermediateOutputPath)')" />
+    
+    <!-- NOTE: since we clear the existing out of date file in _CleanBindingRedirectsPackage, we don't overwrite on every entry here. -->
+    <WriteLinesToFile File="$(IntermediateOutputPath)$(_BindingRedirects)"
+                      Overwrite="false"
+                      Condition="'$(_IsStrongNamed)' == 'true' And '%(BindingRedirected.PublicKeyToken)' != 'null'"
+                      Lines='[$RootKey$\RuntimeConfiguration\dependentAssembly\bindingRedirection\{%(BindingRedirected.Guid)}]
+"name"="%(BindingRedirected.AssemblyName)"
+"publicKeyToken"="%(BindingRedirected.PublicKeyToken)"
+"culture"="neutral"
+"oldVersion"="%(BindingRedirected.From)-%(BindingRedirected.To)"
+"newVersion"="%(BindingRedirected.Version)"
+"codeBase"="$PackageFolder$\%(BindingRedirected.Filename)%(BindingRedirected.Extension)"
+
+'/>
+
+    <ItemGroup>
+      <FileWrites Include="$(IntermediateOutputPath)$(_BindingRedirects)" />
+    </ItemGroup>
+  </Target>
+
+
+</Project>

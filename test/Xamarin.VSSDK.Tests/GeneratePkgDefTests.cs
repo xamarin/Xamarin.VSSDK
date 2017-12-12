@@ -10,10 +10,7 @@ namespace Xamarin.VSSDK.Tests
 {
     public class GeneratePkgDefTests : VsTest
     {
-        ITestOutputHelper output;
-
-        public GeneratePkgDefTests(ITestOutputHelper output) : base(output)
-        { }
+        public GeneratePkgDefTests(ITestOutputHelper output) : base(output) { }
 
         //[Fact]
         public void PkgDefFileIsGeneratedWhenBuidingExtensionWithGeneratePkgDefFilePropertySet()
@@ -30,7 +27,7 @@ namespace Xamarin.VSSDK.Tests
                 { "VSSDKTargetPlatformRegRootSuffix", RootSuffix },
             }, "15.0", new ProjectCollection());
 
-            var result = Builder.Build(project, "Restore;Rebuild", output: output);
+            var result = Builder.Build(project, "Restore;Rebuild", output: Output);
 
             Assert.Equal(BuildResultCode.Success, result.BuildResult.OverallResult);
 
