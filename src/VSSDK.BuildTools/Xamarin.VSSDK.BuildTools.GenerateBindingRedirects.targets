@@ -96,7 +96,7 @@
   <Target Name="_CollectBindingRedirected"
           Inputs="@(BindingRedirected)"
           Outputs="%(Identity)-BATCH"
-          DependsOnTargets="ResolveAssemblyReferences"
+          DependsOnTargets="ResolveReferences"
           Returns="@(BindingRedirected)">
 
     <PropertyGroup>
