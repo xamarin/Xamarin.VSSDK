@@ -3,7 +3,7 @@
   <PropertyGroup>
     <EnableDefaultItems>false</EnableDefaultItems>
     <TargetFramework>net461</TargetFramework>
-    
+
     <ToolsRootDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .editorconfig))\src\VSSDK.BuildTools\</ToolsRootDir>
   </PropertyGroup>
 
@@ -14,20 +14,20 @@
 
   <PropertyGroup>
     <!-- Causes default old version from to be 99.9.9.9 -->
-    <BindingRedirectAllVersions>true</BindingRedirectAllVersions>
+    <BindingDefaultTo>99.9.9.9</BindingDefaultTo>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <BindingRedirected Include="Newtonsoft.Json">
+    <BindingRedirect Include="Newtonsoft.Json">
       <!-- Showcases specifying only From metadata -->
       <From>6.0.0.0</From>
-    </BindingRedirected>
+    </BindingRedirect>
     <!-- Showcases specifying no From/To metadata at all, and case-insensitive matching -->
-    <BindingRedirected Include="automapper" />
+    <BindingRedirect Include="automapper" />
     <!-- Showcases matching a specific assembly -->
-    <BindingRedirected Include="^System, Version=4.0.0.0" From="2.0.0.0" />
+    <BindingRedirect Include="^System, Version=4.0.0.0" From="2.0.0.0" />
     <!-- Showcases matching with a regex that matches two assemblies -->
-    <BindingRedirected Include="System.Xml+" From="3.0.0.0" />
+    <BindingRedirect Include="System.Xml+" From="3.0.0.0" />
   </ItemGroup>
 
   <Import Project="$(NuGetRestoreTargets)" Condition="'$(NuGetRestoreTargets)' != '' and '$(IsRestoreTargetsFileLoaded)' != 'true'" />
