@@ -27,32 +27,18 @@
     <BindingDefaultTo />
     
     <_BindingRedirects>BindingRedirects.pkgdef</_BindingRedirects>
-    <_GenerateBindingRedirects Condition="'$(BindingRedirectFusionExpr)' != ''">true</_GenerateBindingRedirects>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(_GenerateBindingRedirects)' == 'true'">
+  <PropertyGroup>
     <GetCopyToOutputDirectoryItemsDependsOn>
       BindingRedirects;
       $(GetCopyToOutputDirectoryItemsDependsOn)
     </GetCopyToOutputDirectoryItemsDependsOn>
-    <ResolveReferencesDependsOn>
-      $(ResolveReferencesDependsOn);
-      BindingRedirects
-    </ResolveReferencesDependsOn>
     <BuildDependsOn Condition="'$(Configuration)' == 'Release'">
       $(BuildDependsOn);
       ReportBindingRedirects
     </BuildDependsOn>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(_GenerateBindingRedirects)' == 'true'">
-    <Content Include="$(IntermediateOutputPath)$(_BindingRedirects)">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>$(BindingRedirects)</Link>
-      <Visible>false</Visible>
-    </Content>
-  </ItemGroup>
 
   <ItemDefinitionGroup>
     <!-- Facade assemblies don't have this metadata attribute, so default it to empty -->
@@ -67,7 +53,7 @@
     Generates the required binding redirects for the matching resolved references.
     =================================================================================
   -->
-  <Target Name="BindingRedirects" DependsOnTargets="$(BindingRedirectsDependsOn)" />
+  <Target Name="BindingRedirects" Condition="'@(BindingRedirected)' != ''" DependsOnTargets="$(BindingRedirectsDependsOn)" />
 
   <PropertyGroup>
     <BindingRedirectsDependsOn>
@@ -82,7 +68,7 @@
     Reports the generated binding redirects
     =================================================================================
   -->
-  <Target Name="ReportBindingRedirects" DependsOnTargets="BindingRedirects">
+  <Target Name="ReportBindingRedirects" Condition="'@(BindingRedirected)' != ''" DependsOnTargets="BindingRedirects">
 
     <Message Text="Binding redirection applied for @(BindingRedirected -> Count()) assemblies"
              Condition="@(BindingRedirected -> Count()) != 0"
@@ -183,6 +169,7 @@
 
     <ItemGroup>
       <FileWrites Include="$(IntermediateOutputPath)$(_BindingRedirects)" />
+	    <VSIXSourceItem Include="$(IntermediateOutputPath)$(_BindingRedirects)" />
     </ItemGroup>
   </Target>
 
