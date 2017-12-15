@@ -13,8 +13,8 @@
        Examples:
        
        <ItemGroup>
-         <BindingRedirected Include="Newtonsoft.Json" />
-         <BindingRedirected Include="Octokit.+" From="0.28.0.0" />
+         <BindingRedirect Include="Newtonsoft.Json" />
+         <BindingRedirect Include="Octokit.+" From="0.28.0.0" />
        </ItemGroup>
   -->
 
@@ -25,34 +25,16 @@
     <!-- If specified, changes the default max range for the old version to redirect, which otherwise 
          equals the resolved reference version. -->
     <BindingDefaultTo />
-    
+
     <_BindingRedirects>BindingRedirects.pkgdef</_BindingRedirects>
-    <_GenerateBindingRedirects Condition="'$(BindingRedirectFusionExpr)' != ''">true</_GenerateBindingRedirects>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(_GenerateBindingRedirects)' == 'true'">
-    <GetCopyToOutputDirectoryItemsDependsOn>
-      BindingRedirects;
-      $(GetCopyToOutputDirectoryItemsDependsOn)
-    </GetCopyToOutputDirectoryItemsDependsOn>
-    <ResolveReferencesDependsOn>
-      $(ResolveReferencesDependsOn);
-      BindingRedirects
-    </ResolveReferencesDependsOn>
+  <PropertyGroup>
     <BuildDependsOn Condition="'$(Configuration)' == 'Release'">
       $(BuildDependsOn);
       ReportBindingRedirects
     </BuildDependsOn>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(_GenerateBindingRedirects)' == 'true'">
-    <Content Include="$(IntermediateOutputPath)$(_BindingRedirects)">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>$(BindingRedirects)</Link>
-      <Visible>false</Visible>
-    </Content>
-  </ItemGroup>
 
   <ItemDefinitionGroup>
     <!-- Facade assemblies don't have this metadata attribute, so default it to empty -->
@@ -67,13 +49,18 @@
     Generates the required binding redirects for the matching resolved references.
     =================================================================================
   -->
-  <Target Name="BindingRedirects" DependsOnTargets="$(BindingRedirectsDependsOn)" />
+  <Target Name="BindingRedirects" 
+          AfterTargets="ResolveReferences"
+          BeforeTargets="GetVsixSourceItems"
+          Condition="'@(BindingRedirect)' != '' and '$(_GeneratingStringResources)' != 'true'" 
+          DependsOnTargets="$(BindingRedirectsDependsOn)" />
 
   <PropertyGroup>
     <BindingRedirectsDependsOn>
-      _CollectBindingRedirected;
+      _CollectBindingRedirects;
       _CleanBindingRedirectsPackage;
-      _GenerateBindingRedirectsPackage
+      _GenerateBindingRedirectsPackage;
+      _IncludeBindingRedirectsPackage
     </BindingRedirectsDependsOn>
   </PropertyGroup>
 
@@ -84,46 +71,46 @@
   -->
   <Target Name="ReportBindingRedirects" DependsOnTargets="BindingRedirects">
 
-    <Message Text="Binding redirection applied for @(BindingRedirected -> Count()) assemblies"
-             Condition="@(BindingRedirected -> Count()) != 0"
+    <Message Text="Binding redirection applied for @(BindingRedirect -> Count()) assemblies"
+             Condition="@(BindingRedirect -> Count()) != 0"
              Importance="high" />
-    <Message Text="    - %(BindingRedirected.Filename)%(BindingRedirected.Extension)" 
-             Condition="@(BindingRedirected -> Count()) != 0" 
+    <Message Text="    - %(BindingRedirect.Filename)%(BindingRedirect.Extension)"
+             Condition="@(BindingRedirect -> Count()) != 0"
              Importance="normal" />
 
   </Target>
 
-  <Target Name="_CollectBindingRedirected"
-          Inputs="@(BindingRedirected)"
+  <Target Name="_CollectBindingRedirects"
+          Inputs="@(BindingRedirect)"
           Outputs="%(Identity)-BATCH"
           DependsOnTargets="ResolveReferences"
-          Returns="@(BindingRedirected)">
+          Returns="@(BindingRedirect)">
 
     <PropertyGroup>
-      <_FusionExpression>%(BindingRedirected.Identity)</_FusionExpression>
-      <_OldFrom>%(BindingRedirected.From)</_OldFrom>
-      <_OldTo>%(BindingRedirected.To)</_OldTo>
+      <_FusionExpression>%(BindingRedirect.Identity)</_FusionExpression>
+      <_OldFrom>%(BindingRedirect.From)</_OldFrom>
+      <_OldTo>%(BindingRedirect.To)</_OldTo>
     </PropertyGroup>
 
     <ItemGroup>
-      <_BindingRedirectedReference Include="@(ReferencePath)"
+      <_BindingRedirectReference Include="@(ReferencePath)"
                                    Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(ReferencePath.FusionName)', '$(_FusionExpression)', RegexOptions.IgnoreCase))" />
-      <_BindingRedirected Include="@(_BindingRedirectedReference -> Distinct())" />
+      <_BindingRedirect Include="@(_BindingRedirectReference -> Distinct())" />
     </ItemGroup>
 
-    <Error Condition="'@(_BindingRedirected)' == ''" Text="No assembly references match the specified binding redirect expression '$(_FusionExpression)'." />
+    <Error Condition="'@(_BindingRedirect)' == ''" Text="No assembly references match the specified binding redirect expression '$(_FusionExpression)'." />
 
     <ItemGroup>
-      <BindingRedirected Remove="@(BindingRedirected)" />
-      <BindingRedirected Include="@(_BindingRedirected)">
+      <BindingRedirect Remove="@(BindingRedirect)" />
+      <BindingRedirect Include="@(_BindingRedirect)">
         <From>$(_OldFrom)</From>
         <To>$(_OldTo)</To>
-      </BindingRedirected>
-      <BindingRedirected Update="@(_BindingRedirected)">
+      </BindingRedirect>
+      <BindingRedirect Update="@(_BindingRedirect)">
         <From Condition="'%(From)' == ''">$(BindingDefaultFrom)</From>
         <To Condition="'%(To)' == '' And '$(BindingDefaultTo)' != ''">$(BindingDefaultTo)</To>
         <To Condition="'%(To)' == '' And '$(BindingDefaultTo)' == ''">%(Version)</To>
-      </BindingRedirected>
+      </BindingRedirect>
     </ItemGroup>
 
   </Target>
@@ -139,12 +126,12 @@
   </Target>
 
   <Target Name="_GenerateBindingRedirectsPackage"
-          DependsOnTargets="_CollectBindingRedirected"
-          Inputs="@(BindingRedirected)"
+          DependsOnTargets="_CollectBindingRedirects"
+          Inputs="@(BindingRedirect)"
           Outputs="%(Identity)-BATCH">
 
     <PropertyGroup>
-      <_FusionName>%(BindingRedirected.FusionName)</_FusionName>
+      <_FusionName>%(BindingRedirect.FusionName)</_FusionName>
       <_IsStrongNamed Condition="$(_FusionName.IndexOf(',')) != '-1'">true</_IsStrongNamed>
     </PropertyGroup>
 
@@ -157,27 +144,27 @@
     </PropertyGroup>
 
     <ItemGroup Condition="'$(_IsStrongNamed)' == 'true'">
-      <BindingRedirected Update="@(BindingRedirected)">
+      <BindingRedirect Update="@(BindingRedirect)">
         <!-- The registry entries need a Guid, but it doesn't need to be preserved -->
         <Guid>$([System.Guid]::NewGuid().ToString().ToUpper())</Guid>
         <AssemblyName>$(_Name)</AssemblyName>
         <PublicKeyToken>$(_Token)</PublicKeyToken>
-      </BindingRedirected>
+      </BindingRedirect>
     </ItemGroup>
 
     <MakeDir Directories="$(IntermediateOutputPath)" Condition="!Exists('$(IntermediateOutputPath)')" />
-    
+
     <!-- NOTE: since we clear the existing out of date file in _CleanBindingRedirectsPackage, we don't overwrite on every entry here. -->
     <WriteLinesToFile File="$(IntermediateOutputPath)$(_BindingRedirects)"
                       Overwrite="false"
-                      Condition="'$(_IsStrongNamed)' == 'true' And '%(BindingRedirected.PublicKeyToken)' != 'null'"
-                      Lines='[$RootKey$\RuntimeConfiguration\dependentAssembly\bindingRedirection\{%(BindingRedirected.Guid)}]
-"name"="%(BindingRedirected.AssemblyName)"
-"publicKeyToken"="%(BindingRedirected.PublicKeyToken)"
+                      Condition="'$(_IsStrongNamed)' == 'true' And '%(BindingRedirect.PublicKeyToken)' != 'null'"
+                      Lines='[$RootKey$\RuntimeConfiguration\dependentAssembly\bindingRedirection\{%(BindingRedirect.Guid)}]
+"name"="%(BindingRedirect.AssemblyName)"
+"publicKeyToken"="%(BindingRedirect.PublicKeyToken)"
 "culture"="neutral"
-"oldVersion"="%(BindingRedirected.From)-%(BindingRedirected.To)"
-"newVersion"="%(BindingRedirected.Version)"
-"codeBase"="$PackageFolder$\%(BindingRedirected.Filename)%(BindingRedirected.Extension)"
+"oldVersion"="%(BindingRedirect.From)-%(BindingRedirect.To)"
+"newVersion"="%(BindingRedirect.Version)"
+"codeBase"="$PackageFolder$\%(BindingRedirect.Filename)%(BindingRedirect.Extension)"
 
 '/>
 
@@ -186,5 +173,10 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="_IncludeBindingRedirectsPackage">
+    <ItemGroup>
+      <VSIXSourceItem Include="$(IntermediateOutputPath)$(_BindingRedirects)" />
+    </ItemGroup>
+  </Target>
 
 </Project>
