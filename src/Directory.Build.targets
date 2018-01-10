@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="MicroBuild.Core" Version="0.2.0" PrivateAssets="all" />
+
+    <UpToDateCheckInput Include="@(None)" />
   </ItemGroup>
 
   <Target Name="LocalPublish" Condition="'$(CI)' != 'true'" AfterTargets="Pack">

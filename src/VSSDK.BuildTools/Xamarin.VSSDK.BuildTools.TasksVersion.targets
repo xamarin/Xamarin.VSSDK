@@ -4,14 +4,11 @@
     <VSSDKAssemblyFile Condition="'$(VSSDKAssemblyFile)' == ''">Microsoft.VSSDK.Build.Tasks.dll</VSSDKAssemblyFile>
   </PropertyGroup>
 
-  <Target Name="SetVSSDKVersion" BeforeTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VSSDKInstall)' != ''">
-    <GetVSSDKTasksVersion AssemblyFile="$(VSSDKInstall)\$(VSSDKAssemblyFile)">
-      <Output TaskParameter="Assembly" PropertyName="VSSDKTasksAssembly" />
-      <Output TaskParameter="Version" PropertyName="VSSDKTasksVersion" />
-    </GetVSSDKTasksVersion>
-    <PropertyGroup>
-      <VSSDKVersion>$(VSSDKTasksVersion.Substring(0, 4))</VSSDKVersion>
-    </PropertyGroup>
+  <Target Name="SetVsSDKTasksVersion" BeforeTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VSSDKInstall)' != ''">
+    <GetVsSDKTasksVersion AssemblyFile="$(VSSDKInstall)\$(VSSDKAssemblyFile)">
+      <Output TaskParameter="Assembly" PropertyName="VsSDKTasksAssembly" />
+      <Output TaskParameter="Version" PropertyName="VsSDKTasksVersion" />
+    </GetVsSDKTasksVersion>
   </Target>
 
   <!--
@@ -19,11 +16,11 @@
                           Report VSSDK Tasks Version
     =================================================================================
   -->
-  <Target Name="ReportVSSDKVersion" AfterTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VSSDKInstall)' != ''">
-    <Message Importance="normal" Text="Built for Dev$(Dev) ($(TargetFramework)) with $(VSSDKTasksAssembly), Version=$(VSSDKTasksVersion)" />
+  <Target Name="ReportVsSDKVersion" AfterTargets="Build" Condition="'$(TargetFramework)' != '' and '$(VSSDKInstall)' != ''">
+    <Message Importance="normal" Text="Built for Dev$(Dev) ($(TargetFramework)) with $(VsSDKTasksAssembly), Version=$(VsSDKTasksVersion) from VSSDK version $(VsSDKVersion)." />
   </Target>
 
-  <UsingTask TaskName="GetVSSDKTasksVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+  <UsingTask TaskName="GetVsSDKTasksVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
       <AssemblyFile Required="true" />
       <Assembly Output="true" />

@@ -32,7 +32,6 @@
   -->
   <Target Name="MergeVsixManifest" 
           Condition="'$(CreateVsixContainer)' == 'true'"
-          DependsOnTargets="SetVSSDKVersion" 
           Inputs="$(IntermediateVsixManifest);$(MSBuildAllProjects)" 
           Outputs="$(MergedIntermediateVsixManifest)">
 
@@ -71,8 +70,8 @@
     </DetokenizeVsixManifestSource>
 
     <!-- In 15.3+ VSSDK, the schema path is not user-settable. -->
-    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" Condition="'$(VSSDKVersion)' &gt;= '15.0'"  />
-    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" VsixSchemaPath="$(VsixSchemaPath)" Condition="'$(VSSDKVersion)' &lt; '15.0'" />
+    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" Condition="'$(VsSDKVersion)' &gt;= '15.0'"  />
+    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" VsixSchemaPath="$(VsixSchemaPath)" Condition="'$(VsSDKVersion)' &lt; '15.0'" />
   </Target>
 
   <!--

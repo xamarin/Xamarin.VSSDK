@@ -100,14 +100,14 @@
 
     <!--Enable this extension via Extension Manager in Dev14 -->
     <EnableExtension
-        Condition="'$(VSSDKVersion)' &lt; '15.0'"
+        Condition="'$(VsSDKVersion)' &lt; '15.0'"
         VsixIdentifier="$(VsixID)"
         RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)"
         FailIfNotInstalled="true" />
 
     <!--Enable this extension via Extension Manager in Dev15+ -->
     <EnableExtension
-        Condition="'$(VSSDKVersion)' &gt;= '15.0'"
+        Condition="'$(VsSDKVersion)' &gt;= '15.0'"
         VsixIdentifier="$(VsixID)"
         VsixVersion="$(VsixVersion)"
         RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)"
