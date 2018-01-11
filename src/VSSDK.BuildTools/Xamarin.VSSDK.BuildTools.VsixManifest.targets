@@ -70,8 +70,8 @@
     </DetokenizeVsixManifestSource>
 
     <!-- In 15.3+ VSSDK, the schema path is not user-settable. -->
-    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" Condition="'$(BypassVsixValidation)' != 'false' and '$(VsSDKVersion)' &gt;= '15.0'"  />
-    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" VsixSchemaPath="$(VsixSchemaPath)" Condition="'$(BypassVsixValidation)' != 'false' and '$(VsSDKVersion)' &lt; '15.0'" />
+    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" Condition="'$(BypassVsixValidation)' != 'true' and '$(VsSDKVersion)' &gt;= '15.0'"  />
+    <ValidateVsixManifest ItemToValidate="$(MergedIntermediateVsixManifest)" VsixSchemaPath="$(VsixSchemaPath)" Condition="'$(BypassVsixValidation)' != 'true' and '$(VsSDKVersion)' &lt; '15.0'" />
   </Target>
 
   <!--
