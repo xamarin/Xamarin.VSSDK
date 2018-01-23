@@ -50,13 +50,13 @@
     =================================================================================
   -->
   <Target Name="BindingRedirects" 
-          AfterTargets="ResolveReferences"
           BeforeTargets="GetVsixSourceItems"
           Condition="'@(BindingRedirect)' != '' and '$(_GeneratingStringResources)' != 'true'" 
           DependsOnTargets="$(BindingRedirectsDependsOn)" />
 
   <PropertyGroup>
     <BindingRedirectsDependsOn>
+      ResolveReferences;
       _CollectBindingRedirects;
       _CleanBindingRedirectsPackage;
       _GenerateBindingRedirectsPackage;
