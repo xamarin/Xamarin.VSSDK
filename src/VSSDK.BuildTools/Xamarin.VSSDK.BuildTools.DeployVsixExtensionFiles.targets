@@ -46,7 +46,7 @@
 
     <Message Text="VsixID = $(VsixID)" />
     <Message Text="VsixVersion = $(VsixVersion)" />
-    <Message Text="VsixDeploymentPath = $(VsixDeplsoymentPath)" />
+    <Message Text="VsixDeploymentPath = $(VsixDeploymentPath)" />
 
   </Target>
 

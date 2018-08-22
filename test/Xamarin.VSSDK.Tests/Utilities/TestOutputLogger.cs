@@ -5,13 +5,11 @@ using Xunit.Abstractions;
 /// <summary>
 /// xunit logger > MSBuild logger
 /// </summary>
-public class TestOutputLogger : ILogger
+class TestOutputLogger : ILogger
 {
-	ITestOutputHelper output;
-
-	public TestOutputLogger(ITestOutputHelper output, LoggerVerbosity? verbosity = LoggerVerbosity.Quiet)
+    public TestOutputLogger(ITestOutputHelper output, LoggerVerbosity? verbosity = LoggerVerbosity.Quiet)
 	{
-		this.output = output;
+		this.Output = output;
 		Verbosity = verbosity.GetValueOrDefault();
 	}
 
@@ -24,9 +22,9 @@ public class TestOutputLogger : ILogger
 		FinishedTasks = new List<TaskFinishedEventArgs>();
 	}
 
-    public ITestOutputHelper Output => output;
+    public ITestOutputHelper Output { get; }
 
-	public LoggerVerbosity Verbosity { get; set; }
+    public LoggerVerbosity Verbosity { get; set; }
 
 	public List<BuildMessageEventArgs> Messages { get; private set; } = new List<BuildMessageEventArgs>();
 
@@ -46,7 +44,7 @@ public class TestOutputLogger : ILogger
 		eventSource.AnyEventRaised += (sender, e) =>
 		{
 			if (!(e is BuildMessageEventArgs) && Verbosity > LoggerVerbosity.Normal)
-				output?.WriteLine(e.Message);
+				Output?.WriteLine(e.Message);
 		};
 
 		eventSource.MessageRaised += (sender, e) =>
@@ -65,21 +63,21 @@ public class TestOutputLogger : ILogger
 			}
 
 			if (Verbosity != LoggerVerbosity.Quiet && shouldLog)
-				output?.WriteLine(e.Message);
+				Output?.WriteLine(e.Message);
 
 			Messages.Add(e);
 		};
 
 		eventSource.ErrorRaised += (sender, e) =>
 		{
-			output?.WriteLine(e.Message);
+			Output?.WriteLine(e.Message);
 			Errors.Add(e);
 		};
 
 		eventSource.WarningRaised += (sender, e) =>
 		{
 			if (Verbosity != LoggerVerbosity.Quiet)
-				output?.WriteLine(e.Message);
+				Output?.WriteLine(e.Message);
 
 			Warnings.Add(e);
 		};

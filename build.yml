@@ -17,14 +17,23 @@ steps:
     solution: build.proj
     msbuildArguments: /t:Build /p:Out="$(Build.ArtifactStagingDirectory)" /bl:"$(Build.ArtifactStagingDirectory)\build.binlog"
 
+- task: VSTest@2
+  displayName: Test
+  inputs:
+    testAssemblyVer2: |-
+      **\*.Tests.dll
+      !**\xunit*.dll
+    codeCoverageEnabled: 'true'
+    publishRunAttachments: 'true'
+
 - task: MSBuild@1
-  displayName: Publish
+  displayName: Push
   inputs:
     solution: build.proj
     msbuildArguments: /t:Publish /p:Out="$(Build.ArtifactStagingDirectory)" /p:StorageAccessKey=$(StorageAccessKey) /bl:"$(Build.ArtifactStagingDirectory)\push.binlog"
 
 - task: PublishBuildArtifacts@1
-  displayName: Publish Artifact
+  displayName: Publish
   condition: always()
   inputs:
     PathtoPublish: $(Build.ArtifactStagingDirectory)

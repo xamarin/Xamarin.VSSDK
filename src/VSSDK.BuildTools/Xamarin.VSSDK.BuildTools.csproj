@@ -16,14 +16,29 @@
 	</ItemDefinitionGroup>
 
 	<ItemGroup>
-		<PackageFile Include="Microsoft.VisualStudio.SDK.VsixSuppression" Kind="Dependency" Version="14.1.33" TargetFramework="any" />
+		<PackageFile Include="Microsoft.VisualStudio.SDK.VsixSuppression" Kind="Dependency" Version="14.1.37" TargetFramework="any" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="15.0.26201" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.1012" PrivateAssets="all" />
+  <ItemGroup Label="Visual Studio 2013">
+    <PackageFile Include="Microsoft.VSSDK.BuildTools" Version="12.0.21005" Kind="Dependency" TargetFramework="net45" />
+  </ItemGroup>
+
+  <ItemGroup Label="Visual Studio 2015">
+    <PackageFile Include="Microsoft.VSSDK.BuildTools" Version="14.3.25420" Kind="Dependency" TargetFramework="net452" />
+  </ItemGroup>
+
+  <ItemGroup Label="Visual Studio 2017">
+    <PackageFile Include="Microsoft.VSSDK.BuildTools" Version="15.7.109" Kind="Dependency" TargetFramework="net46" />
+  </ItemGroup>
+
+  <ItemGroup Label="Visual Studio 2019">
+    <PackageFile Include="Microsoft.VSSDK.BuildTools" Version="15.7.109" Kind="Dependency" TargetFramework="net47" />
+  </ItemGroup>
+
+  <ItemGroup>
+		<PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.7.179" PrivateAssets="all" />
 		<PackageReference Include="netfx-System.StringResources" Version="3.1.5" PrivateAssets="all" />
-		<PackageReference Include="NuGet.Build.Packaging" Version="0.1.323" />
+		<PackageReference Include="NuGet.Build.Packaging" Version="0.1.323" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>

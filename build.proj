@@ -1,5 +1,4 @@
-<Project DefaultTargets="Build" TreatAsLocalProperty="Configuration">
-  <Import Project="build\corebuild.props" />
+<Project Sdk="CoreBuild/1.0.0-alpha" DefaultTargets="Build" TreatAsLocalProperty="Configuration">
   <Import Project="src\Directory.Build.props"/>
 
   <PropertyGroup>
@@ -16,9 +15,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit.runner.console" Version="2.3.1" />
-    <PackageReference Include="Sleet.Azure" Version="*" />
-    <PackageReference Include="JsonPoke.MSBuild" Version="*" />
+    <PackageReference Include="xunit.runner.console" Version="2.4.0" />
+    <PackageReference Include="Sleet.Azure" Version="0.2.5" />
+    <PackageReference Include="JsonPoke.MSBuild" Version="1.0.9" />
   </ItemGroup>
 
   <ItemDefinitionGroup>
@@ -31,14 +30,13 @@
     <Solution Include="src\*.sln" />
   </ItemGroup>
 
+  <Target Name="Configure" DependsOnTargets="Restore" />
+
   <Target Name="Build" DependsOnTargets="Version">
     <Message Text="##vso[build.updatebuildnumber]$(PackageVersion)" Importance="high" Condition="'$(TF_BUILD)' == 'true'" />
 
     <MakeDir Directories="$(Out)" Condition="!Exists('$(Out)')" />
     <MSBuild Projects="@(Solution)" Targets="Build" />
-
-    <!-- Also build the tests for Dev14 (by default it's only compiled for dev15) -->
-    <MSBuild Projects="test\Xamarin.VSSDK.Tests\Xamarin.VSSDK.Tests.csproj" Targets="Build" Properties="$(AdditionalProperties);Dev=14.0" />
 
     <Copy SourceFiles="NuGet.Config" DestinationFolder="$(Out)" />
   </Target>
@@ -57,46 +55,6 @@
     <Exec Command='"$(Sleet)" delete -i Xamarin.VSSDK.BuildTools -v $(DeleteVersion) -s feed -c $(_SleetConfig)' ContinueOnError='true' />
   </Target>
 
-  <Target Name="Test" DependsOnTargets="Build">
-    <PropertyGroup>
-      <XmlTestFile>$(Out)\TestResults.xml</XmlTestFile>
-      <HtmlTestFile>$(Out)\TestResults.html</HtmlTestFile>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <_TestAssembly Include="test\**\bin\**\*Tests.dll" />
-      <TestAssembly Include="@(_TestAssembly)"
-									  Condition="$([System.String]::new('%(Filename)').EndsWith('AcceptanceTests')) == 'false' And '%(Filename)' != 'Roslyn.Services.Editor.UnitTests'" />
-    </ItemGroup>
-
-    <Exec Command="&quot;$(XunitConsolePathX86)&quot; &quot;@(TestAssembly, '&quot; &quot;')&quot; $(XunitOptions) -html &quot;$(HtmlTestFile)&quot; -xml &quot;$(XmlTestFile)&quot;"
-			  Condition="'@(TestAssembly)' != ''">
-      <Output TaskParameter="ExitCode" PropertyName="ExitCode" />
-    </Exec>
-
-    <Message Text="All tests passed, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' == '0'" Importance="high" />
-    <Error Text="There were test failures, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' != '0'" />
-  </Target>
-
-  <Target Name="Acceptance" DependsOnTargets="Build">
-    <PropertyGroup>
-      <XmlTestFile>$(Out)AcceptanceResults.xml</XmlTestFile>
-      <HtmlTestFile>$(Out)AcceptanceResults.html</HtmlTestFile>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <TestAssembly Include="test\**\bin\**\*AcceptanceTests.dll" />
-    </ItemGroup>
-
-    <Exec Command="&quot;$(XunitConsolePathX86)&quot; &quot;@(TestAssembly, '&quot; &quot;')&quot; $(XunitOptions) -html &quot;$(HtmlTestFile)&quot; -xml &quot;$(XmlTestFile)&quot;"
-			  Condition="'@(TestAssembly)' != ''">
-      <Output TaskParameter="ExitCode" PropertyName="ExitCode" />
-    </Exec>
-
-    <Message Text="All tests passed, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' == '0'" Importance="high" />
-    <Error Text="There were test failures, for full log see $(HtmlTestFile)" Condition="'@(TestAssembly)' != '' And '$(ExitCode)' != '0'" />
-  </Target>
-
   <Target Name="Clean">
     <Exec Command='for /d /r . %%d in (bin,obj,.vs) do @if exist "%%d" rd /s/q "%%d"'
 		      Condition="'$(OS)' == 'Windows_NT'" />
@@ -111,5 +69,4 @@
   </Target>
 
   <Import Project="src\Version.targets" />
-  <Import Project="build\corebuild.targets" />
 </Project>

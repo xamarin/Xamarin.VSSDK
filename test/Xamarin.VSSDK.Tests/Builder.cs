@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 /// automatic solution-configuration generation for 
 /// P2P references.
 /// </summary>
-public static partial class Builder
+static partial class Builder
 {
     const string ToolsVersion = "15.0";
 
