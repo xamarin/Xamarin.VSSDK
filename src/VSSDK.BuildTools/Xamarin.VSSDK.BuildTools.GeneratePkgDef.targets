@@ -2,7 +2,7 @@
 
   <!--
     ==================================================================================================================
-       Overrrides Generate Pkk Def (filtering the reference path to avoid the "filename or extension is too long" )
+       Overrides Generate PkgDef (filtering the reference path to avoid the "filename or extension is too long" )
     ==================================================================================================================
   -->
   <Target Name="GeneratePkgDef"
@@ -14,7 +14,7 @@
     <Message Text="Creating intermediate PkgDef file." />
 
     <ItemGroup>
-      <_AssembliesToIncludeForBingding Include="@(ReferencePath)"
+      <_AssembliesToIncludeForBinding Include="@(ReferencePath)"
         Condition="'%(ReferencePath.ResolvedFrom)' != 'ImplicitlyExpandDesignTimeFacades' and '%(ReferencePath.FrameworkFile)' != 'true'"  />
     </ItemGroup>
 
@@ -22,7 +22,7 @@
                   ProductVersion="$(TargetVSVersion)"
                   OutputFile="$(IntermediateOutputPath)$(TargetName).latest.pkgdef"
                   UseCodebase="$(UseCodebase)"
-                  ReferencedAssemblies="@(_AssembliesToIncludeForBingding)"  />
+                  ReferencedAssemblies="@(_AssembliesToIncludeForBinding)"  />
     <CopyIfChanged Condition="Exists('$(IntermediateOutputPath)$(TargetName).latest.pkgdef')"
                    SourceFile="$(IntermediateOutputPath)$(TargetName).latest.pkgdef"
                    DestinationFile="$(IntermediateOutputPath)$(TargetName).pkgdef" />
