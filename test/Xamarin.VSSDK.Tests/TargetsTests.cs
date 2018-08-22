@@ -11,9 +11,9 @@ namespace Xamarin.VSSDK.Tests
     public class TargetsTests
     {
         // This resolves the SDKs to the same location that was used to compile this project.
-        static TargetsTests() => Environment.SetEnvironmentVariable(
-            nameof(ThisAssembly.Project.Properties.MSBuildSDKsPath), 
-            ThisAssembly.Project.Properties.MSBuildSDKsPath);
+        //static TargetsTests() => Environment.SetEnvironmentVariable(
+        //    nameof(ThisAssembly.Project.Properties.MSBuildSDKsPath), 
+        //    ThisAssembly.Project.Properties.MSBuildSDKsPath);
 
         ITestOutputHelper output;
 
@@ -24,10 +24,11 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new ProjectInstance("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net46;net461;net462" },
+                { "TargetFrameworks", "net45;net452;net46" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
             }, "15.0", new ProjectCollection());
 
+            Builder.Build(project, "Restore");
             var result = Builder.Build(project, "Build");
 
             Assert.Equal(BuildResultCode.Failure, result.BuildResult.OverallResult);
@@ -39,11 +40,12 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new ProjectInstance("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net46;net461;net462" },
+                { "TargetFrameworks", "net45;net452;net46" },
                 { "BuildingInsideVisualStudio", "true" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
             }, "15.0", new ProjectCollection());
 
+            Builder.Build(project, "Restore");
             var result = Builder.Build(project, "Build");
 
             Assert.Equal(BuildResultCode.Success, result.BuildResult.OverallResult);
@@ -55,13 +57,13 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net46;net461;net462" },
-                { "ActiveDebugFramework", "net461" },
+                { "TargetFrameworks", "net45;net452;net46" },
+                { "ActiveDebugFramework", "net452" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
                 { "BuildingInsideVisualStudio", "true" }
             }, "15.0", new ProjectCollection());
 
-            Assert.Equal("net461", project.GetPropertyValue("TargetFramework"));
+            Assert.Equal("net452", project.GetPropertyValue("TargetFramework"));
         }
 
         [Fact]
@@ -69,12 +71,12 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net46;net461;net462" },
-                { "ActiveDebugFramework", "net461" },
+                { "TargetFrameworks", "net45;net452;net46" },
+                { "ActiveDebugFramework", "net452" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
             }, "15.0", new ProjectCollection());
 
-            Assert.NotEqual("net461", project.GetPropertyValue("TargetFramework"));
+            Assert.NotEqual("net452", project.GetPropertyValue("TargetFramework"));
         }
 
         [Fact]
@@ -82,12 +84,12 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net46;net461;net462" },
+                { "TargetFrameworks", "net45;net452;net46" },
                 { "Dev", "15.0" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
             }, "15.0", new ProjectCollection());
 
-            Assert.Equal("net462", project.GetPropertyValue("TargetFrameworks"));
+            Assert.Equal("net46", project.GetPropertyValue("TargetFrameworks"));
         }
 
         [Fact]
@@ -95,14 +97,14 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net46;net461;net462" },
-                { "ActiveDebugFramework", "net461" },
+                { "TargetFrameworks", "net45;net452;net46" },
+                { "ActiveDebugFramework", "net452" },
                 { "Dev", "15.0" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
                 { "BuildingInsideVisualStudio", "true" },
             }, "15.0", new ProjectCollection());
 
-            Assert.Equal("net462", project.GetPropertyValue("TargetFramework"));
+            Assert.Equal("net46", project.GetPropertyValue("TargetFramework"));
         }
 
         [Fact]
@@ -110,12 +112,12 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net46;net461;net462" },
+                { "TargetFrameworks", "net45;net452;net46" },
                 { "Dev", "15.0" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
             }, "15.0", new ProjectCollection());
 
-            Assert.Equal("net462", project.GetPropertyValue("TargetFrameworks"));
+            Assert.Equal("net46", project.GetPropertyValue("TargetFrameworks"));
         }
 
         [Fact]
@@ -123,8 +125,8 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net46;net461;net462" },
-                { "TargetFramework", "net461" },
+                { "TargetFrameworks", "net45;net452;net46" },
+                { "TargetFramework", "net452" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
             }, "15.0", new ProjectCollection());
 

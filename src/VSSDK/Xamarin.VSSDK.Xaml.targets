@@ -25,7 +25,7 @@
 	</PropertyGroup>
 
 	<!-- VSIX projects generate a temp project file which doesnt have any extension and needs to be built as C# projects. 
-		 The .NET SDK just imporrts Microsoft.Common.CurrentVersion.targets. 
+		 The .NET SDK just imports Microsoft.Common.CurrentVersion.targets. 
 		 So set LanguageTargets to import CSharp.targets if the extension is unknown -->
 	<PropertyGroup Condition="'$(LanguageTargets)' == ''">
 		<LanguageTargets Condition="'$(MSBuildProjectExtension)' == '.csproj' OR '$(Language)' == 'C#'">$(MSBuildToolsPath)\Microsoft.CSharp.targets</LanguageTargets>

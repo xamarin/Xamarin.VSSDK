@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net46</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
@@ -40,37 +40,39 @@
     <ThisAssemblyProjectProperty Include="CSharpCoreTargetsPath" />
     <ThisAssemblyProjectProperty Include="RoslynTargetsPath" />
     <ThisAssemblyProjectProperty Include="MSBuildSDKsPath" />
+    <ThisAssemblyProjectProperty Include="MSBuildBinPath" />
     <ThisAssemblyProjectProperty Include="MSBuildExtensionsPath" />
     <ThisAssemblyProjectProperty Include="NuGetRestoreTargets" />
 
-    <!-- Need to deploy Roslyn code analysis/compiler for VSIX build/deploy to succeed -->
+    <!-- 
+    Need to deploy Roslyn code analysis/compiler for VSIX build/deploy to succeed --><!--
     <None Include="$(RoslynTargetsPath)\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Roslyn\%(Filename)%(Extension)</Link>
       <Visible>false</Visible>
     </None>
+    -->
 
     <!-- Hide contentFiles coming from nuget packages (in particular, Microsoft.Build.Runtime) -->
+    <!--
     <None Update="@(None)">
       <Visible>$([MSBuild]::ValueOrDefault('%(None.NuGetPackageId)', '').Equals(''))</Visible>
     </None>
-    <Folder Update="15.0">
-      <Visible>false</Visible>
-    </Folder>
+    -->
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Logging.StructuredLogger" Version="1.1.168" />
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
     <PackageReference Include="MSBuilder.ThisAssembly.Project" Version="0.3.4" />
+    <PackageReference Include="InjectModuleInitializer" Version="2.0.0" />
     <PackageReference Include="Mvp.Xml" Version="2.3.0" />
-    <PackageReference Include="xunit" Version="2.3.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Include="xunit.vsix" Version="0.3.12-beta" />
-    <PackageReference Include="Microsoft.Build" Version="15.3.409" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.3.409" />
-    <!-- Allows loading and evaluating 15.3+ projects -->
-    <PackageReference Include="Microsoft.Build.Runtime" Version="15.3.409" />
+    <PackageReference Include="Microsoft.Build" Version="15.8.166" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.8.166" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.0.18" />
+    <PackageReference Include="Microsoft.Build.Logging.StructuredLogger" Version="1.1.168" />
     <!-- Allows loading and evaluating VSSDK projects -->
     <PackageReference Include="VSSDK_Reference_Assemblies" Version="15.0.26608" />
   </ItemGroup>

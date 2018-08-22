@@ -25,37 +25,41 @@
 	</ItemDefinitionGroup>
 
 	<ItemGroup Label="Visual Studio 2013">
-		<PackageFile Include="VSSDK_Reference_Assemblies" Version="12.0.21005" Kind="Dependency" TargetFramework="net46" />
+		<PackageFile Include="VSSDK_Reference_Assemblies" Version="12.0.21005" Kind="Dependency" TargetFramework="net45" />
 
 		<!-- Missing EnvDTE + VSLangProj -->
-		<PackageFile Include="EnvDTE100" Version="10.0.1" Kind="Dependency" TargetFramework="net46" />
-		<PackageFile Include="VSLangProj100" Version="10.0.30319" Kind="Dependency" TargetFramework="net46" />
-		<PackageFile Include="VSLangProj110" Version="11.0.61030" Kind="Dependency" TargetFramework="net46" />
+		<PackageFile Include="EnvDTE100" Version="10.0.1" Kind="Dependency" TargetFramework="net45" />
+		<PackageFile Include="VSLangProj100" Version="10.0.30319" Kind="Dependency" TargetFramework="net45" />
+		<PackageFile Include="VSLangProj110" Version="11.0.61030" Kind="Dependency" TargetFramework="net45" />
 
 		<!-- Workaround for warning on wrong dep. for 12.0.* -->
-		<PackageFile Include="Microsoft.VisualStudio.Threading" Version="12.2.0" Kind="Dependency" TargetFramework="net46" />
-		<PackageFile Include="VSSDK.Shell.12" Version="12.0.4" Kind="Dependency" TargetFramework="net46" />
-		<PackageFile Include="VSSDK.ComponentModelHost" Version="12.0.4" Kind="Dependency" TargetFramework="net46" />
+		<PackageFile Include="Microsoft.VisualStudio.Threading" Version="12.2.0" Kind="Dependency" TargetFramework="net45" />
+		<PackageFile Include="VSSDK.Shell.12" Version="12.0.4" Kind="Dependency" TargetFramework="net45" />
+		<PackageFile Include="VSSDK.ComponentModelHost" Version="12.0.4" Kind="Dependency" TargetFramework="net45" />
 	</ItemGroup>
 
 	<ItemGroup Label="Visual Studio 2015">
-		<PackageFile Include="VSSDK_Reference_Assemblies" Version="14.3.25407" Kind="Dependency" TargetFramework="net461" />
+		<PackageFile Include="VSSDK_Reference_Assemblies" Version="14.3.25407" Kind="Dependency" TargetFramework="net452" />
 
 		<!-- Missing EnvDTE + VSLangProj -->
-		<PackageFile Include="EnvDTE100" Version="10.0.1" Kind="Dependency" TargetFramework="net461" />
-		<PackageFile Include="VSLangProj100" Version="10.0.30319" Kind="Dependency" TargetFramework="net461" />
-		<PackageFile Include="VSLangProj110" Version="11.0.61030" Kind="Dependency" TargetFramework="net461" />
-		<PackageFile Include="VSLangProj140" Version="14.0.25029" Kind="Dependency" TargetFramework="net461" />
+		<PackageFile Include="EnvDTE100" Version="10.0.1" Kind="Dependency" TargetFramework="net452" />
+		<PackageFile Include="VSLangProj100" Version="10.0.30319" Kind="Dependency" TargetFramework="net452" />
+		<PackageFile Include="VSLangProj110" Version="11.0.61030" Kind="Dependency" TargetFramework="net452" />
+		<PackageFile Include="VSLangProj140" Version="14.0.25029" Kind="Dependency" TargetFramework="net452" />
 
-		<PackageFile Include="Microsoft.VisualStudio.ComponentModelHost" Version="14.0.25424" TargetFramework="net461" Kind="Dependency" />
+		<PackageFile Include="Microsoft.VisualStudio.ComponentModelHost" Version="14.0.25424" TargetFramework="net452" Kind="Dependency" />
 	</ItemGroup>
 
 	<ItemGroup Label="Visual Studio 2017">
-		<PackageFile Include="VSSDK_Reference_Assemblies" Version="15.0.26608" TargetFramework="net462" Kind="Dependency" />
+		<PackageFile Include="VSSDK_Reference_Assemblies" Version="15.0.26608" TargetFramework="net46" Kind="Dependency" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <PackageReference Include="NuGet.Build.Packaging" Version="0.1.323" />
+  <ItemGroup Label="Visual Studio 2019">
+    <PackageFile Include="VSSDK_Reference_Assemblies" Version="15.0.26608" TargetFramework="net47" Kind="Dependency" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="NuGet.Build.Packaging" Version="0.1.323" PrivateAssets="all" />
 	</ItemGroup>
 
 </Project>

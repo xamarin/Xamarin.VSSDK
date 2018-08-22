@@ -2,7 +2,7 @@
 
 namespace NuGet.Build.Packaging
 {
-    public static class TaskItemExtensions
+    static class TaskItemExtensions
 	{
 		/// <summary>
 		/// Checks if the given item has metadata key/values matching the 
