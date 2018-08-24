@@ -1,12 +1,16 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <PropertyGroup>
+    <CreatePkgDefAssemblyToProcess Condition="'$(CreatePkgDefAssemblyToProcess)' == ''">$(TargetPath)</CreatePkgDefAssemblyToProcess>
+  </PropertyGroup>
+
   <!--
     ==================================================================================================================
        Overrides Generate PkgDef (filtering the reference path to avoid the "filename or extension is too long" )
     ==================================================================================================================
   -->
   <Target Name="GeneratePkgDef"
-          Inputs="$(TargetPath)"
+          Inputs="$(CreatePkgDefAssemblyToProcess)"
           Outputs="$(IntermediateOutputPath)$(TargetName).pkgdef"
           Condition="'$(GeneratePkgDefFile)'=='true'"
           DependsOnTargets="$(GeneratePkgDefDependsOn)">
@@ -18,7 +22,7 @@
         Condition="'%(ReferencePath.ResolvedFrom)' != 'ImplicitlyExpandDesignTimeFacades' and '%(ReferencePath.FrameworkFile)' != 'true'"  />
     </ItemGroup>
 
-    <CreatePkgDef AssemblyToProcess="$(TargetPath)"
+    <CreatePkgDef AssemblyToProcess="$(CreatePkgDefAssemblyToProcess)"
                   ProductVersion="$(TargetVSVersion)"
                   OutputFile="$(IntermediateOutputPath)$(TargetName).latest.pkgdef"
                   UseCodebase="$(UseCodebase)"
@@ -35,6 +39,7 @@
       <FileWrites Include="$(IntermediateOutputPath)$(TargetName).pkgdef" Condition="Exists('$(IntermediateOutputPath)$(TargetName).pkgdef')"/>
       <FileWrites Include="$(IntermediateOutputPath)$(TargetName).latest.pkgdef" Condition="Exists('$(IntermediateOutputPath)$(TargetName).latest.pkgdef')"/>
     </ItemGroup>
+
   </Target>
 
 </Project>
