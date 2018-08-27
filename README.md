@@ -74,7 +74,7 @@ for non-IDE builds. CI and command line (after a restore) will properly referenc
 and override the per-target framework dependency that XVSSDK sets up:
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="15.0.26201" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="15.8.3247" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
 	</ItemGroup>
 
 ### One VSIX per Visual Studio version
@@ -89,7 +89,7 @@ the build tasks used in the first target framework when the subsequent one runs 
 for VS2013 for net46, then building for VS2015 for net461 with a different Build Tools tasks). 
 
 Therefore, when multi-targeting, you need to build for each target IDE separately. This can be achieved 
-easily by passing a `/p:Dev=[12.0,14.0,15.0]`. We use the `Dev` property instead of passing `/p:TargetFramework` 
+easily by passing a `/p:Dev=[12.0,14.0,15.0,16.0]`. We use the `Dev` property instead of passing `/p:TargetFramework` 
 because the latter can affect the build for other projects that don't require changing the target framework.
 By using our own property, which is used to change `TargetFramework` just for the VSIX projects, we achieve 
 the same goal without disrupting other projects.
