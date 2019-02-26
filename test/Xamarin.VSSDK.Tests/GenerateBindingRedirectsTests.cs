@@ -31,7 +31,7 @@ namespace Xamarin.VSSDK.Tests
                 { nameof(ThisAssembly.Project.Properties.NuGetRestoreTargets), ThisAssembly.Project.Properties.NuGetRestoreTargets },
                 { nameof(ThisAssembly.Project.Properties.CSharpCoreTargetsPath), ThisAssembly.Project.Properties.CSharpCoreTargetsPath },
                 { nameof(ThisAssembly.Project.Properties.RoslynTargetsPath), ThisAssembly.Project.Properties.RoslynTargetsPath },
-            }, "15.0", new ProjectCollection());
+            }, "Current", new ProjectCollection());
 
             var result = Builder.Build(factory(), "Restore").AssertSuccess();
             result = Builder.Build(factory(), "ReportBindingRedirects").AssertSuccess();
