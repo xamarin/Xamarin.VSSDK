@@ -3,7 +3,7 @@
       Declare our supported frameworks so they show up in the target framework selection dropdown.
   -->
   <ItemGroup>
-    <SupportedTargetFramework Include="net47" DisplayName="Visual Studio 2019" />
+    <SupportedTargetFramework Include="net472" DisplayName="Visual Studio 2019" />
     <SupportedTargetFramework Include="net46" DisplayName="Visual Studio 2017" />
     <SupportedTargetFramework Include="net452" DisplayName="Visual Studio 2015" />
     <SupportedTargetFramework Include="net45" DisplayName="Visual Studio 2013" />

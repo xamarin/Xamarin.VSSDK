@@ -9,13 +9,13 @@
 	<PropertyGroup>
 		<!-- Default $(Dev) according to either '.' value or $(ActiveDebugFramework). These are explicit user-chosen values -->
 		<Dev Condition="'$(Dev)' == '.'">$(VisualStudioVersion)</Dev>
-    <Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net47'">16.0</Dev>
+    <Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net472'">16.0</Dev>
     <Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net46'">15.0</Dev>
 		<Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net452'">14.0</Dev>
 		<Dev Condition="'$(Dev)' == '' And '$(ActiveDebugFramework)' == 'net45'">12.0</Dev>
 
 		<!-- If no ActiveDebugFramework was set, just set it to the one we determined, for consistency -->
-    <ActiveDebugFramework Condition="'$(Dev)' == '16.0'">net47</ActiveDebugFramework>
+    <ActiveDebugFramework Condition="'$(Dev)' == '16.0'">net472</ActiveDebugFramework>
     <ActiveDebugFramework Condition="'$(Dev)' == '15.0'">net46</ActiveDebugFramework>
 		<ActiveDebugFramework Condition="'$(Dev)' == '14.0'">net452</ActiveDebugFramework>
 		<ActiveDebugFramework Condition="'$(Dev)' == '12.0'">net45</ActiveDebugFramework>
