@@ -51,11 +51,11 @@
 	</ItemGroup>
 
 	<ItemGroup Label="Visual Studio 2017">
-		<PackageFile Include="VSSDK_Reference_Assemblies" Version="15.0.26608" TargetFramework="net46" Kind="Dependency" />
+		<PackageFile Include="Microsoft.VisualStudio.SDK" Version="15.9.3" TargetFramework="net46" Kind="Dependency" ExcludeAssets="runtime" />
 	</ItemGroup>
 
   <ItemGroup Label="Visual Studio 2019">
-    <PackageFile Include="VSSDK_Reference_Assemblies" Version="15.0.26608" TargetFramework="net47" Kind="Dependency" />
+		<PackageFile Include="Microsoft.VisualStudio.SDK" Version="16.0.150-pre" TargetFramework="net472" Kind="Dependency" ExcludeAssets="runtime" />
   </ItemGroup>
 
   <ItemGroup>

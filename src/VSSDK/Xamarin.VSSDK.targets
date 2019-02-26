@@ -8,7 +8,7 @@
       $(TargetFrameworks), or alternatively, by the Framework selector dropdown in 15.3+
   -->
   <PropertyGroup Condition="'$(Dev)' == ''">
-    <Dev Condition="'$(TargetFramework)' == 'net47'">16.0</Dev>
+    <Dev Condition="'$(TargetFramework)' == 'net472'">16.0</Dev>
     <Dev Condition="'$(TargetFramework)' == 'net46'">15.0</Dev>
     <Dev Condition="'$(TargetFramework)' == 'net452'">14.0</Dev>
     <Dev Condition="'$(TargetFramework)' == 'net45'">12.0</Dev>

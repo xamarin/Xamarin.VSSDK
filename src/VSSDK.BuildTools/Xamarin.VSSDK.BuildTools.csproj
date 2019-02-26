@@ -28,11 +28,11 @@
   </ItemGroup>
 
   <ItemGroup Label="Visual Studio 2017">
-    <PackageFile Include="Microsoft.VSSDK.BuildTools" Version="15.7.109" Kind="Dependency" TargetFramework="net46" />
+    <PackageFile Include="Microsoft.VSSDK.BuildTools" Version="15.9.3039" Kind="Dependency" TargetFramework="net46" />
   </ItemGroup>
 
   <ItemGroup Label="Visual Studio 2019">
-    <PackageFile Include="Microsoft.VSSDK.BuildTools" Version="15.7.109" Kind="Dependency" TargetFramework="net47" />
+    <PackageFile Include="Microsoft.VSSDK.BuildTools" Version="16.0.2258" Kind="Dependency" TargetFramework="net472" />
   </ItemGroup>
 
   <ItemGroup>
