@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
-using Microsoft.Build.Framework;
 using Xunit;
 using Xunit.Abstractions;
+using static Builder;
 
 namespace Xamarin.VSSDK.Tests
 {
@@ -22,34 +22,34 @@ namespace Xamarin.VSSDK.Tests
         [Fact]
         public void CrossTargetingBuildFailsWhenNotBuildingInsideVisualStudio()
         {
-            var project = new ProjectInstance("Template.csproj", new Dictionary<string, string>
+            var project = new ProjectInstance("Template.csproj", Global(new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net45;net452;net46" },
+                { "TargetFrameworks", "net45;net46" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
-            }, "Current", new ProjectCollection());
+            }), null, new ProjectCollection(Global()));
 
             Builder.Build(project, "Restore");
             var result = Builder.Build(project, "Build");
 
             Assert.Equal(BuildResultCode.Failure, result.BuildResult.OverallResult);
+            if (result.Logger.Errors[0].Code != "XVSSDK0001")
+                Process.Start(result.StructuredLogger.Parameters);
+
             Assert.Equal("XVSSDK0001", result.Logger.Errors[0].Code);
         }
 
         [Fact]
         public void CrossTargetingBuildSucceedsWhenBuildingInsideVisualStudio()
         {
-            var project = new ProjectInstance("Template.csproj", new Dictionary<string, string>
+            var project = new ProjectInstance("Template.csproj", Global(new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net45;net452;net46" },
+                { "TargetFrameworks", "net45;net46" },
                 { "BuildingInsideVisualStudio", "true" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
-            }, "Current", new ProjectCollection());
+            }), null, new ProjectCollection(Global()));
 
-            Builder.Build(project, "Restore");
-            var result = Builder.Build(project, "Build");
-
-            Assert.Equal(BuildResultCode.Success, result.BuildResult.OverallResult);
-            Assert.Equal(TargetResultCode.Success, result.ResultCode);
+            Build(project, "Restore").AssertSuccess();
+            Build(project, "Build").AssertSuccess();
         }
 
         [Fact]
@@ -57,13 +57,13 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net45;net452;net46" },
-                { "ActiveDebugFramework", "net452" },
+                { "TargetFrameworks", "net45;net46;net472" },
+                { "ActiveDebugFramework", "net46" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
                 { "BuildingInsideVisualStudio", "true" }
-            }, "Current", new ProjectCollection());
+            }, null, new ProjectCollection());
 
-            Assert.Equal("net452", project.GetPropertyValue("TargetFramework"));
+            Assert.Equal("net46", project.GetPropertyValue("TargetFramework"));
         }
 
         [Fact]
@@ -71,12 +71,12 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net45;net452;net46" },
-                { "ActiveDebugFramework", "net452" },
+                { "TargetFrameworks", "net45;net46;net472" },
+                { "ActiveDebugFramework", "net46" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
-            }, "Current", new ProjectCollection());
+            }, null, new ProjectCollection());
 
-            Assert.NotEqual("net452", project.GetPropertyValue("TargetFramework"));
+            Assert.NotEqual("net46", project.GetPropertyValue("TargetFramework"));
         }
 
         [Fact]
@@ -84,10 +84,10 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net45;net452;net46" },
+                { "TargetFrameworks", "net45;net46;net472" },
                 { "Dev", "15.0" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
-            }, "Current", new ProjectCollection());
+            }, null, new ProjectCollection());
 
             Assert.Equal("net46", project.GetPropertyValue("TargetFrameworks"));
         }
@@ -97,12 +97,12 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net45;net452;net46" },
-                { "ActiveDebugFramework", "net452" },
+                { "TargetFrameworks", "net45;net46;net472" },
+                { "ActiveDebugFramework", "net45" },
                 { "Dev", "15.0" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
                 { "BuildingInsideVisualStudio", "true" },
-            }, "Current", new ProjectCollection());
+            }, null, new ProjectCollection());
 
             Assert.Equal("net46", project.GetPropertyValue("TargetFramework"));
         }
@@ -112,10 +112,10 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net45;net452;net46" },
+                { "TargetFrameworks", "net45;net46;net472" },
                 { "Dev", "15.0" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
-            }, "Current", new ProjectCollection());
+            }, null, new ProjectCollection());
 
             Assert.Equal("net46", project.GetPropertyValue("TargetFrameworks"));
         }
@@ -125,12 +125,12 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new Project("Template.csproj", new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net45;net452;net46" },
-                { "TargetFramework", "net452" },
+                { "TargetFrameworks", "net45;net46;net472" },
+                { "TargetFramework", "net46" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
-            }, "Current", new ProjectCollection());
+            }, null, new ProjectCollection());
 
-            Assert.Equal("14.0", project.GetPropertyValue("Dev"));
+            Assert.Equal("15.0", project.GetPropertyValue("Dev"));
         }
     }
 }

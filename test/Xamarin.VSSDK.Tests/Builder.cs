@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.Build.Execution;
@@ -16,7 +17,18 @@ using Xunit.Abstractions;
 /// </summary>
 static partial class Builder
 {
-    const string ToolsVersion = "15.0";
+    public static Dictionary<string, string> Global(Dictionary<string, string> properties = null, [CallerMemberName] string caller = "")
+    {
+        properties = properties ?? new Dictionary<string, string>();
+
+        properties["BaseIntermediateOutputPath"] = Path.Combine(Directory.GetCurrentDirectory(), "obj", caller) + "\\";
+        properties["MSBuildProjectExtensionsPath"] = Path.Combine(Directory.GetCurrentDirectory(), "obj", caller);
+        properties["IntermediateOutputPath"] = Path.Combine(Directory.GetCurrentDirectory(), "obj", caller) + "\\";
+        properties["BaseOutputPath"] = Path.Combine(Directory.GetCurrentDirectory(), "bin", caller) + "\\";
+        properties["OutputPath"] = Path.Combine(Directory.GetCurrentDirectory(), "bin", caller);
+
+        return properties;
+    }
 
     public static TargetResult Build(ProjectInstance project, string targets, 
         Dictionary<string, string> properties = null, 
@@ -26,10 +38,16 @@ static partial class Builder
         properties = properties ?? new Dictionary<string, string>();
         properties["Configuration"] = ThisAssembly.Project.Properties.Configuration;
 
+        properties["BaseIntermediateOutputPath"] = Path.Combine(Directory.GetCurrentDirectory(), "obj", caller);
+        properties["MSBuildProjectExtensionsPath"] = Path.Combine(Directory.GetCurrentDirectory(), "obj", caller);
+        properties["IntermediateOutputPath"] = Path.Combine(Directory.GetCurrentDirectory(), "obj", caller) + "\\";
+        properties["BaseOutputPath"] = Path.Combine(Directory.GetCurrentDirectory(), "bin", caller) + "\\";
+        properties["OutputPath"] = Path.Combine(Directory.GetCurrentDirectory(), "bin", caller);
+
         //if (!Debugger.IsAttached)
-        // Without this, builds end up running in process and colliding with each other, 
-        // especially around the current directory used to resolve relative paths in projects.
-        //Environment.SetEnvironmentVariable("MSBUILDNOINPROCNODE", "0", EnvironmentVariableTarget.Process);
+        //  Without this, builds end up running in process and colliding with each other, 
+        //  especially around the current directory used to resolve relative paths in projects.
+        //  Environment.SetEnvironmentVariable("MSBUILDNOINPROCNODE", "0", EnvironmentVariableTarget.Process);
 
         using (var manager = new BuildManager(Guid.NewGuid().ToString()))
         {
@@ -45,7 +63,17 @@ static partial class Builder
             };
 
             var logger = new TestOutputLogger(output, verbosity);
-            var structured = new StructuredLogger { Verbosity = verbosity.GetValueOrDefault(), Parameters = caller + ".binlog" };
+            var framework = "";
+            var directory = Directory.GetCurrentDirectory();
+            properties.TryGetValue("TargetFramework", out framework);
+
+            if (framework != null)
+            {
+                directory = Path.Combine(directory, framework);
+                Directory.CreateDirectory(directory);
+            }
+
+            var structured = new StructuredLogger { Verbosity = verbosity.GetValueOrDefault(), Parameters = Path.Combine(directory, caller + ".binlog") };
             parameters.Loggers = new ILogger[] { logger, structured };
 
             var result = manager.Build(parameters, request);

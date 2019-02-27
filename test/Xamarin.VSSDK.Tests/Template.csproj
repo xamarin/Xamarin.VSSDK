@@ -4,6 +4,9 @@
   <PropertyGroup>
     <IsCrossTargetingBuild Condition="'$(IsCrossTargetingBuild)' == '' and '$(TargetFrameworks)' != '' and '$(TargetFramework)' == ''">true</IsCrossTargetingBuild>
     <SdkRootDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), .editorconfig))\src\VSSDK\bin\$(Configuration)\</SdkRootDir>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ImportDirectoryBuildProps>false</ImportDirectoryBuildProps>
+    <ImportDirectoryBuildTargets>false</ImportDirectoryBuildTargets>
   </PropertyGroup>
 
   <Import Project="$(SdkRootDir)buildMultiTargeting\Xamarin.VSSDK.props" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
