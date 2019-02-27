@@ -32,7 +32,8 @@
   </ItemGroup>
 
   <ItemGroup Label="Visual Studio 2019">
-    <PackageFile Include="Microsoft.VSSDK.BuildTools" Version="16.0.2258" Kind="Dependency" TargetFramework="net472" />
+		<!-- TODO: updating to 16.x build tools requires changes to DeployVsixExtensionFiles.targets. Enabling/Installing has changed  -->
+    <PackageFile Include="Microsoft.VSSDK.BuildTools" Version="15.9.3039" Kind="Dependency" TargetFramework="net472" />
   </ItemGroup>
 
   <ItemGroup>
