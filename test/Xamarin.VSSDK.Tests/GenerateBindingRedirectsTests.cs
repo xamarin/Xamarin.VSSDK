@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Xunit;
@@ -17,21 +16,20 @@ namespace Xamarin.VSSDK.Tests
 
         public GenerateBindingRedirectsTests(ITestOutputHelper output) : base(output) { }
 
-        //[InlineData("net461")]
-        //[InlineData("net462")]
-        //[Theory(Skip = "Can't make this work yet")]
-        [Fact]
-        public void BindingRedirectsCanBeProvided()
+        [InlineData("net45")]
+        [InlineData("net46")]
+        [Theory]
+        public void BindingRedirectsCanBeProvided(string targetFramework)
         {
             Func<ProjectInstance> factory = () => new ProjectInstance("BindRedirected.csproj", new Dictionary<string, string>
             {
-                { "TargetFramework", "net461" },
+                { "TargetFramework", targetFramework },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
                 { nameof(ThisAssembly.Project.Properties.MSBuildExtensionsPath), ThisAssembly.Project.Properties.MSBuildExtensionsPath },
                 { nameof(ThisAssembly.Project.Properties.NuGetRestoreTargets), ThisAssembly.Project.Properties.NuGetRestoreTargets },
                 { nameof(ThisAssembly.Project.Properties.CSharpCoreTargetsPath), ThisAssembly.Project.Properties.CSharpCoreTargetsPath },
                 { nameof(ThisAssembly.Project.Properties.RoslynTargetsPath), ThisAssembly.Project.Properties.RoslynTargetsPath },
-            }, "Current", new ProjectCollection());
+            }, null, new ProjectCollection());
 
             var result = Builder.Build(factory(), "Restore").AssertSuccess();
             result = Builder.Build(factory(), "ReportBindingRedirects").AssertSuccess();

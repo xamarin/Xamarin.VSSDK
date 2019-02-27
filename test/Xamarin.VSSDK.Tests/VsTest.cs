@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Xamarin.VSSDK.Tests
@@ -13,14 +14,14 @@ namespace Xamarin.VSSDK.Tests
         const string BaseRootSuffix = "15.0_XVSSDK";
 #elif Dev16
         protected const string BaseRootSuffix = "16.0_XVSSDK";
-#elif Dev17
-        const string BaseRootSuffix = "17.0_XVSSDK";
 #endif
 
 #if Dev14
-        protected const string TargetFramework = "net461";
-#else
-        protected const string TargetFramework = "net462";
+        protected const string TargetFramework = "net452";
+#elif Dev15
+        protected const string TargetFramework = "net46";
+#elif Dev16
+        protected const string TargetFramework = "net471";
 #endif
 
 

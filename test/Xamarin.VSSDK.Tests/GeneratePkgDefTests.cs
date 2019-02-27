@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Xunit;
 using Xunit.Abstractions;
+using static Builder;
 
 namespace Xamarin.VSSDK.Tests
 {
@@ -19,15 +19,15 @@ namespace Xamarin.VSSDK.Tests
             if (!string.IsNullOrEmpty(vsixDeploymentPath) && Directory.Exists(vsixDeploymentPath))
                 Directory.Delete(vsixDeploymentPath, true);
 
-            var project = new ProjectInstance("VsixTemplate.csproj", new Dictionary<string, string>
+            var project = new ProjectInstance("VsixTemplate.csproj", Global(new Dictionary<string, string>
             {
                 { "TargetFramework", TargetFramework },
                 { "GeneratePkgDefFile", "true"},
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
                 { "VSSDKTargetPlatformRegRootSuffix", RootSuffix },
-            }, "15.0", new ProjectCollection());
+            }), null, new ProjectCollection(Global()));
 
-            var result = Builder.Build(project, "Restore;Rebuild", output: Output);
+            var result = Build(project, "Restore;Rebuild", output: Output);
 
             Assert.Equal(BuildResultCode.Success, result.BuildResult.OverallResult);
 
