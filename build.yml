@@ -5,6 +5,11 @@ steps:
 - checkout: self
   clean: true
 
+- task: DotNetCoreInstaller@0
+  displayName: 'Use .NET Core sdk 2.1.500'
+  inputs:
+    version: 2.1.500
+  
 - task: MSBuild@1
   displayName: Restore
   inputs:
