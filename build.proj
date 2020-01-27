@@ -17,6 +17,7 @@
   <ItemGroup>
     <PackageReference Include="xunit.runner.console" Version="2.4.0" />
     <PackageReference Include="Sleet.Azure" Version="0.2.5" />
+    <PackageReference Include="Sleet" Version="2.3.33" />
     <PackageReference Include="JsonPoke.MSBuild" Version="1.0.9" />
   </ItemGroup>
 
