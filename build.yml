@@ -1,15 +1,30 @@
-queue: Hosted VS2017
+pool:
+  vmImage: windows-2019
+
+variables:
+- group: Xamarin NuGetized
+
+resources:
+  repositories:
+  - repository: templates
+    type: github
+    name: xamarin/yaml-templates
+    ref: refs/heads/master
+    endpoint: xamarin
 
 steps:
 
 - checkout: self
   clean: true
 
-- task: DotNetCoreInstaller@0
-  displayName: 'Use .NET Core sdk 2.1.500'
+- task: UseDotNet@2
   inputs:
-    version: 2.1.500
-  
+    version: 2.1.x
+
+- task: UseDotNet@2
+  inputs:
+    useGlobalJson: true
+
 - task: MSBuild@1
   displayName: Restore
   inputs:
@@ -31,11 +46,11 @@ steps:
     codeCoverageEnabled: 'true'
     publishRunAttachments: 'true'
 
-- task: MSBuild@1
-  displayName: Push
-  inputs:
-    solution: build.proj
-    msbuildArguments: /t:Publish /p:Out="$(Build.ArtifactStagingDirectory)" /p:StorageAccessKey=$(StorageAccessKey) /bl:"$(Build.ArtifactStagingDirectory)\push.binlog"
+- template: sleet/v1.yml@templates
+  parameters:
+    connectionString: $(SLEET_FEED_CONNECTIONSTRING)
+    container: xvs
+    packages: $(Build.ArtifactStagingDirectory)
 
 - task: PublishBuildArtifacts@1
   displayName: Publish

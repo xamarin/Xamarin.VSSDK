@@ -8,15 +8,10 @@
     <IntermediateOutputPath>$(RestoreOutputPath)\</IntermediateOutputPath>
     <Out Condition="'$(Out)' == ''">$(MSBuildThisFileDirectory)out</Out>
     <AdditionalProperties>Configuration=$(Configuration);PackageOutputPath=$(Out);NuGetBuildTasksPackTargets=DONT-WANT-SDK-PACK</AdditionalProperties>
-
-    <SleetInit Condition="'$(SleetInit)' == ''">false</SleetInit>
-    <StorageAccount>nugets</StorageAccount>
-    <StorageContainer>xvssdk</StorageContainer>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="xunit.runner.console" Version="2.4.0" />
-    <PackageReference Include="Sleet.Azure" Version="0.2.5" />
     <PackageReference Include="JsonPoke.MSBuild" Version="1.0.9" />
   </ItemGroup>
 
@@ -39,20 +34,6 @@
     <MSBuild Projects="@(Solution)" Targets="Build" />
 
     <Copy SourceFiles="NuGet.Config" DestinationFolder="$(Out)" />
-  </Target>
-
-  <Target Name="_AddPackages" BeforeTargets="Push">
-    <ItemGroup>
-      <Package Include="$(Out)\*.nupkg" />
-    </ItemGroup>
-  </Target>
-
-  <Target Name="Publish" DependsOnTargets="Push" />
-
-  <Target Name="Delete" DependsOnTargets="_SleetValidateStorage;_SleetConfigCreate;SetVersion">
-    <Error Condition="'$(DeleteVersion)' == ''" Text="Please specify the version of the Xamarin.VSSDK packages to delete as /p:DeleteVersion" />
-    <Exec Command='"$(Sleet)" delete -i Xamarin.VSSDK -v $(DeleteVersion) -s feed -c $(_SleetConfig)' ContinueOnError='true' />
-    <Exec Command='"$(Sleet)" delete -i Xamarin.VSSDK.BuildTools -v $(DeleteVersion) -s feed -c $(_SleetConfig)' ContinueOnError='true' />
   </Target>
 
   <Target Name="Clean">
