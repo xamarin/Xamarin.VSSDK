@@ -1,4 +1,8 @@
-queue: Hosted VS2017
+pool:
+  vmImage: windows-2019
+
+variables:
+- group: Xamarin NuGetized
 
 steps:
 
@@ -35,7 +39,7 @@ steps:
   displayName: Push
   inputs:
     solution: build.proj
-    msbuildArguments: /t:Publish /p:Out="$(Build.ArtifactStagingDirectory)" /p:StorageAccessKey=$(StorageAccessKey) /bl:"$(Build.ArtifactStagingDirectory)\push.binlog"
+    msbuildArguments: /t:Publish /p:Out="$(Build.ArtifactStagingDirectory)" /p:StorageAccessKey=$(StorageAccessKey) /p:StorageAccount=nugetized /p:StorageContainer=xvs /bl:"$(Build.ArtifactStagingDirectory)\push.binlog"
 
 - task: PublishBuildArtifacts@1
   displayName: Publish
