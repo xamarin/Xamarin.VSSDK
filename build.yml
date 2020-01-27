@@ -21,7 +21,12 @@ steps:
   inputs:
     packageType: 'sdk'
     useGlobalJson: true
-  
+
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: 2.1
+
 - task: MSBuild@1
   displayName: Restore
   inputs:
