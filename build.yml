@@ -25,7 +25,7 @@ steps:
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
-    version: 2.1
+    version: 2.1.x
 
 - task: MSBuild@1
   displayName: Restore
