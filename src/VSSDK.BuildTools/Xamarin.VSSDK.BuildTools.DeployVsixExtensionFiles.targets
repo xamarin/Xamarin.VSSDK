@@ -76,24 +76,6 @@
   </Target>
 
   <Target Name="_EnableVsixExtension" Condition="'@(_CopiedVsixExtensionFile)' != ''">
-    <!--Check if the user is an administrator and the user profile hasn't been setup for the target instance. -->
-    <CheckProfileSetup
-        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)">
-      <Output TaskParameter="IsAdministrator" PropertyName="IsCurrentUserAdministrator" />
-      <Output TaskParameter="IsProfileSetup" PropertyName="IsTargetProfileSetup" />
-    </CheckProfileSetup>
-
-    <!--Run devenv to setup the target profile if necessary -->
-    <Message
-        Importance="High"
-        Text="Setting up Visual Studio for debugging extensions. This one-time operation may take a minute or more."
-        Condition="'$(IsCurrentUserAdministrator)'=='True' And '$(IsTargetProfileSetup)'=='False'" />
-    <Devenv
-        Condition="'$(IsCurrentUserAdministrator)'=='True' And '$(IsTargetProfileSetup)'=='False'"
-        RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)"
-        ResetSettingProfile="General.vssettings"
-        IsEmbedded="true" />
-
     <!--Enable always loading extensions from LocalAppData -->
     <EnableLoadingAllExtensions
         RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)" />
