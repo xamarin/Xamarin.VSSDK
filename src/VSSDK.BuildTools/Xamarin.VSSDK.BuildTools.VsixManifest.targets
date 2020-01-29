@@ -13,7 +13,7 @@
          We preserve the existing value as the one we will merge to later on. -->
     <MergedIntermediateVsixManifest>$(IntermediateVsixManifest)</MergedIntermediateVsixManifest>
     <IntermediateVsixManifest>$(MergedIntermediateVsixManifest).tmp</IntermediateVsixManifest>
-    <EnsureUpdatedVsixManifestDependsOn>MergeVsixManifest;ReplaceIntermediateVsixManifest</EnsureUpdatedVsixManifestDependsOn>
+    <EnsureUpdatedVsixManifestDependsOn>DetokenizeVsixManifestFile;MergeVsixManifest;ReplaceIntermediateVsixManifest</EnsureUpdatedVsixManifestDependsOn>
   </PropertyGroup>
 
   <!-- There is a non-trivial amount of conditions around $(DeployExtension) and $(CreateVsixContainer) and the manifest, 
@@ -31,7 +31,7 @@
     items from the MSBuild project, and write it out to a target manifest.
   -->
   <Target Name="MergeVsixManifest" 
-          Condition="'$(CreateVsixContainer)' == 'true'"
+          Condition="'$(CreateVsixContainer)' == 'true' or '$(DeployExtension)' == 'true'"
           Inputs="$(IntermediateVsixManifest);$(MSBuildAllProjects)" 
           Outputs="$(MergedIntermediateVsixManifest)">
 
