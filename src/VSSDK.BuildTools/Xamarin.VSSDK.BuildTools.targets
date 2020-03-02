@@ -24,7 +24,6 @@
   <Import Project="Xamarin.VSSDK.BuildTools.FindSourceVsixManifest.targets" Condition="'$(OverrideDeployVsixExtensionFiles)' == 'true' and '$(Dev)' &gt;= '15.0'" />
   <Import Project="Xamarin.VSSDK.BuildTools.GetVsixDeploymentPath.targets" Condition="'$(OverrideDeployVsixExtensionFiles)' == 'true' and '$(Dev)' &gt;= '15.0'" />
   <Import Project="Xamarin.VSSDK.BuildTools.FindExistingDeploymentPath.targets" Condition="'$(OverrideDeployVsixExtensionFiles)' == 'true' and '$(Dev)' &gt;= '15.0'" />
-  <Import Project="Xamarin.VSSDK.BuildTools.GeneratePkgDef.targets" />
   <Import Project="Xamarin.VSSDK.BuildTools.GenerateBindingRedirects.targets" />
 
   <!-- This fixes the GetVsixSourceItems target when the project references are being evaluated in a cross targeting build -->
