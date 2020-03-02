@@ -35,6 +35,7 @@ The XVSSDK will perform the following mapping of VS versions:
 |   net46       |       2013          |
 |   net461      |       2015          |
 |   net462      |       2017          |
+|   net472      |       2019          |
 
 The XVSSDK automatically adds TF-specific dependencies on the `VSSDK_Reference_Assemblies` nuget package,
 which provides all the necessary APIs to author VS extensions.
