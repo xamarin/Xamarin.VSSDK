@@ -16,6 +16,9 @@
 		<None Update="buildMultiTargeting\Xamarin.VSSDK.targets">
 			<Kind>buildMultiTargeting</Kind>
 		</None>
+		<None Update="tools\empty.cmd">
+			<Kind>tools</Kind>
+		</None>
 	</ItemGroup>
 
 	<ItemDefinitionGroup>

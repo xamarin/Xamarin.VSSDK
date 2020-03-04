@@ -1,4 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(PkgXamarin_VSSDK)\build\Xamarin.VSSDK.Defaults.targets" Condition="'$(XamarinVSSDKDefaultsImported)' != 'true' And '$(PkgXamarin_VSSDK)' != ''" />
+  <Import Project="$(PkgXamarin_VSSDK)\build\Xamarin.VSSDK.DefaultDev.targets" Condition="'$(XamarinVSSDKDefaultDevImported)' != 'true' And '$(PkgXamarin_VSSDK)' != ''" />
 
   <PropertyGroup>
     <IsVsixExtension>true</IsVsixExtension>

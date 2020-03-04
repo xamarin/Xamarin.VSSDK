@@ -11,5 +11,6 @@
 
   <PropertyGroup>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+    <XamarinVSSDKPropsImported>true</XamarinVSSDKPropsImported>
   </PropertyGroup>
 </Project>

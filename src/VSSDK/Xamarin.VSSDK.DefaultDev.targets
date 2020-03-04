@@ -1,0 +1,19 @@
+<Project TreatAsLocalProperty="Dev" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+      Provides the default value for $(Dev) according to the current $(TargetFramework) 
+      which is automatically specified by the cross-targeting build for each value in 
+      $(TargetFrameworks), or alternatively, by the Framework selector dropdown in 15.3+
+  -->
+  <PropertyGroup Condition="'$(Dev)' == ''">
+    <Dev Condition="'$(TargetFramework)' == 'net472'">16.0</Dev>
+    <Dev Condition="'$(TargetFramework)' == 'net46'">15.0</Dev>
+    <Dev Condition="'$(TargetFramework)' == 'net452'">14.0</Dev>
+    <Dev Condition="'$(TargetFramework)' == 'net45'">12.0</Dev>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <XamarinVSSDKDefaultDevImported>true</XamarinVSSDKDefaultDevImported>
+  </PropertyGroup>
+
+</Project>
