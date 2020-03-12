@@ -1,3 +1,10 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <PropertyGroup>
+    <!-- Set startup process to always start with the experimental instance and logging enabled -->
+    <StartAction>Program</StartAction>
+    <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
+    <StartArguments>/rootSuffix Exp /log</StartArguments>
+  </PropertyGroup>
+
 </Project>
