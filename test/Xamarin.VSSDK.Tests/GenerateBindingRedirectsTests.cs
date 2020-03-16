@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Xunit;
@@ -33,6 +34,27 @@ namespace Xamarin.VSSDK.Tests
 
             var result = Builder.Build(factory(), "Restore").AssertSuccess();
             result = Builder.Build(factory(), "ReportBindingRedirects").AssertSuccess();
+        }
+
+        [Fact]
+        public void BindingRedirectsCanExclude()
+        {
+            Func<ProjectInstance> factory = () => new ProjectInstance("BindRedirected.csproj", new Dictionary<string, string>
+            {
+                { "TargetFramework", "netstandard2.0" },
+                { "Configuration", ThisAssembly.Project.Properties.Configuration },
+                { nameof(ThisAssembly.Project.Properties.MSBuildExtensionsPath), ThisAssembly.Project.Properties.MSBuildExtensionsPath },
+                { nameof(ThisAssembly.Project.Properties.NuGetRestoreTargets), ThisAssembly.Project.Properties.NuGetRestoreTargets },
+                { nameof(ThisAssembly.Project.Properties.CSharpCoreTargetsPath), ThisAssembly.Project.Properties.CSharpCoreTargetsPath },
+                { nameof(ThisAssembly.Project.Properties.RoslynTargetsPath), ThisAssembly.Project.Properties.RoslynTargetsPath },
+            }, null, new ProjectCollection());
+
+            var result = Builder.Build(factory(), "Restore").AssertSuccess();
+            result = Builder.Build(factory(), "ReportBindingRedirects").AssertSuccess();
+
+            Assert.Empty(result.Items.Where(x => x.GetMetadata("PackageName") == "System.Reactive.Linq"));
+            Assert.NotEmpty(result.Items.Where(x => x.GetMetadata("PackageName") == "System.Reactive"));
+            Assert.NotEmpty(result.Items.Where(x => x.GetMetadata("PackageName") == "System.Reactive.Core"));
         }
     }
 }

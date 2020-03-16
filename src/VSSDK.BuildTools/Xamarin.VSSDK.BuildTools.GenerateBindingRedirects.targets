@@ -69,7 +69,7 @@
     Reports the generated binding redirects
     =================================================================================
   -->
-  <Target Name="ReportBindingRedirects" DependsOnTargets="BindingRedirects">
+  <Target Name="ReportBindingRedirects" DependsOnTargets="BindingRedirects" Returns="@(BindingRedirect)">
 
     <Message Text="Binding redirection applied for @(BindingRedirect -> Count()) assemblies"
              Condition="@(BindingRedirect -> Count()) != 0"
@@ -87,14 +87,15 @@
           Returns="@(BindingRedirect)">
 
     <PropertyGroup>
-      <_FusionExpression>%(BindingRedirect.Identity)</_FusionExpression>
+      <_FusionExpression>$([MSBuild]::Escape('%(BindingRedirect.Identity)'))</_FusionExpression>
+      <_FusionExcludeName>$([MSBuild]::Escape('%(BindingRedirect.Except)')),</_FusionExcludeName>
       <_OldFrom>%(BindingRedirect.From)</_OldFrom>
       <_OldTo>%(BindingRedirect.To)</_OldTo>
     </PropertyGroup>
 
     <ItemGroup>
       <_BindingRedirectReference Include="@(ReferencePath)"
-                                   Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(ReferencePath.FusionName)', '$(_FusionExpression)', RegexOptions.IgnoreCase))" />
+                                   Condition="!$([MSBuild]::ValueOrDefault('%(ReferencePath.FusionName)', '').StartsWith('$(_FusionExcludeName)')) And $([System.Text.RegularExpressions.Regex]::IsMatch('%(ReferencePath.FusionName)', '$(_FusionExpression)', RegexOptions.IgnoreCase))" />
       <_BindingRedirect Include="@(_BindingRedirectReference -> Distinct())" />
     </ItemGroup>
 
