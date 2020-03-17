@@ -10,9 +10,14 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="automapper" Version="6.2.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.Reactive" Version="4.3.2" />
     <PackageReference Include="System.Reactive.Core" Version="4.3.2" />
     <PackageReference Include="System.Reactive.Linq" Version="4.3.2" />
+    <!-- Showcases matching all RX assemblies, but excluding a particular one -->
+    <BindingRedirect Include="System.Reactive" Except="System.Reactive.Linq" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -31,8 +36,6 @@
     <BindingRedirect Include="^System, Version=4.0.0.0" From="2.0.0.0" />
     <!-- Showcases matching with a regex that matches two assemblies -->
     <BindingRedirect Include="System.Xml+" From="3.0.0.0" />
-    <!-- Showcases matching all RX assemblies, but excluding a particular one -->
-    <BindingRedirect Include="System.Reactive" Except="System.Reactive.Linq" />
   </ItemGroup>
 
   <Import Project="$(NuGetRestoreTargets)" Condition="'$(NuGetRestoreTargets)' != '' and '$(IsRestoreTargetsFileLoaded)' != 'true'" />
