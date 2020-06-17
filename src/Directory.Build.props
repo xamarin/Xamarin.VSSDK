@@ -5,6 +5,13 @@
 
   <PropertyGroup>
     <Authors>Microsoft</Authors>
+    <Company>Microsoft</Company>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseUrl>https://github.com/xamarin/Xamarin.VSSDK/blob/master/LICENSE</PackageLicenseUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageProjectUrl>https://github.com/xamarin/Xamarin.VSSDK</PackageProjectUrl>
+
 
     <!-- This property still needs to be passed-in via build.cmd in order for it to work properly pre-15.2 -->
     <NuGetBuildTasksPackTargets>DONT-WANT-SDK-PACK</NuGetBuildTasksPackTargets>
