@@ -3,6 +3,7 @@ pool:
 
 variables:
 - group: Xamarin NuGetized
+- group: Xamarin-Nugetized-Secrets
 
 resources:
   repositories:
@@ -48,7 +49,7 @@ steps:
 
 - template: sleet/v1.yml@templates
   parameters:
-    connectionString: $(SLEET_FEED_CONNECTIONSTRING)
+    connectionString: $(sleet-connection-string)
     container: xvs
     packages: $(Build.ArtifactStagingDirectory)
 
