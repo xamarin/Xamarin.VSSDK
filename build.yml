@@ -92,7 +92,7 @@ jobs:
       Write-Host "##vso[task.setvariable variable=PushPackages;]$push"
     displayName: Set PushPackages
     condition: eq(variables['PushPackages'], '')
-    
+
   - task: NuGetCommand@2
     displayName: Push Packages
     continueOnError: true
