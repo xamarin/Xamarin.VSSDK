@@ -1,3 +1,17 @@
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops
+trigger:
+  batch: false
+  branches:
+    include:
+    - main
+
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/github?view=azure-devops&tabs=yaml#pr-triggers
+pr:
+  autoCancel: false
+  branches:
+    include:
+    - main
+
 pool:
   vmImage: windows-2019
 
