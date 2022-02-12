@@ -12,11 +12,8 @@ pr:
     include:
     - main
 
-pool:
-  vmImage: windows-2019
-
 variables:
-- group: Xamarin NuGetized
+  - group: Xamarin NuGetized
 
 resources:
   repositories:
@@ -26,78 +23,82 @@ resources:
     ref: refs/heads/main
     endpoint: xamarin
 
-steps:
+jobs:
+- job: Build
+  pool:
+    vmImage: windows-2019
 
-- checkout: self
-  clean: true
+  steps:
+  - checkout: self
+    clean: true
 
-- task: UseDotNet@2
-  inputs:
-    version: 2.1.807
+  - task: UseDotNet@2
+    inputs:
+      version: 2.1.807
 
-- task: UseDotNet@2
-  inputs:
-    useGlobalJson: true
+  - task: UseDotNet@2
+    inputs:
+      useGlobalJson: true
 
-- task: NuGetAuthenticate@0
-  displayName: Authenticate NuGet feeds
-  inputs:
-    forceReinstallCredentialProvider: true
+  - task: NuGetAuthenticate@0
+    displayName: Authenticate NuGet feeds
+    inputs:
+      forceReinstallCredentialProvider: true
 
-- task: MSBuild@1
-  displayName: Restore
-  inputs:
-    solution: build.proj
-    msbuildArguments: /t:Restore /bl:"$(Build.ArtifactStagingDirectory)\restore.binlog"
+  - task: MSBuild@1
+    displayName: Restore
+    inputs:
+      solution: build.proj
+      msbuildArguments: /t:Restore /bl:"$(Build.ArtifactStagingDirectory)\restore.binlog"
 
-- task: MSBuild@1
-  displayName: Build
-  inputs:
-    solution: build.proj
-    msbuildArguments: /t:Build /p:Out="$(Build.ArtifactStagingDirectory)" /bl:"$(Build.ArtifactStagingDirectory)\build.binlog"
+  - task: MSBuild@1
+    displayName: Build
+    inputs:
+      solution: build.proj
+      msbuildArguments: /t:Build /p:Out="$(Build.ArtifactStagingDirectory)" /bl:"$(Build.ArtifactStagingDirectory)\build.binlog"
 
-- task: VSTest@2
-  displayName: Test
-  inputs:
-    testAssemblyVer2: |-
-      **\*.Tests.dll
-      !**\xunit*.dll
-    codeCoverageEnabled: 'true'
-    publishRunAttachments: 'true'
+  - task: VSTest@2
+    displayName: Test
+    inputs:
+      testAssemblyVer2: |-
+        **\*.Tests.dll
+        !**\xunit*.dll
+      codeCoverageEnabled: 'true'
+      publishRunAttachments: 'true'
 
-- template: sleet/v1.yml@templates
-  parameters:
-    connectionString: $(SLEET_FEED_CONNECTIONSTRING)
-    container: xvs
-    packages: $(Build.ArtifactStagingDirectory)
+  - template: sleet/v1.yml@templates
+    parameters:
+      connectionString: $(SLEET_FEED_CONNECTIONSTRING)
+      container: xvs
+      packages: $(Build.ArtifactStagingDirectory)
 
-- task: PublishBuildArtifacts@1
-  displayName: Publish
-  condition: always()
-  inputs:
-    PathtoPublish: $(Build.ArtifactStagingDirectory)
-    ArtifactName: output
-    ArtifactType: Container
+  - task: PublishBuildArtifacts@1
+    displayName: Publish
+    condition: always()
+    inputs:
+      PathtoPublish: $(Build.ArtifactStagingDirectory)
+      ArtifactName: output
+      ArtifactType: Container
 
-- task: NuGetCommand@2
-  displayName: 'NuGet Update'
-  inputs:
-    command: custom
-    arguments: 'update -self'
+  - task: NuGetCommand@2
+    displayName: 'NuGet Update'
+    inputs:
+      command: custom
+      arguments: 'update -self'
 
-- pwsh: |
-    $branch = '$(Build.SourceBranch)'
-    $push = "$($branch -eq 'refs/heads/main' -or $branch -match 'refs/heads/d\d\d-*|refs/heads/rel/*')".ToLowerInvariant()
-    Write-Host "##vso[task.setvariable variable=PushPackages;]$push"
-  displayName: Set PushPackages
-  condition: eq(variables['PushPackages'], '')
-   
-- task: NuGetCommand@2
-  displayName: Push Packages
-  continueOnError: true
-  condition: and(succeeded(), eq(variables['PushPackages'], 'true'))
-  inputs:
-    command: push
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-    nuGetFeedType: external
-    publishFeedCredentials: 'xamarin-impl public feed'
+  - pwsh: |
+      $branch = '$(Build.SourceBranch)'
+      $push = "$($branch -eq 'refs/heads/main' -or $branch -match 'refs/heads/d\d\d-*|refs/heads/rel/*')".ToLowerInvariant()
+      Write-Host "##vso[task.setvariable variable=PushPackages;]$push"
+    displayName: Set PushPackages
+    condition: eq(variables['PushPackages'], '')
+    
+  - task: NuGetCommand@2
+    displayName: Push Packages
+    continueOnError: true
+    condition: and(succeeded(), eq(variables['PushPackages'], 'true'))
+    inputs:
+      command: push
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      nuGetFeedType: external
+      publishFeedCredentials: 'xamarin-impl public feed'
