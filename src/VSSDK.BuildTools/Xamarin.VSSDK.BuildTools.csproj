@@ -63,4 +63,8 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Update="GitInfo" Version="2.2.0" />
+	</ItemGroup>
+
 </Project>

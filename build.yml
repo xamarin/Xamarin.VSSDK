@@ -9,7 +9,7 @@ resources:
   - repository: templates
     type: github
     name: xamarin/yaml-templates
-    ref: refs/heads/master
+    ref: refs/heads/main
     endpoint: xamarin
 
 steps:
@@ -68,7 +68,7 @@ steps:
 
 - pwsh: |
     $branch = '$(Build.SourceBranch)'
-    $push = "$($branch -eq 'refs/heads/master' -or $branch -match 'refs/heads/d\d\d-*|refs/heads/rel/*')".ToLowerInvariant()
+    $push = "$($branch -eq 'refs/heads/main' -or $branch -match 'refs/heads/d\d\d-*|refs/heads/rel/*')".ToLowerInvariant()
     Write-Host "##vso[task.setvariable variable=PushPackages;]$push"
   displayName: Set PushPackages
   condition: eq(variables['PushPackages'], '')

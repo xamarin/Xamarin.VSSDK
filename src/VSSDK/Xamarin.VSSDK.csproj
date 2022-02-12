@@ -62,7 +62,11 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <PackageReference Include="NuGet.Build.Packaging" Version="0.1.323" PrivateAssets="all" />
+	  <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" PrivateAssets="all" />
 	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="GitInfo" Version="2.2.0" />
+  </ItemGroup>
 
 </Project>
