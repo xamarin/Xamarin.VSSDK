@@ -49,7 +49,7 @@ jobs:
     displayName: Build
     inputs:
       solution: src\Xamarin.VSSDK.sln
-      msbuildArguments: '/r /bl:$(Build.ArtifactStagingDirectory)/logs/build.binlog'
+      msbuildArguments: '/r /p:Configuration=Release /bl:$(Build.ArtifactStagingDirectory)/logs/build.binlog'
 
   # Disabled
   - task: VSTest@2
