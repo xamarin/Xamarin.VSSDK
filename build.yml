@@ -49,7 +49,7 @@ jobs:
     displayName: Build
     inputs:
       solution: src\Xamarin.VSSDK.sln
-      msbuildArguments: '/r /bl:$(Build.ArtifactStagingDirectory)/logs/build.binlog' /p:Out="$(Build.ArtifactStagingDirectory)"
+      msbuildArguments: '/r /bl:$(Build.ArtifactStagingDirectory)/logs/build.binlog'
 
   - task: VSTest@2
     displayName: Test
