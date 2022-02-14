@@ -73,7 +73,8 @@ jobs:
       [IO.File]::Copy("$(Build.SourcesDirectory)/NuGet.Config", "$(Build.ArtifactStagingDirectory)/NuGet.Config")
 
       $outDirectory = "$(Build.SourcesDirectory)/out"
-      $files = [IO.Directory]::GetFiles($outDirectory, '*.nuget')
+      Write-Host "Build output directory: ${outDirectory}"
+      $files = [IO.Directory]::GetFiles($outDirectory, '*.nupkg')
 
       if ($null -ne $files -and $files.Count -gt 0) {
         $files | foreach {
