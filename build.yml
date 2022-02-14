@@ -61,6 +61,7 @@ jobs:
         !**\xunit*.dll
       codeCoverageEnabled: 'true'
       publishRunAttachments: 'true'
+      vsTestVersion: 15.0
 
   # UNDONE: Determine if sleet is required
   # - template: sleet/v1.yml@templates
