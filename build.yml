@@ -62,7 +62,7 @@ jobs:
       codeCoverageEnabled: 'true'
       publishRunAttachments: 'true'
 
-  - template: sleet/v1.yml@templates
+  - template: sleet/v2.yml@templates
     parameters:
       connectionString: $(SLEET_FEED_CONNECTIONSTRING)
       container: xvs
