@@ -70,7 +70,6 @@ jobs:
   #    packages: $(Build.ArtifactStagingDirectory)
 
   - powershell: |
-
       [IO.File]::Copy("$(Build.SourcesDirectory)/NuGet.Config", "$(Build.ArtifactStagingDirectory)/NuGet.Config")
 
       $outDirectory = "$(Build.SourcesDirectory)/out"
