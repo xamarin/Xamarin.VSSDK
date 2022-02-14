@@ -51,8 +51,10 @@ jobs:
       solution: src\Xamarin.VSSDK.sln
       msbuildArguments: '/r /bl:$(Build.ArtifactStagingDirectory)/logs/build.binlog'
 
+  # Disabled
   - task: VSTest@2
     displayName: Test
+    enabled: false
     inputs:
       testAssemblyVer2: |-
         **\*.Tests.dll
@@ -65,6 +67,10 @@ jobs:
       connectionString: $(SLEET_FEED_CONNECTIONSTRING)
       container: xvs
       packages: $(Build.ArtifactStagingDirectory)
+
+  - powershell: |
+      [IO.File]::Copy('NuGet.Config', "$(Build.ArtifactStagingDirectory)/NuGet.Config")
+    displayName: 'Copy NuGet.Config'
 
   - task: PublishBuildArtifacts@1
     displayName: Publish
