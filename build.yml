@@ -69,8 +69,23 @@ jobs:
       packages: $(Build.ArtifactStagingDirectory)
 
   - powershell: |
-      [IO.File]::Copy('NuGet.Config', "$(Build.ArtifactStagingDirectory)/NuGet.Config")
-    displayName: 'Copy NuGet.Config'
+
+      [IO.File]::Copy("$(Build.SourcesDirectory)/NuGet.Config", "$(Build.ArtifactStagingDirectory)/NuGet.Config")
+
+      $outDirectory = "$(Build.SourcesDirectory)/out"
+      $files = [IO.Directory]::GetFiles($outDirectory, *.nuget)
+
+      if ($null -ne $files -and $files.Count -gt 0) {
+        $files | foreach {
+          $filename = [IO.Path]::GetFileName($_)
+          $destPathAndFilename = [IO.Path]::Combine("$(Build.ArtifactStagingDirectory)", $filename)
+          Write-Host "Copy $_ to ${destPathAndFilename}"
+          [IO.File]::Copy($_, $destPathAndFilename)
+        }
+      } else {
+        Write-Host "ERROR: Nuget files not found: ${$outDirectory}"
+      }
+    displayName: 'Stage artifacts'
 
   - task: PublishBuildArtifacts@1
     displayName: Publish
