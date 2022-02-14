@@ -62,11 +62,12 @@ jobs:
       codeCoverageEnabled: 'true'
       publishRunAttachments: 'true'
 
-  - template: sleet/v1.yml@templates
-    parameters:
-      connectionString: $(SLEET_FEED_CONNECTIONSTRING)
-      container: xvs
-      packages: $(Build.ArtifactStagingDirectory)
+  # UNDONE: Determine if sleet is required
+  # - template: sleet/v1.yml@templates
+  #  parameters:
+  #    connectionString: $(SLEET_FEED_CONNECTIONSTRING)
+  #    container: xvs
+  #    packages: $(Build.ArtifactStagingDirectory)
 
   - powershell: |
 
