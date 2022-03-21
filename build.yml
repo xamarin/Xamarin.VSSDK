@@ -48,10 +48,16 @@ jobs:
       forceReinstallCredentialProvider: true
 
   - task: MSBuild@1
+    displayName: Restore
+    inputs:
+      solution: build.proj
+      msbuildArguments: /t:Restore /p:Configuration=Release /bl:"$(Build.ArtifactStagingDirectory)\restore.binlog"
+
+  - task: MSBuild@1
     displayName: Build
     inputs:
       solution: src\Xamarin.VSSDK.sln
-      msbuildArguments: '/r /p:Configuration=Release /bl:$(Build.ArtifactStagingDirectory)/build.binlog'
+      msbuildArguments: /t:Build /p:Configuration=Release /p:Out="$(Build.ArtifactStagingDirectory)" /bl:"$(Build.ArtifactStagingDirectory)\build.binlog
 
   # Disabled
   - task: VSTest@2
