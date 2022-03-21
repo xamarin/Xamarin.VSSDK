@@ -65,12 +65,11 @@ jobs:
       publishRunAttachments: 'true'
       vsTestVersion: 15.0
 
-  # UNDONE: Determine if sleet is required
-  # - template: sleet/v1.yml@templates
-  #  parameters:
-  #    connectionString: $(SLEET_FEED_CONNECTIONSTRING)
-  #    container: xvs
-  #    packages: $(Build.ArtifactStagingDirectory)
+  - template: sleet/v1.yml@templates
+    parameters:
+      connectionString: $(SLEET_FEED_CONNECTIONSTRING)
+      container: xvs
+      packages: $(Build.ArtifactStagingDirectory)
 
   - powershell: |
       [IO.File]::Copy("$(Build.SourcesDirectory)/NuGet.Config", "$(Build.ArtifactStagingDirectory)/NuGet.Config")
