@@ -8,7 +8,7 @@
     <Company>Microsoft</Company>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageLicenseUrl>https://github.com/xamarin/Xamarin.VSSDK/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/xamarin/Xamarin.VSSDK/blob/main/LICENSE</PackageLicenseUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageProjectUrl>https://github.com/xamarin/Xamarin.VSSDK</PackageProjectUrl>
 

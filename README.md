@@ -4,7 +4,7 @@ Extensions to the Visual Studio SDK to make extensions authoring easier.
 
 
 [![TFS Build status](https://devdiv.visualstudio.com/_apis/public/build/definitions/0bdbc590-a062-4c3f-b0f6-9383f67865ee/6415/badge)](https://devdiv.visualstudio.com/DevDiv/_build/index?definitionId=6415&_a=completed)
-[![License](https://img.shields.io/github/license/xamarin/Xamarin.VSSDK.svg)](https://github.com/xamarin/Xamarin.VSSDK/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/xamarin/Xamarin.VSSDK.svg)](https://github.com/xamarin/Xamarin.VSSDK/blob/main/LICENSE)
 
 ## Installation
 
@@ -43,7 +43,7 @@ which provides all the necessary APIs to author VS extensions.
 When using VS2017 Update 3 or greater (15.3+), you can also select the target Visual Studio version by 
 selecting the relevant Target Framework from the Run dropdown:
 
-![Active Debug Framework Selection](https://raw.github.com/xamarin/Xamarin.VSSDK/master/test/ActiveDebugFramework.png)
+![Active Debug Framework Selection](https://raw.github.com/xamarin/Xamarin.VSSDK/main/test/ActiveDebugFramework.png)
 
 When doing so, the `TargetFramework` will be set to the selected one, causing the right VSSDK BuildTools 
 package to be used to deploy the extension to the right Experimental Instance. So you can use VS2017 to 
