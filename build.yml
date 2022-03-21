@@ -65,7 +65,7 @@ jobs:
       publishRunAttachments: 'true'
       vsTestVersion: 15.0
 
-  - template: sleet/v1.yml@templates
+  - template: sleet/v2.yml@templates
     parameters:
       connectionString: $(SLEET_FEED_CONNECTIONSTRING)
       container: xvs
