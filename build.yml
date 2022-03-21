@@ -50,8 +50,8 @@ jobs:
   - task: MSBuild@1
     displayName: Restore
     inputs:
-      solution: build.proj
-      msbuildArguments: /t:Restore /bl:"$(Build.ArtifactStagingDirectory)\restore.binlog"
+      solution: src\Xamarin.VSSDK.sln
+      msbuildArguments: /t:Restore /p:Configuration=Release /bl:"$(Build.ArtifactStagingDirectory)\restore.binlog"
 
   - task: MSBuild@1
     displayName: Build
