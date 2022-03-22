@@ -59,17 +59,16 @@ jobs:
       solution: src\Xamarin.VSSDK.sln
       msbuildArguments: /t:Build /p:Configuration=Release /bl:"$(Build.ArtifactStagingDirectory)\build.binlog"
 
-  # Disabled
+  # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/vstest?view=azure-devops
   - task: VSTest@2
     displayName: Test
-    enabled: false
     inputs:
       testAssemblyVer2: |-
         **\*.Tests.dll
         !**\xunit*.dll
       codeCoverageEnabled: 'true'
       publishRunAttachments: 'true'
-      vsTestVersion: 15.0
+      searchFolder: "$(Build.SourcesDirectory)/test"
 
   - powershell: |
       $sourcesDirectory = "$(Build.SourcesDirectory)"
