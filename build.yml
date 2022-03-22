@@ -57,7 +57,7 @@ jobs:
     displayName: Build
     inputs:
       solution: src\Xamarin.VSSDK.sln
-      msbuildArguments: /t:Build /p:Configuration=Release /p:Out="$(Build.ArtifactStagingDirectory)" /bl:"$(Build.ArtifactStagingDirectory)\build.binlog"
+      msbuildArguments: /t:Build /p:Configuration=Release /bl:"$(Build.ArtifactStagingDirectory)\build.binlog"
 
   # Disabled
   - task: VSTest@2
@@ -71,30 +71,48 @@ jobs:
       publishRunAttachments: 'true'
       vsTestVersion: 15.0
 
+  - powershell: |
+      $sourcesDirectory = "$(Build.SourcesDirectory)"
+      Write-Host "Sources directory: ${sourcesDirectory}"
+
+      $artifactsDirectory = "$(Build.ArtifactStagingDirectory)"
+      Write-Host "Artifacts directory: ${artifactsDirectory}"
+
+      [IO.File]::Copy("${sourcesDirectory}/NuGet.Config", "${artifactsDirectory}/NuGet.Config")
+
+      $outDirectory = "${sourcesDirectory}/out"
+      Write-Host "Build output directory: ${outDirectory}"
+
+      if ([IO.Directory]::Exists($outDirectory)) {
+        $files = [IO.Directory]::GetFiles($outDirectory, '*.nupkg')
+
+        if ($null -ne $files -and $files.Count -gt 0) {
+          $files | foreach {
+            $filename = [IO.Path]::GetFileName($_)
+            $destPathAndFilename = [IO.Path]::Combine($artifactsDirectory, $filename)
+            Write-Host "Copy $_ to ${destPathAndFilename}"
+            [IO.File]::Copy($_, $destPathAndFilename)
+          }
+        } else {
+          Write-Host "ERROR: Nuget files not found: ${outDirectory}"
+        }
+      } else {
+        Write-Host "Output directory not found: ${outDirectory}"
+        Write-Host "NuGet packages in artifacts directory: ${artifactsDirectory}"
+        $files = [IO.Directory]::GetFiles($artifactsDirectory, '*.nupkg')
+        if ($null -ne $files -and $files.Count -gt 0) {
+          $files | foreach { Write-Host " $([IO.Path]::GetFileName($_))" }
+        } else {
+          Write-Host "No NuGet files found: ${artifactsDirectory}"
+        }
+      }
+    displayName: 'Stage artifacts'
+
   - template: sleet/v1.yml@templates
     parameters:
       connectionString: $(SLEET_FEED_CONNECTIONSTRING)
       container: xvs
       packages: $(Build.ArtifactStagingDirectory)
-
-  - powershell: |
-      [IO.File]::Copy("$(Build.SourcesDirectory)/NuGet.Config", "$(Build.ArtifactStagingDirectory)/NuGet.Config")
-
-      $outDirectory = "$(Build.SourcesDirectory)/out"
-      Write-Host "Build output directory: ${outDirectory}"
-      $files = [IO.Directory]::GetFiles($outDirectory, '*.nupkg')
-
-      if ($null -ne $files -and $files.Count -gt 0) {
-        $files | foreach {
-          $filename = [IO.Path]::GetFileName($_)
-          $destPathAndFilename = [IO.Path]::Combine("$(Build.ArtifactStagingDirectory)", $filename)
-          Write-Host "Copy $_ to ${destPathAndFilename}"
-          [IO.File]::Copy($_, $destPathAndFilename)
-        }
-      } else {
-        Write-Host "ERROR: Nuget files not found: ${$outDirectory}"
-      }
-    displayName: 'Stage artifacts'
 
   - task: PublishBuildArtifacts@1
     displayName: Publish
