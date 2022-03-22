@@ -23,7 +23,8 @@
     <PackOnBuild>true</PackOnBuild>
     <PrimaryOutputKind>build</PrimaryOutputKind>
     <InferLegacyPackageReferences>false</InferLegacyPackageReferences>
-    <PackageOutputPath>$(MSBuildThisFileDirectory)..\out</PackageOutputPath>
+    <PackageOutputPath Condition="'$(Out)' == ''">$(MSBuildThisFileDirectory)..\out</PackageOutputPath>
+    <PackageOutputPath Condition="'$(Out)' != ''">$(Out)</PackageOutputPath>
 
     <!-- Build -->
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
