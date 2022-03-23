@@ -57,7 +57,7 @@ jobs:
     displayName: Build
     inputs:
       solution: src\Xamarin.VSSDK.sln
-      msbuildArguments: /t:Build /p:Configuration=Release /bl:"$(Build.ArtifactStagingDirectory)\build.binlog"
+      msbuildArguments: /t:Build /p:Configuration=Release /bl:"$(Build.ArtifactStagingDirectory)\build.binlog" /maxCpuCount:1    # UNDONE: Help serialize build log: /m:1
 
   # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/vstest?view=azure-devops
   - task: VSTest@2
