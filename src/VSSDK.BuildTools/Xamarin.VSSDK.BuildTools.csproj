@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-		<PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.9.20" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.11.0" PrivateAssets="all" />
 		<PackageReference Include="netfx-System.StringResources" Version="3.1.5" PrivateAssets="all" />
 		<PackageReference Include="NuGet.Build.Packaging" Version="0.1.323" PrivateAssets="all" />
 	</ItemGroup>
