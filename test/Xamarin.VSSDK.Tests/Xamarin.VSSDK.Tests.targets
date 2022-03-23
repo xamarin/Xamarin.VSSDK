@@ -5,7 +5,7 @@
     <PropertyGroup>
       <_VSSDK_TF Condition="'$(Dev)' == '14.0'">net461</_VSSDK_TF>
       <_VSSDK_TF Condition="'$(Dev)' == '15.0'">net462</_VSSDK_TF>
-      <_VSSDK_TF Condition="'$(Dev)' == '16.0'">net462</_VSSDK_TF>
+      <_VSSDK_TF Condition="'$(Dev)' == '16.0'">net472</_VSSDK_TF>
     </PropertyGroup>
     
     <MSBuild Projects="..\VSSDK.Installer\vssdk-installer.proj" Targets="Restore" />
