@@ -24,7 +24,7 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new ProjectInstance("Template.csproj", Global(new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net45;net46" },
+                { "TargetFrameworks", "net45;net46;net472" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
             }), null, new ProjectCollection(Global()));
 
@@ -43,7 +43,7 @@ namespace Xamarin.VSSDK.Tests
         {
             var project = new ProjectInstance("Template.csproj", Global(new Dictionary<string, string>
             {
-                { "TargetFrameworks", "net45;net46" },
+                { "TargetFrameworks", "net45;net46;net472" },
                 { "BuildingInsideVisualStudio", "true" },
                 { "Configuration", ThisAssembly.Project.Properties.Configuration },
             }), null, new ProjectCollection(Global()));

@@ -19,6 +19,7 @@ namespace Xamarin.VSSDK.Tests
 
         [InlineData("net45")]
         [InlineData("net46")]
+        [InlineData("net472")]
         [Theory]
         public void BindingRedirectsCanBeProvided(string targetFramework)
         {
