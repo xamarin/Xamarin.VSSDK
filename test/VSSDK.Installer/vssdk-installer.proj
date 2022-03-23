@@ -7,7 +7,8 @@
   <ItemGroup>
     <PackageReference Include="VSSDK_Reference_Assemblies" Version="14.*" Condition="'$(TargetFramework)' == 'net461'" />
     <PackageReference Include="VSSDK_Reference_Assemblies" Version="15.*" Condition="'$(TargetFramework)' == 'net462'" />
-    <PackageReference Include="VSSDK_Reference_Assemblies" Version="16.*" Condition="'$(TargetFramework)' == 'net472'" />
+    <!-- TODO: updating to 16.x build tools requires changes to DeployVsixExtensionFiles.targets. Enabling/Installing has changed. See Xamarin.VSSDK.BuildTools.csproj -->
+    <PackageReference Include="VSSDK_Reference_Assemblies" Version="15.*" Condition="'$(TargetFramework)' == 'net472'" />
   </ItemGroup>
 
   <Target Name="GetVSSDK">
