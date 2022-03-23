@@ -6,7 +6,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
-    <Dev Condition="'$(Dev)' == ''">15.0</Dev>
+    <Dev Condition="'$(Dev)' == ''">16.0</Dev>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Dev)' == '14.0'">
@@ -19,6 +19,12 @@
     <AssemblyName>Xamarin.VSSDK.15.0.Tests</AssemblyName>
     <OutputPath>bin\15.0</OutputPath>
     <DefineConstants>$(DefineConstants);Dev15</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Dev)' == '16.0'">
+    <AssemblyName>Xamarin.VSSDK.16.0.Tests</AssemblyName>
+    <OutputPath>bin\16.0</OutputPath>
+    <DefineConstants>$(DefineConstants);Dev16</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
