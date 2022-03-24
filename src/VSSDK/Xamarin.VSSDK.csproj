@@ -58,7 +58,7 @@
 	</ItemGroup>
 
   <ItemGroup Label="Visual Studio 2019">
-		<PackageFile Include="Microsoft.VisualStudio.SDK" Version="16.0.204" TargetFramework="net472" Kind="Dependency" ExcludeAssets="runtime" />
+		<PackageFile Include="Microsoft.VisualStudio.SDK" Version="16.10.31321.278" TargetFramework="net472" Kind="Dependency" ExcludeAssets="runtime" />
   </ItemGroup>
 
   <ItemGroup>

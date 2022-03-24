@@ -5,14 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- https://www.nuget.org/packages/VSSDK_Reference_Assemblies -->
     <PackageReference Include="VSSDK_Reference_Assemblies" Version="14.*" Condition="'$(TargetFramework)' == 'net461'" />
     <PackageReference Include="VSSDK_Reference_Assemblies" Version="15.*" Condition="'$(TargetFramework)' == 'net462'" />
     <!-- TODO: updating to 16.x build tools requires changes to DeployVsixExtensionFiles.targets. Enabling/Installing has changed. See Xamarin.VSSDK.BuildTools.csproj -->
-    <PackageReference Include="VSSDK_Reference_Assemblies" Version="15.*" Condition="'$(TargetFramework)' == 'net472'" />
+    <!-- For 16.x reference Microsoft.VSSDK.BuildTools in place of VSSDK_Reference_Assemblies since there is no 16.x version of VSSDK_Reference_Assemblies -->
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.*" Condition="'$(TargetFramework)' == 'net472'" />
   </ItemGroup>
 
   <Target Name="GetVSSDK">
     <ItemGroup>
+      <!-- VSSDKInstall refers to the package location of Microsoft.VSSDK.BuildTools such as %userprofile%\.nuget\packages\microsoft.vssdk.buildtools\15.1.192\build\..\\tools\VSSDK -->
       <VSSDK Include="$(VSSDKInstall)\**\*.*" />
     </ItemGroup>
   </Target>
