@@ -15,7 +15,7 @@
 
   <Target Name="GetVSSDK">
     <ItemGroup>
-      <!-- VSSDKInstall refers to the package location of Microsoft.VSSDK.BuildTools such as %userprofile%\.nuget\packages\microsoft.vssdk.buildtools\15.1.192\build\..\\tools\VSSDK -->
+      <!-- VSSDKInstall refers to the package location of Microsoft.VSSDK.BuildTools such as %userprofile%\.nuget\packages\microsoft.vssdk.buildtools\15.1.192\build\..\tools\VSSDK -->
       <VSSDK Include="$(VSSDKInstall)\**\*.*" />
     </ItemGroup>
   </Target>
