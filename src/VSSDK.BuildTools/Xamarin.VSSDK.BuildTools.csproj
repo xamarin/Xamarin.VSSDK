@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net46</TargetFramework>
+		<TargetFramework>net472</TargetFramework>
 		<RootNamespace>Xamarin.VSSDK</RootNamespace>
 
 		<PackageId>Xamarin.VSSDK.BuildTools</PackageId>
@@ -32,12 +32,13 @@
   </ItemGroup>
 
   <ItemGroup Label="Visual Studio 2019">
-		<!-- TODO: updating to 16.x build tools requires changes to DeployVsixExtensionFiles.targets. Enabling/Installing has changed  -->
-    <PackageFile Include="Microsoft.VSSDK.BuildTools" Version="15.9.3039" Kind="Dependency" TargetFramework="net472" />
+    <!-- TODO: updating to 16.x build tools requires changes to DeployVsixExtensionFiles.targets. Enabling/Installing has changed. Also see TODO comment in vssdk-installer.proj  -->
+	<!-- https://www.nuget.org/packages/Microsoft.VSSDK.BuildTools -->
+    <PackageFile Include="Microsoft.VSSDK.BuildTools" Version="16.10.1055" Kind="Dependency" TargetFramework="net472" />
   </ItemGroup>
 
   <ItemGroup>
-		<PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.9.20" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.11.0" PrivateAssets="all" />
 		<PackageReference Include="netfx-System.StringResources" Version="3.1.5" PrivateAssets="all" />
 		<PackageReference Include="NuGet.Build.Packaging" Version="0.1.323" PrivateAssets="all" />
 	</ItemGroup>
@@ -61,6 +62,10 @@
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Update="GitInfo" Version="2.2.0" />
 	</ItemGroup>
 
 </Project>

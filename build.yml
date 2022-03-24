@@ -1,84 +1,147 @@
-pool:
-  vmImage: windows-2019
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops
+trigger:
+  batch: false
+  branches:
+    include:
+    - main
+
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/github?view=azure-devops&tabs=yaml#pr-triggers
+pr:
+  autoCancel: false
+  branches:
+    include:
+    - main
 
 variables:
-- group: Xamarin NuGetized
+  - group: Xamarin NuGetized
 
 resources:
   repositories:
   - repository: templates
     type: github
     name: xamarin/yaml-templates
-    ref: refs/heads/master
+    ref: refs/heads/main
     endpoint: xamarin
 
-steps:
+jobs:
+- job: Build
+  pool:
+    name: AzurePipelines-EO
+    demands:
+    - ImageOverride -equals AzurePipelinesWindows2019compliant
 
-- checkout: self
-  clean: true
+  steps:
+  - checkout: self
+    clean: true
 
-- task: UseDotNet@2
-  inputs:
-    version: 2.1.807
+  - task: UseDotNet@2
+    inputs:
+      version: 2.1.818
 
-- task: UseDotNet@2
-  inputs:
-    useGlobalJson: true
+  - task: UseDotNet@2
+    inputs:
+      useGlobalJson: true
 
-- task: MSBuild@1
-  displayName: Restore
-  inputs:
-    solution: build.proj
-    msbuildArguments: /t:Restore /bl:"$(Build.ArtifactStagingDirectory)\restore.binlog"
+  - task: NuGetAuthenticate@0
+    displayName: Authenticate NuGet feeds
+    inputs:
+      forceReinstallCredentialProvider: true
 
-- task: MSBuild@1
-  displayName: Build
-  inputs:
-    solution: build.proj
-    msbuildArguments: /t:Build /p:Out="$(Build.ArtifactStagingDirectory)" /bl:"$(Build.ArtifactStagingDirectory)\build.binlog"
+  - task: MSBuild@1
+    displayName: Restore
+    inputs:
+      solution: src\Xamarin.VSSDK.sln
+      msbuildArguments: /t:Restore /p:Configuration=Release /bl:"$(Build.ArtifactStagingDirectory)\restore.binlog"
 
-- task: VSTest@2
-  displayName: Test
-  inputs:
-    testAssemblyVer2: |-
-      **\*.Tests.dll
-      !**\xunit*.dll
-    codeCoverageEnabled: 'true'
-    publishRunAttachments: 'true'
+  - task: MSBuild@1
+    displayName: Build
+    inputs:
+      solution: src\Xamarin.VSSDK.sln
+      msbuildArguments: /t:Build /p:Configuration=Release /bl:"$(Build.ArtifactStagingDirectory)\build.binlog" /maxCpuCount:1 /v:detailed   # UNDONE: Help serialize build log: /m:1
 
-- template: sleet/v1.yml@templates
-  parameters:
-    connectionString: $(SLEET_FEED_CONNECTIONSTRING)
-    container: xvs
-    packages: $(Build.ArtifactStagingDirectory)
+  # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/vstest?view=azure-devops
+  - task: VSTest@2
+    displayName: Test
+    inputs:
+      testAssemblyVer2: |-
+        **\*.Tests.dll
+        !**\xunit*.dll
+      codeCoverageEnabled: 'true'
+      publishRunAttachments: 'true'
+      configuration: Release
+      searchFolder: "$(Build.SourcesDirectory)/test"
 
-- task: PublishBuildArtifacts@1
-  displayName: Publish
-  condition: always()
-  inputs:
-    PathtoPublish: $(Build.ArtifactStagingDirectory)
-    ArtifactName: output
-    ArtifactType: Container
+  - powershell: |
+      $sourcesDirectory = "$(Build.SourcesDirectory)"
+      Write-Host "Sources directory: ${sourcesDirectory}"
 
-- task: NuGetCommand@2
-  displayName: 'NuGet Update'
-  inputs:
-    command: custom
-    arguments: 'update -self'
+      $artifactsDirectory = "$(Build.ArtifactStagingDirectory)"
+      Write-Host "Artifacts directory: ${artifactsDirectory}"
 
-- pwsh: |
-    $branch = '$(Build.SourceBranch)'
-    $push = "$($branch -eq 'refs/heads/master' -or $branch -match 'refs/heads/d\d\d-*|refs/heads/rel/*')".ToLowerInvariant()
-    Write-Host "##vso[task.setvariable variable=PushPackages;]$push"
-  displayName: Set PushPackages
-  condition: eq(variables['PushPackages'], '')
-   
-- task: NuGetCommand@2
-  displayName: Push Packages
-  continueOnError: true
-  condition: and(succeeded(), eq(variables['PushPackages'], 'true'))
-  inputs:
-    command: push
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-    nuGetFeedType: external
-    publishFeedCredentials: 'xamarin-impl public feed'
+      [IO.File]::Copy("${sourcesDirectory}/NuGet.Config", "${artifactsDirectory}/NuGet.Config")
+
+      $outDirectory = "${sourcesDirectory}/out"
+      Write-Host "Build output directory: ${outDirectory}"
+
+      if ([IO.Directory]::Exists($outDirectory)) {
+        $files = [IO.Directory]::GetFiles($outDirectory, '*.nupkg')
+
+        if ($null -ne $files -and $files.Count -gt 0) {
+          $files | foreach {
+            $filename = [IO.Path]::GetFileName($_)
+            $destPathAndFilename = [IO.Path]::Combine($artifactsDirectory, $filename)
+            Write-Host "Copy $_ to ${destPathAndFilename}"
+            [IO.File]::Copy($_, $destPathAndFilename)
+          }
+        } else {
+          Write-Host "ERROR: Nuget files not found: ${outDirectory}"
+        }
+      } else {
+        Write-Host "Output directory not found: ${outDirectory}"
+        Write-Host "NuGet packages in artifacts directory: ${artifactsDirectory}"
+        $files = [IO.Directory]::GetFiles($artifactsDirectory, '*.nupkg')
+        if ($null -ne $files -and $files.Count -gt 0) {
+          $files | foreach { Write-Host " $([IO.Path]::GetFileName($_))" }
+        } else {
+          Write-Host "No NuGet files found: ${artifactsDirectory}"
+        }
+      }
+    displayName: 'Stage artifacts'
+
+  - template: sleet/v1.yml@templates
+    parameters:
+      connectionString: $(SLEET_FEED_CONNECTIONSTRING)
+      container: xvs
+      packages: $(Build.ArtifactStagingDirectory)
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish
+    condition: always()
+    inputs:
+      PathtoPublish: $(Build.ArtifactStagingDirectory)
+      ArtifactName: output
+      ArtifactType: Container
+
+  - pwsh: |
+      $branch = '$(Build.SourceBranch)'
+      $push = "$($branch -eq 'refs/heads/main' -or $branch -match 'refs/heads/d\d\d-*|refs/heads/rel/*')".ToLowerInvariant()
+      Write-Host "##vso[task.setvariable variable=PushPackages;]$push"
+    displayName: Set PushPackages
+    condition: eq(variables['PushPackages'], '')
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet Update'
+    condition: and(succeeded(), eq(variables['PushPackages'], 'true'))
+    inputs:
+      command: custom
+      arguments: 'update -self'
+
+  - task: NuGetCommand@2
+    displayName: Push Packages
+    continueOnError: true
+    condition: and(succeeded(), eq(variables['PushPackages'], 'true'))
+    inputs:
+      command: push
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      nuGetFeedType: external
+      publishFeedCredentials: 'xamarin-impl public feed'

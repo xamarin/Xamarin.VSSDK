@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net46</TargetFramework>
+		<TargetFramework>net472</TargetFramework>
 		<RootNamespace>Xamarin.VSSDK</RootNamespace>
 
 		<PackageId>Xamarin.VSSDK</PackageId>
@@ -58,11 +58,15 @@
 	</ItemGroup>
 
   <ItemGroup Label="Visual Studio 2019">
-		<PackageFile Include="Microsoft.VisualStudio.SDK" Version="16.0.204" TargetFramework="net472" Kind="Dependency" ExcludeAssets="runtime" />
+		<PackageFile Include="Microsoft.VisualStudio.SDK" Version="16.10.31321.278" TargetFramework="net472" Kind="Dependency" ExcludeAssets="runtime" />
   </ItemGroup>
 
   <ItemGroup>
-	  <PackageReference Include="NuGet.Build.Packaging" Version="0.1.323" PrivateAssets="all" />
+	  <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" PrivateAssets="all" />
 	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="GitInfo" Version="2.2.0" />
+  </ItemGroup>
 
 </Project>

@@ -17,9 +17,9 @@ AssemblyVersion=$(AssemblyVersion)" />
 
   <Target Name="_ClearTagVersion" AfterTargets="_GitBaseVersionTag" BeforeTargets="_GitBaseVersionFile">
     <PropertyGroup Condition="'$(GitBaseVersion)' != '' and '$(GitSemVerSource)' == 'Tag' and '$(GitCommits)' != '0'">
-      <!-- If the current commit isn't exactly the tagged commit, remove the determined base version, 
+      <!-- If the current commit isn't exactly the tagged commit, remove the determined base version,
            so that probing continues as usual (GitInfo file follows).
-           This means that we can push a version from master/dev without having to create a branch.
+           This means that we can push a version from main/dev without having to create a branch.
            Typical "true" releases will likely come from versioned branches though.
       -->
       <GitBaseVersion></GitBaseVersion>
@@ -46,8 +46,8 @@ AssemblyVersion=$(AssemblyVersion)" />
       <GitBranch Condition="'$(SYSTEM_PULLREQUEST_TARGETBRANCH)' == '' and '$(BUILD_SOURCEBRANCHNAME)' != ''">$(BUILD_SOURCEBRANCHNAME)</GitBranch>
       <GitBranch Condition="'$(APPVEYOR_REPO_BRANCH)' != ''">$(APPVEYOR_REPO_BRANCH)</GitBranch>
 
-      <!-- NOTE: build metadata does not affect version matching, so even if you work from a different branch+commit that gets 
-           rebased+merged later on, the version # might still be the same (provided there weren't additional commits in master 
+      <!-- NOTE: build metadata does not affect version matching, so even if you work from a different branch+commit that gets
+           rebased+merged later on, the version # might still be the same (provided there weren't additional commits in main
            before the rebase+merge.
       -->
       <_IndexOfBranchSlash>$(GitBranch.LastIndexOf('/'))</_IndexOfBranchSlash>
@@ -55,8 +55,8 @@ AssemblyVersion=$(AssemblyVersion)" />
       <_GitBranch Condition="'$(_IndexOfBranchSlash)' != '0'">$(GitBranch.Substring($(_IndexOfBranchSubstring)))</_GitBranch>
       <_GitBranch Condition="'$(_IndexOfBranchSlash)' == '0'">$(GitBranch)</_GitBranch>
 
-      <!-- We'll use GitFlow and ship publicly from master, meaning we don't need branch metadata from there -->
-      <SemVerMetadata Condition="'$(_GitBranch)' != 'master'">$(_GitBranch).</SemVerMetadata>
+      <!-- We'll use GitFlow and ship publicly from main, meaning we don't need branch metadata from there -->
+      <SemVerMetadata Condition="'$(_GitBranch)' != 'main'">$(_GitBranch).</SemVerMetadata>
       <SemVerMetadata>$(SemVerMetadata)sha.$(GitCommit)</SemVerMetadata>
 
       <!-- If there is a pre-release label, fix the major.minor.build and increment the release label digit instead. -->

@@ -50,6 +50,10 @@
     <PackageReference Include="VSSDK_Reference_Assemblies" Version="15.0.26608" />
   </ItemGroup>
 
+  <ItemGroup Label="Visual Studio 2019" Condition="'$(TargetFramework)' == 'net472'" >
+    <PackageReference Include="VSSDK_Reference_Assemblies" Version="16.0.204" />
+  </ItemGroup>
+
   <Target Name="_EnsureExperimental" BeforeTargets="GetVsixDeploymentPath">
     <!--Check if the user is an administrator and the user profile hasn't been setup for the target instance. -->
     <CheckProfileSetup

@@ -21,7 +21,7 @@ namespace Xamarin.VSSDK.Tests
 #elif Dev15
         protected const string TargetFramework = "net46";
 #elif Dev16
-        protected const string TargetFramework = "net471";
+        protected const string TargetFramework = "net472";
 #endif
 
 

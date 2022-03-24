@@ -19,6 +19,7 @@ namespace Xamarin.VSSDK.Tests
 
         [InlineData("net461")]
         [InlineData("net462")]
+        [InlineData("net472")]
         [Theory(Skip = "Can't make this work yet")]
         public void ExtensionFilesAreDeployedWhenBuidingExtension(string targetFramework)
         {

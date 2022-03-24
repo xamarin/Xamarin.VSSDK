@@ -6,7 +6,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
-    <Dev Condition="'$(Dev)' == ''">15.0</Dev>
+    <Dev Condition="'$(Dev)' == ''">16.0</Dev>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Dev)' == '14.0'">
@@ -19,6 +19,12 @@
     <AssemblyName>Xamarin.VSSDK.15.0.Tests</AssemblyName>
     <OutputPath>bin\15.0</OutputPath>
     <DefineConstants>$(DefineConstants);Dev15</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Dev)' == '16.0'">
+    <AssemblyName>Xamarin.VSSDK.16.0.Tests</AssemblyName>
+    <OutputPath>bin\16.0</OutputPath>
+    <DefineConstants>$(DefineConstants);Dev16</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -66,15 +72,18 @@
     <PackageReference Include="MSBuilder.ThisAssembly.Project" Version="0.3.4" />
     <PackageReference Include="InjectModuleInitializer" Version="2.0.0" />
     <PackageReference Include="Mvp.Xml" Version="2.3.0" />
-    <PackageReference Include="xunit" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="xunit.vsix" Version="0.3.12-beta" />
-    <PackageReference Include="Microsoft.Build" Version="16.5.0" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="16.5.0" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build" Version="16.10.0" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="16.10.0" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Locator" Version=" 1.2.6" />
-    <PackageReference Include="MSBuild.StructuredLogger" Version="2.0.174" />
+    <PackageReference Include="MSBuild.StructuredLogger" Version="2.1.630" />
     <!-- Allows loading and evaluating VSSDK projects -->
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.0.204" />
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.10.31529.105" />
   </ItemGroup>
 
   <ItemGroup>
